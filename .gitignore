@@ -1,0 +1,9 @@
+# ignore documentation
+doc/html/*
+
+# ignore generated files
+bin/*
+build/*
+
+# temp files
+*.sok~
