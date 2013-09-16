@@ -85,7 +85,6 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
     Level* lvl = new Level();
     RLE rle;
 
-    Uint8 state = 0;
     Uint32 tileLine = 0;
     bool lastLineWasBlank = true;
     bool isLevelData = false;
@@ -129,6 +128,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
             this->registerLevel( lvl, levelName, levelMap );
             lvl = new Level();
             levelName = "";
+            tileLine = 0;
         }
 
         // process input
