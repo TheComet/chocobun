@@ -45,4 +45,5 @@ void App::go( void )
 {
     Sokoban::Collection c( "../../collections/test.sok" );
     c.initialise();
+    c.deinitialise();
 }

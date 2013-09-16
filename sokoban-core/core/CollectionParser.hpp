@@ -54,22 +54,23 @@ public:
 
     /*!
      * @brief Parses a collection file and writes into a map of levels
-     */
-    void parse( const std::string& fileName, std::map<std::string, Level*>& levelMap );
-
-private:
-
-    /*!
-     * @brief Universal .SOK format parser
      *
-     * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
+     * @param fileName The name of the file to parse
+     * @param levelMap An std::map of levels to write to
+     * @return Returns the name of the collection (if any), otherwise the string
+     * is empty
      */
-    void parseSOK( std::ifstream& file, std::map<std::string, Level*>& levelMap );
+    std::string parse( const std::string& fileName, std::map<std::string, Level*>& levelMap );
 
     /*!
-     * @brief Registers a level to a level map
+     * @brief Saves a collection to a file
+     *
+     * Will export using the .SOK format, regardless of input format
+     *
+     * @param fileName The file name to save to
+     * @param levelMap An std::map of levels to save
      */
-    void registerLevel( Level* level, std::string& levelName, std::map<std::string, Level*>& levelMap );
+    void save( const std::string& fileName, std::map<std::string, Level*>& levelMap );
 
 };
 

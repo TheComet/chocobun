@@ -44,6 +44,8 @@ public:
 
     static const std::string validTiles;
 
+    typedef std::map<std::string, Level*>::iterator metaDataIterator;
+
     /*!
      * @brief Default Constructor
      */
@@ -85,6 +87,34 @@ public:
     const std::string& getMetaData( const std::string& key );
 
     /*!
+     * @brief Formats and streams all meta data to a stream object
+     *
+     * This is used when saving the level's meta data
+     *
+     * @param stream The stream object to stream to
+     */
+    void streamAllMetaData( std::ostream& stream );
+
+    /*!
+     * @brief Adds comments and other text for this level
+     *
+     * This is used later on when the file is saved to disk again,
+     * so comments that would not normally be loaded are preserved
+     *
+     * @param comment Comment to add
+     */
+    void addCommentData( const std::string& comment );
+
+    /*!
+     * @brief Streams all comment data to a stream object
+     *
+     * This is used to save the comment data of a level
+     *
+     * @param stream The stream object to stream to
+     */
+    void streamAllCommentData( std::ostream& stream );
+
+    /*!
      * @brief Inserts a tile into the level at the given coordinate
      *
      * Internally the map array is resized accordingly so it remains square.
@@ -106,10 +136,41 @@ public:
      */
     void insertTile( const Sokoban::Uint32& x, const Sokoban::Uint32& y, const char& tile );
 
+    /*!
+     * @brief Inserts a whole line instead of a single tile
+     *
+     * Internally the map array is resized accordingly so it remains square.
+     * Valid tile characters are:
+     * -# Wall
+     * -@ Pusher
+     * -+ Pusher on goal square
+     * -$ Box
+     * -* Box on goal square
+     * -. Goal square
+     * -  Floor (space)
+     * -_ Floor
+     *
+     * @exception Sokoban::Exception if an invalid character is passed
+     *
+     * @param y The Y coordinate for the tile line to insert
+     * @param tiles The line of tiles to insert
+     */
+    void insertTileLine( const Sokoban::Uint32& y, const std::string& tiles );
+
+    /*!
+     * \brief Streams all tile data to a stream object
+     *
+     * This is used to save the level data to a file
+     *
+     * @param stream The stream object to stream to
+     */
+    void streamAllTileData( std::ostream& stream );
+
 private:
 
     std::vector< std::vector<char> > m_LevelArray;
     std::map<std::string, std::string> m_MetaData;
+    std::vector<std::string> m_Comments;
     std::vector<char> m_UndoData;
 
 };

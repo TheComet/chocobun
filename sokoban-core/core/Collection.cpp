@@ -44,19 +44,19 @@ Collection::~Collection( void )
 // --------------------------------------------------------------
 void Collection::initialise( void )
 {
+
+    // load and parse levels
     CollectionParser cp;
     cp.parse( m_FileName, m_LevelMap );
-    for( std::map<std::string, Level*>::iterator it = m_LevelMap.begin(); it != m_LevelMap.end(); ++it )
-    {
-        std::cout << "level: " << it->first << std::endl;
-        it->second->drawLevel();
-        std::cout << std::endl;
-    }
 }
 
 // --------------------------------------------------------------
 void Collection::deinitialise( void )
 {
+
+    // export levels
+    CollectionParser cp;
+    //cp.save( m_FileName, m_LevelMap );
 }
 
 // --------------------------------------------------------------

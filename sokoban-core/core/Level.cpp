@@ -25,7 +25,6 @@
 #include <core/Level.hpp>
 #include <core/Exception.hpp>
 
-#include <iostream>
 const std::string Sokoban::Level::validTiles = "#@+$*. _pPbB";
 
 namespace Sokoban {
@@ -47,7 +46,6 @@ void Level::addMetaData( const std::string& key, const std::string& value )
     if( m_MetaData.find( key ) != m_MetaData.end() )
         throw Exception( "[Level::addMetaData] meta data already exists" );
     m_MetaData[key] = value;
-    std::cout << "added meta data: " << key << "," << value << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -57,6 +55,26 @@ const std::string& Level::getMetaData( const std::string& key )
     if( p == m_MetaData.end() )
         throw Exception( "[Level::getMetaData] meta data not found" );
     return p->second;
+}
+
+// --------------------------------------------------------------
+void Level::streamAllMetaData( std::ostream& stream )
+{
+    for( std::map<std::string, std::string>::iterator it = m_MetaData.begin(); it != m_MetaData.end(); ++it )
+        stream << it->first << ": " << it->second << std::endl;
+}
+
+// --------------------------------------------------------------
+void Level::addCommentData( const std::string& comment )
+{
+    m_Comments.push_back( comment );
+}
+
+// --------------------------------------------------------------
+void Level::streamAllCommentData( std::ostream& stream )
+{
+    for( std::vector<std::string>::iterator it = m_Comments.begin(); it != m_Comments.end(); ++it )
+        stream << *it << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -80,6 +98,24 @@ void Level::insertTile( const Sokoban::Uint32& x, const Sokoban::Uint32& y, cons
     // write tile
     m_LevelArray[x][y] = tile;
 
+}
+
+// --------------------------------------------------------------
+void Level::insertTileLine( const Sokoban::Uint32& y, const std::string& tiles )
+{
+    for( size_t x = 0; x != tiles.size(); ++x )
+        this->insertTile( x, y, tiles[x] );
+}
+
+// --------------------------------------------------------------
+void Level::streamAllTileData( std::ostream& stream )
+{
+    for( size_t y = 0; y != m_LevelArray[0].size(); ++y )
+    {
+        for( size_t x = 0; x != m_LevelArray.size(); ++x )
+            stream << m_LevelArray[x][y];
+        stream << std::endl;
+    }
 }
 
 } // namespace Sokoban
