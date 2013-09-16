@@ -25,8 +25,6 @@
 #include <core/Level.hpp>
 #include <core/Exception.hpp>
 
-#include <iostream>
-
 const std::string Sokoban::Level::validTiles = "#@+$*. _pPbB";
 
 namespace Sokoban {
@@ -67,28 +65,28 @@ void Level::streamAllMetaData( std::ostream& stream )
 }
 
 // --------------------------------------------------------------
-void Level::addCommentData( const std::string& comment )
+void Level::addHeaderData( const std::string& header )
 {
-    m_Comments.push_back( comment );
+    m_HeaderData.push_back( header );
 }
 
 // --------------------------------------------------------------
-void Level::removeCommentData( const std::string& comment )
+void Level::removeHeaderData( const std::string& header )
 {
-    for( std::vector<std::string>::iterator it = m_Comments.begin(); it != m_Comments.end(); ++it )
+    for( std::vector<std::string>::iterator it = m_HeaderData.begin(); it != m_HeaderData.end(); ++it )
     {
-        if( it->compare( comment ) == 0 )
+        if( it->compare( header ) == 0 )
         {
-            m_Comments.erase( it );
+            m_HeaderData.erase( it );
             break;
         }
     }
 }
 
 // --------------------------------------------------------------
-void Level::streamAllCommentData( std::ostream& stream )
+void Level::streamAllHeaderData( std::ostream& stream )
 {
-    for( std::vector<std::string>::iterator it = m_Comments.begin(); it != m_Comments.end(); ++it )
+    for( std::vector<std::string>::iterator it = m_HeaderData.begin(); it != m_HeaderData.end(); ++it )
         stream << *it << std::endl;
 }
 
@@ -131,6 +129,32 @@ void Level::streamAllTileData( std::ostream& stream )
             stream << m_LevelArray[x][y];
         stream << std::endl;
     }
+}
+
+// --------------------------------------------------------------
+void Level::addLevelNote( const std::string& note )
+{
+    m_Notes.push_back( note );
+}
+
+// --------------------------------------------------------------
+void Level::removeLevelNote( const std::string& note)
+{
+    for( std::vector<std::string>::iterator it = m_Notes.begin(); it != m_Notes.end(); ++it )
+    {
+        if( it->compare( note ) == 0 )
+        {
+            m_Notes.erase( it );
+            break;
+        }
+    }
+}
+
+// --------------------------------------------------------------
+void Level::streamAllNotes( std::ostream& stream )
+{
+    for( std::vector<std::string>::iterator it = m_Notes.begin(); it != m_Notes.end(); ++it )
+        stream << *it << std::endl;
 }
 
 } // namespace Sokoban

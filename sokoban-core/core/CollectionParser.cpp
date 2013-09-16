@@ -65,17 +65,28 @@ std::string CollectionParser::parse( const std::string& fileName, std::map<std::
 void CollectionParser::save( const std::string& collectionName, const std::string& fileName, std::map<std::string,Level*>& levelMap )
 {
 
-    //
-
-    // open the file
-    std::ofstream file( fileName.c_str(), std::ofstream::out );
+    std::string tempFileName = fileName; tempFileName.append( "~" );
+    std::ofstream file( tempFileName.c_str(), std::ofstream::out );
     if( !file.is_open() )
         throw Exception( "[CollectionParser::save] unable to open file for saving" );
 
     // default export format is SOK
     CollectionParserBase* parser = new CollectionParserSOK();
+    parser->enableCompression();
     parser->save( collectionName, file, levelMap );
     delete parser;
+
+    // replace original with saved file
+    /*
+    if( remove( fileName.c_str() ) ) throw Exception( "[CollectionParser::save] Failed to replace save file with original\
+                                                    file. Your progress has been saved to a temporary file with the same\
+                                                    file name as the original, but with an additional \"~\" character.\
+                                                    Try manually merging them.");
+    if( rename( tempFileName.c_str(), fileName.c_str() ) ) throw Exception( "[CollectionParser::save] \
+                                                    Failed to replace original save file with temporary. Your progress\
+                                                    has been saved to a temporary file with the same file name as the\
+                                                    original, but with an additional \"~\" character. Try manually renaming it.");
+*/
 }
 
 } // namespace Sokoban

@@ -96,35 +96,35 @@ public:
     void streamAllMetaData( std::ostream& stream );
 
     /*!
-     * @brief Adds comments and other text for this level
+     * @brief Adds Header data and other text for this level
      *
      * This is used later on when the file is saved to disk again,
-     * so comments that would not normally be loaded are preserved
+     * so headers that would not normally be loaded are preserved
      *
-     * @param comment Comment to add
+     * @param header Header to add
      */
-    void addCommentData( const std::string& comment );
+    void addHeaderData( const std::string& header );
 
     /*!
-     * @brief Removes a comment from this level
+     * @brief Removes header data from this level
      *
      * This is called when a level name is discovered. Because
      * there can be multiple passes of delay before a level name can
      * be confirmed, it usually occurs that it has been added as a
-     * comment first. This will remove it again so it isn't exported twice.
+     * Header first. This will remove it again so it isn't exported twice.
      *
-     * @param comment The comment string to remove
+     * @param header The Header string to remove
      */
-    void removeCommentData( const std::string& comment );
+    void removeHeaderData( const std::string& header );
 
     /*!
-     * @brief Streams all comment data to a stream object
+     * @brief Streams all header data to a stream object
      *
-     * This is used to save the comment data of a level
+     * This is used to save the header data of a level
      *
      * @param stream The stream object to stream to
      */
-    void streamAllCommentData( std::ostream& stream );
+    void streamAllHeaderData( std::ostream& stream );
 
     /*!
      * @brief Inserts a tile into the level at the given coordinate
@@ -170,7 +170,7 @@ public:
     void insertTileLine( const Sokoban::Uint32& y, const std::string& tiles );
 
     /*!
-     * \brief Streams all tile data to a stream object
+     * @brief Streams all tile data to a stream object
      *
      * This is used to save the level data to a file
      *
@@ -178,11 +178,35 @@ public:
      */
     void streamAllTileData( std::ostream& stream );
 
+    /*!
+     * @brief Adds level notes to this level
+     *
+     * @param note The notes string to add
+     */
+    void addLevelNote( const std::string& note);
+
+    /*!
+     * @brief Removes level notes from this level
+     *
+     * @param note The note to search for and remove
+     */
+    void removeLevelNote( const std::string& note );
+
+    /*!
+     * @brief Streams all notes to a stream object
+     *
+     * This is used to save the level data to a file
+     *
+     * @param stream The stream object to stream to
+     */
+    void streamAllNotes( std::ostream& stream );
+
 private:
 
     std::vector< std::vector<char> > m_LevelArray;
     std::map<std::string, std::string> m_MetaData;
-    std::vector<std::string> m_Comments;
+    std::vector<std::string> m_HeaderData;
+    std::vector<std::string> m_Notes;
     std::vector<char> m_UndoData;
 
 };

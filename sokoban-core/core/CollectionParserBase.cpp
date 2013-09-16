@@ -54,4 +54,14 @@ void CollectionParserBase::registerLevel( Level* level, std::string& levelName, 
     levelMap[levelName] = level;
 }
 
+// --------------------------------------------------------------
+void CollectionParserBase::enableCompression( void )
+{
+}
+
+// --------------------------------------------------------------
+void CollectionParserBase::disableCompression( void )
+{
+}
+
 } // namespace Sokoban

@@ -71,6 +71,18 @@ public:
      */
     void save( const std::string& collectionName, std::ofstream& file, std::map<std::string, Level*>& levelMap );
 
+    /*!
+     * @brief Enables RLE compression for tile data when exporting
+     * @note Default is <b>disabled</b>
+     */
+    void enableCompression( void );
+
+    /*!
+     * @brief Disables RLE compression for tile data when exporting
+     * @note Default is <b>disabled</b>
+     */
+    void disableCompression( void );
+
 private:
 
     /*!
@@ -87,6 +99,8 @@ private:
      * @return True if a key-value pair was found, false if otherwise
      */
     bool getKeyValuePair( const std::string& str, std::string& key, std::string& value );
+
+    bool m_EnableRLE;
 
 };
 

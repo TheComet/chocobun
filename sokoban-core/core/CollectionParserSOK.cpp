@@ -27,11 +27,13 @@
 #include <core/RLE.hpp>
 
 #include <fstream>
+#include <sstream>
 
 namespace Sokoban {
 
 // --------------------------------------------------------------
-CollectionParserSOK::CollectionParserSOK( void )
+CollectionParserSOK::CollectionParserSOK( void ) :
+    m_EnableRLE( false )
 {
 }
 
@@ -70,6 +72,7 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
     if( pos2 != pos && pos3 != pos+1 )
     {
         key = str.substr(pos2, pos-pos2);
+        while( str[pos+1] == ' ' ) ++pos; // cut spaces preceeding value
         value = str.substr(pos+1, pos3-pos);
         return true;
     }
@@ -93,6 +96,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
     std::string inBuf("");
     std::string oldInBuf("");
     std::string levelName("");
+    std::string tempLevelName("");
     std::string collectionName("");
     while( !file.eof() )
     {
@@ -119,20 +123,29 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
 
         lastLineWasLevelData = isLevelData; // so checks are only performed once
         isLevelData = this->isLevelData( inBuf );
+        std::cout << inBuf << std::endl;
 
         if( lastLineWasBlank && oldInBuf.find("::") == std::string::npos && isLevelData )
         {
-            levelName = oldInBuf;
-            lvl->removeCommentData( levelName ); // level name was added in the last pass, remove it again
+            tempLevelName = oldInBuf;
+            if( levelName.size() == 0 )
+                levelName = tempLevelName;
         }
 
         // create new level if beginning of new level data has been found
         // this only works if level data has been read at least once
-        if( levelDataReadForFirstTime && !lastLineWasLevelData && isLevelData )
+        if( levelDataReadForFirstTime && (!lastLineWasLevelData || lastLineWasBlank) && isLevelData )
         {
+            if( levelName.size() != 0 )
+            {
+                lvl->removeHeaderData( levelName ); // level name was added in the last pass, remove it again
+                lvl->removeLevelNote( levelName );
+                lvl->removeHeaderData( tempLevelName );
+                lvl->removeLevelNote( tempLevelName );
+            }
             this->registerLevel( lvl, levelName, levelMap );
             lvl = new Level();
-            levelName = "";
+            levelName = tempLevelName;
             tileLine = 0;
         }
         if( isLevelData )
@@ -167,7 +180,10 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
             }
 
             // add data as comment data
-            lvl->addCommentData( inBuf );
+            if( levelDataReadForFirstTime )
+                lvl->addLevelNote( inBuf );
+            else
+                lvl->addHeaderData( inBuf );
             break;
         }
     }
@@ -179,17 +195,47 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
 }
 
 // --------------------------------------------------------------
+void CollectionParserSOK::enableCompression( void )
+{
+    m_EnableRLE = true;
+}
+
+// --------------------------------------------------------------
+void CollectionParserSOK::disableCompression( void )
+{
+    m_EnableRLE = false;
+}
+
+// --------------------------------------------------------------
 void CollectionParserSOK::save( const std::string& collectionName, std::ofstream& file, std::map<std::string, Level*>& levelMap )
 {
 
-    // write all levels to file
+    // write all levels to std::cout
+    // levels need to be written in reverse order
     file << "Collection: " << collectionName << std::endl;
+    RLE rle;
     for( std::map<std::string, Level*>::iterator it = levelMap.begin(); it != levelMap.end(); ++it )
     {
-        it->second->streamAllCommentData( file );
+
+        // header data contains all unformatted text read in from the file (including comments)
+        it->second->streamAllHeaderData( file );
+
+        // place level name above tile data between two empty lines
         file << std::endl << it->first << std::endl << std::endl;
+
+        // write tile data with optional RLE compression
         it->second->streamAllTileData( file );
+        /*std::stringstream ss;
+        it->second->streamAllTileData( ss );
+        std::string compressed = ss.str();
+        if( m_EnableRLE ) rle.multiPassCompress( compressed );
+        file << compressed;*/
+
+        // add meta data below tile data
         it->second->streamAllMetaData( file );
+
+        // add level notes below meta data
+        it->second->streamAllNotes( file );
     }
 }
 

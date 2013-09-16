@@ -43,7 +43,7 @@ App::~App( void )
 // launch application
 void App::go( void )
 {
-    Sokoban::Collection c( "../../collections/test.sok" );
+    Sokoban::Collection c( "../../collections/ksokoban-original.sok" );
     c.initialise();
     c.deinitialise();
 }
