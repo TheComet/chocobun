@@ -157,4 +157,16 @@ void Level::streamAllNotes( std::ostream& stream )
         stream << *it << std::endl;
 }
 
+// --------------------------------------------------------------
+void Level::setLevelName( const std::string& name )
+{
+    m_LevelName = name;
+}
+
+// --------------------------------------------------------------
+std::string Level::getLevelName( void ) const
+{
+    return m_LevelName;
+}
+
 } // namespace Sokoban

@@ -25,7 +25,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <map>
+#include <vector>
 #include <string>
 
 namespace Sokoban {
@@ -53,14 +53,14 @@ public:
     ~CollectionParser( void );
 
     /*!
-     * @brief Parses a collection file and writes into a map of levels
+     * @brief Parses a collection file and writes into a vector of levels
      *
      * @param fileName The name of the file to parse
-     * @param levelMap An std::map of levels to write to
+     * @param levels An std::vector of levels to write to
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    std::string parse( const std::string& fileName, std::map<std::string, Level*>& levelMap );
+    std::string parse( const std::string& fileName, std::vector<Level*>& levels );
 
     /*!
      * @brief Saves a collection to a file
@@ -68,9 +68,9 @@ public:
      * Will export using the .SOK format, regardless of input format
      *
      * @param fileName The file name to save to
-     * @param levelMap An std::map of levels to save
+     * @param levels An std::vector of levels to save
      */
-    void save( const std::string& collectionName, const std::string& fileName, std::map<std::string, Level*>& levelMap );
+    void save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels );
 
 };
 

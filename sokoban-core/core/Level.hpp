@@ -201,6 +201,16 @@ public:
      */
     void streamAllNotes( std::ostream& stream );
 
+    /*!
+     * @brief Sets the name of the level
+     */
+    void setLevelName( const std::string& name );
+
+    /*!
+     * @brief Gets the name of the level
+     */
+    std::string getLevelName( void ) const;
+
 private:
 
     std::vector< std::vector<char> > m_LevelArray;
@@ -208,6 +218,7 @@ private:
     std::vector<std::string> m_HeaderData;
     std::vector<std::string> m_Notes;
     std::vector<char> m_UndoData;
+    std::string m_LevelName;
 
 };
 

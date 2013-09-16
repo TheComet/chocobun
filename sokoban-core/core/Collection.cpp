@@ -47,7 +47,7 @@ void Collection::initialise( void )
 
     // load and parse levels
     CollectionParser cp;
-    m_CollectionName = cp.parse( m_FileName, m_LevelMap );
+    m_CollectionName = cp.parse( m_FileName, m_Levels );
 }
 
 // --------------------------------------------------------------
@@ -56,7 +56,7 @@ void Collection::deinitialise( void )
 
     // export levels
     CollectionParser cp;
-    cp.save( m_CollectionName, m_FileName, m_LevelMap );
+    cp.save( m_CollectionName, m_FileName, m_Levels );
 }
 
 // --------------------------------------------------------------

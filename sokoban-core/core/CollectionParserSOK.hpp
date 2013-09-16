@@ -55,11 +55,11 @@ public:
      * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
      *
      * @param file An open file object to read from
-     * @param levelMap An std::map of levels to write to
+     * @param levelMap An std::vector of levels to write to
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    std::string parse( std::ifstream& file, std::map<std::string, Level*>& levelMap );
+    std::string parse( std::ifstream& file, std::vector<Level*>& levelMap );
 
     /*!
      * @brief Universal .SOK format exporter
@@ -67,9 +67,9 @@ public:
      * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
      *
      * @param file An open file object to write data to
-     * @param levelMap An std::map of levels to read from
+     * @param levelMap An std::vector of levels to read from
      */
-    void save( const std::string& collectionName, std::ofstream& file, std::map<std::string, Level*>& levelMap );
+    void save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
 
     /*!
      * @brief Enables RLE compression for tile data when exporting

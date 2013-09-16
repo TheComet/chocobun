@@ -44,7 +44,7 @@ CollectionParser::~CollectionParser( void )
 }
 
 // --------------------------------------------------------------
-std::string CollectionParser::parse( const std::string& fileName, std::map<std::string,Level*>& levelMap )
+std::string CollectionParser::parse( const std::string& fileName, std::vector<Level*>& levels )
 {
 
     // open the file
@@ -56,13 +56,13 @@ std::string CollectionParser::parse( const std::string& fileName, std::map<std::
     CollectionParserBase* parser = new CollectionParserSOK();
 
     // parse
-    std::string result = parser->parse( file, levelMap );
+    std::string result = parser->parse( file, levels );
     delete parser;
     return result;
 }
 
 // --------------------------------------------------------------
-void CollectionParser::save( const std::string& collectionName, const std::string& fileName, std::map<std::string,Level*>& levelMap )
+void CollectionParser::save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels )
 {
 
     std::string tempFileName = fileName; tempFileName.append( "~" );
@@ -73,7 +73,7 @@ void CollectionParser::save( const std::string& collectionName, const std::strin
     // default export format is SOK
     CollectionParserBase* parser = new CollectionParserSOK();
     parser->enableCompression();
-    parser->save( collectionName, file, levelMap );
+    parser->save( collectionName, file, levels );
     delete parser;
 
     // replace original with saved file

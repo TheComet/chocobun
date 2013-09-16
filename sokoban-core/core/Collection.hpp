@@ -25,7 +25,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <map>
+#include <vector>
 #include <string>
 
 namespace Sokoban {
@@ -81,7 +81,7 @@ private:
 
     std::string m_FileName;
     std::string m_CollectionName;
-    std::map<std::string, Level*> m_LevelMap;
+    std::vector<Level*> m_Levels;
 };
 
 } // namespace Sokoban

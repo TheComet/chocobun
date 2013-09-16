@@ -20,6 +20,7 @@
 
 #include <core/Config.hpp>
 #include <core/CollectionParserBase.hpp>
+#include <core/Level.hpp>
 
 #include <sstream>
 
@@ -36,9 +37,10 @@ CollectionParserBase::~CollectionParserBase( void )
 }
 
 // --------------------------------------------------------------
-void CollectionParserBase::registerLevel( Level* level, std::string& levelName, std::map<std::string, Level*>& levelMap )
+void CollectionParserBase::registerLevel( Level* level, std::string& levelName, std::vector<Level*>& levels )
 {
     std::stringstream ss;
+    std::vector<Level*>::iterator it;
     if( levelName.size() == 0 )
     {
         Uint32 i = 1;
@@ -48,10 +50,14 @@ void CollectionParserBase::registerLevel( Level* level, std::string& levelName, 
             ss << "Level #";
             ss << i;
             ++i;
-        }while( levelMap.find(ss.str()) != levelMap.end() );
+            for( it = levels.begin(); it != levels.end(); ++it )
+                if( (*it)->getLevelName().compare(ss.str()) == 0 )
+                    break;
+        }while( it!= levels.end() );
         levelName = ss.str();
     }
-    levelMap[levelName] = level;
+    level->setLevelName( levelName );
+    levels.push_back( level );
 }
 
 // --------------------------------------------------------------

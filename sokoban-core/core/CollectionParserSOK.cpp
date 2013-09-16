@@ -81,7 +81,7 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
-std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::string, Level*>& levelMap )
+std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>& levels )
 {
 
     // the first level is a requirement
@@ -123,13 +123,16 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
 
         lastLineWasLevelData = isLevelData; // so checks are only performed once
         isLevelData = this->isLevelData( inBuf );
-        std::cout << inBuf << std::endl;
 
         if( lastLineWasBlank && oldInBuf.find("::") == std::string::npos && isLevelData )
         {
-            tempLevelName = oldInBuf;
-            if( levelName.size() == 0 )
-                levelName = tempLevelName;
+            std::string key, value;
+            if( !this->isLevelData( oldInBuf ) && !this->getKeyValuePair(oldInBuf, key, value) )
+            {
+                tempLevelName = oldInBuf;
+                if( levelName.size() == 0 )
+                    levelName = tempLevelName;
+            }
         }
 
         // create new level if beginning of new level data has been found
@@ -143,8 +146,9 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
                 lvl->removeHeaderData( tempLevelName );
                 lvl->removeLevelNote( tempLevelName );
             }
-            this->registerLevel( lvl, levelName, levelMap );
+            this->registerLevel( lvl, levelName, levels );
             lvl = new Level();
+            if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
             tileLine = 0;
         }
@@ -189,7 +193,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
     }
 
     // register still open level
-    this->registerLevel( lvl, levelName, levelMap );
+    this->registerLevel( lvl, levelName, levels );
 
     return collectionName;
 }
@@ -207,24 +211,24 @@ void CollectionParserSOK::disableCompression( void )
 }
 
 // --------------------------------------------------------------
-void CollectionParserSOK::save( const std::string& collectionName, std::ofstream& file, std::map<std::string, Level*>& levelMap )
+void CollectionParserSOK::save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {
 
     // write all levels to std::cout
     // levels need to be written in reverse order
     file << "Collection: " << collectionName << std::endl;
     RLE rle;
-    for( std::map<std::string, Level*>::iterator it = levelMap.begin(); it != levelMap.end(); ++it )
+    for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
     {
 
         // header data contains all unformatted text read in from the file (including comments)
-        it->second->streamAllHeaderData( file );
+        (*it)->streamAllHeaderData( file );
 
         // place level name above tile data between two empty lines
-        file << std::endl << it->first << std::endl << std::endl;
+        file << std::endl << (*it)->getLevelName() << std::endl << std::endl;
 
         // write tile data with optional RLE compression
-        it->second->streamAllTileData( file );
+        (*it)->streamAllTileData( file );
         /*std::stringstream ss;
         it->second->streamAllTileData( ss );
         std::string compressed = ss.str();
@@ -232,10 +236,10 @@ void CollectionParserSOK::save( const std::string& collectionName, std::ofstream
         file << compressed;*/
 
         // add meta data below tile data
-        it->second->streamAllMetaData( file );
+        (*it)->streamAllMetaData( file );
 
         // add level notes below meta data
-        it->second->streamAllNotes( file );
+        (*it)->streamAllNotes( file );
     }
 }
 
