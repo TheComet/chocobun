@@ -1,11 +1,10 @@
+Collection:  TheComet
 ::Aha, why isn't this preserved
-Collection: TheComet
-Author: TheComet
 Copyright (c) TheComet
 These levels may be freely distributed provided they are credited with
 the author's name.
 
-Chaos
+Demo Level 01
 
 #######
 ###p .#
@@ -14,8 +13,13 @@ Chaos
 #.  # #
 #   b.#
 #######
+Author:  TheComet
+Solution/Moves
+dDuurrddLLrrddLLUlluuRDRddrruuLLrruullDlldddRRuULrrruullDldRddlUruuurr
+ddddLLuuRlddrruUUdlldlldRRuuulDrddlluRurrrddLLUluRRlddrruUlldlldRRRllu
+uulD
 
-Demo Level 01
+Level #1
 
 ########
 #      #
@@ -23,8 +27,3 @@ Demo Level 01
 #   $  #
 # . .  #
 ########
-
-Solution/Moves
-dDuurrddLLrrddLLUlluuRDRddrruuLLrruullDlldddRRuULrrruullDldRddlUruuurr
-ddddLLuuRlddrruUUdlldlldRRuuulDrddlluRurrrddLLUluRRlddrruUlldlldRRRllu
-uulD

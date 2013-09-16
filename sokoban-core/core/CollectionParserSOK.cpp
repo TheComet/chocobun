@@ -128,7 +128,6 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
 
         // create new level if beginning of new level data has been found
         // this only works if level data has been read at least once
-        std::cout << inBuf << std::endl;
         if( levelDataReadForFirstTime && !lastLineWasLevelData && isLevelData )
         {
             this->registerLevel( lvl, levelName, levelMap );

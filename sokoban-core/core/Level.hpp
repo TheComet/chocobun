@@ -105,17 +105,17 @@ public:
      */
     void addCommentData( const std::string& comment );
 
-    void removeCommentData( const std::string& comment )
-    {
-        for( std::vector<std::string>::iterator it = m_Comments.begin(); it != m_Comments.end(); ++it )
-        {
-            if( it->compare( comment ) == 0 )
-            {
-                m_Comments.erase( it );
-                break;
-            }
-        }
-    }
+    /*!
+     * @brief Removes a comment from this level
+     *
+     * This is called when a level name is discovered. Because
+     * there can be multiple passes of delay before a level name can
+     * be confirmed, it usually occurs that it has been added as a
+     * comment first. This will remove it again so it isn't exported twice.
+     *
+     * @param comment The comment string to remove
+     */
+    void removeCommentData( const std::string& comment );
 
     /*!
      * @brief Streams all comment data to a stream object
