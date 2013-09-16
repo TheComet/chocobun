@@ -62,7 +62,7 @@ std::string CollectionParser::parse( const std::string& fileName, std::map<std::
 }
 
 // --------------------------------------------------------------
-void CollectionParser::save( const std::string& fileName, std::map<std::string,Level*>& levelMap )
+void CollectionParser::save( const std::string& collectionName, const std::string& fileName, std::map<std::string,Level*>& levelMap )
 {
 
     //
@@ -74,7 +74,7 @@ void CollectionParser::save( const std::string& fileName, std::map<std::string,L
 
     // default export format is SOK
     CollectionParserBase* parser = new CollectionParserSOK();
-    parser->save( file, levelMap );
+    parser->save( collectionName, file, levelMap );
     delete parser;
 }
 

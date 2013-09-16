@@ -49,7 +49,7 @@ public:
     virtual ~CollectionParserBase( void );
 
     virtual std::string parse( std::ifstream& file, std::map<std::string, Level*>& levelMap ) = 0;
-    virtual void save( std::ofstream& file, std::map<std::string, Level*>& levelMap ) = 0;
+    virtual void save( const std::string& collectionName, std::ofstream& file, std::map<std::string, Level*>& levelMap ) = 0;
 
 protected:
 

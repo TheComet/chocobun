@@ -89,6 +89,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
     bool lastLineWasBlank = true;
     bool isLevelData = false;
     bool lastLineWasLevelData = false;
+    bool levelDataReadForFirstTime = false;
     std::string inBuf("");
     std::string oldInBuf("");
     std::string levelName("");
@@ -106,7 +107,6 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
             std::getline( file, inBuf );
             if( inBuf.size() > 1 )
                 break;
-            lvl->addCommentData( "" ); // preserves line breaks when exporting again
             lastLineWasBlank = true;
         }
 
@@ -121,16 +121,23 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
         isLevelData = this->isLevelData( inBuf );
 
         if( lastLineWasBlank && oldInBuf.find("::") == std::string::npos && isLevelData )
+        {
             levelName = oldInBuf;
+            lvl->removeCommentData( levelName ); // level name was added in the last pass, remove it again
+        }
 
         // create new level if beginning of new level data has been found
-        if( !lastLineWasLevelData && isLevelData )
+        // this only works if level data has been read at least once
+        std::cout << inBuf << std::endl;
+        if( levelDataReadForFirstTime && !lastLineWasLevelData && isLevelData )
         {
             this->registerLevel( lvl, levelName, levelMap );
             lvl = new Level();
             levelName = "";
             tileLine = 0;
         }
+        if( isLevelData )
+            levelDataReadForFirstTime = true;
 
         // process input
         for(;;){
@@ -173,14 +180,15 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
 }
 
 // --------------------------------------------------------------
-void CollectionParserSOK::save( std::ofstream& file, std::map<std::string, Level*>& levelMap )
+void CollectionParserSOK::save( const std::string& collectionName, std::ofstream& file, std::map<std::string, Level*>& levelMap )
 {
 
     // write all levels to file
+    file << "Collection: " << collectionName << std::endl;
     for( std::map<std::string, Level*>::iterator it = levelMap.begin(); it != levelMap.end(); ++it )
     {
         it->second->streamAllCommentData( file );
-        file << it->first;
+        file << std::endl << it->first << std::endl << std::endl;
         it->second->streamAllTileData( file );
         it->second->streamAllMetaData( file );
     }

@@ -1,11 +1,7 @@
-:: Header here
-
-An example file:
-
-----------------------------------------------------------------------
-Collection: YASGen
-Author: YASGen & Brian Damgaard
-Copyright (c) 2003 by Brian Damgaard
+::Aha, why isn't this preserved
+Collection: TheComet
+Author: TheComet
+Copyright (c) TheComet
 These levels may be freely distributed provided they are credited with
 the author's name.
 
@@ -19,14 +15,6 @@ Chaos
 #   b.#
 #######
 
-Solution/Moves
-dDuurrddLLrrddLLUlluuRDRddrruuLLrruullDlldddRRuULrrruullDldRddlUruuurr
-ddddLLuuRlddrruUUdlldlldRRuuulDrddlluRurrrddLLUluRRlddrruUlldlldRRRllu
-uulD
-----------------------------------------------------------------------
-
-More level examples:
-
 Demo Level 01
 
 ########
@@ -36,67 +24,7 @@ Demo Level 01
 # . .  #
 ########
 
-This demo level is trivial, but it suffices to demonstrate
-the file-format.
-A Sokoban program can add key/value pairs within the notes,
-such as:
-Author: nn
-Website: http://www.nn.net
-
 Solution/Moves
-rurrdDuLulDD
-
-The title of a snapshot does not bear any special meaning.
-This snapshot just happens to be the best solution found
-(so far). The demo-program automatically saves best solutions.
-
-Snapshot 7/0
-urrrrdd
-
-This is an example of a snapshot saved by the user.
-Later he/she can continue work on this path.
-
-Snapshot 9/2
-urrrrddLL*ruulDD
-
-Another snapshot saved by the user. The '*' indicates
-current position, i.e., the last moves were taken back,
-but are still available for the "redo" function.
-
-
-Demo Level 02
-
-########
-#     .#
-#@ $   #
-#   $  #
-# . *  #
-########
-
-Just another trivial demo level. The number of levels in a
-file is limited by available memory only.
-
-Solution/Moves
-rRRRdrUdlLLulD
-
-Reverse Mode Snapshot 13/6
-[rrrd]UUrLLLdrD
-
-This is an example of a reverse mode snapshot.
-
-Reverse mode snapshots always have a leading jump-sequence,
-even if it is empty. An example: "[]Ulld...".
-
-
-Demo Level 03
-
-########
-#      #
-#  $   #
-#   $  #
-# + .  #
-########
-
-Solution/Moves
-rrruulLrDuullDD
- 
+dDuurrddLLrrddLLUlluuRDRddrruuLLrruullDlldddRRuULrrruullDldRddlUruuurr
+ddddLLuuRlddrruUUdlldlldRRuuulDrddlluRurrrddLLUluRRlddrruUlldlldRRRllu
+uulD

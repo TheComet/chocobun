@@ -69,7 +69,7 @@ public:
      * @param file An open file object to write data to
      * @param levelMap An std::map of levels to read from
      */
-    void save( std::ofstream& file, std::map<std::string, Level*>& levelMap );
+    void save( const std::string& collectionName, std::ofstream& file, std::map<std::string, Level*>& levelMap );
 
 private:
 

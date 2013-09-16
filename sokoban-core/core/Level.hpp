@@ -105,6 +105,18 @@ public:
      */
     void addCommentData( const std::string& comment );
 
+    void removeCommentData( const std::string& comment )
+    {
+        for( std::vector<std::string>::iterator it = m_Comments.begin(); it != m_Comments.end(); ++it )
+        {
+            if( it->compare( comment ) == 0 )
+            {
+                m_Comments.erase( it );
+                break;
+            }
+        }
+    }
+
     /*!
      * @brief Streams all comment data to a stream object
      *

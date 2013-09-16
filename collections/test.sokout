@@ -1,103 +1,29 @@
-:: Header here
-
-An example file:
-
-----------------------------------------------------------------------
-Copyright (c) 2003 by Brian Damgaard
+Collection:  TheComet
+::Aha, why isn't this preserved
+Copyright (c) TheComet
 These levels may be freely distributed provided they are credited with
 the author's name.
 
-Chaos
-
-ChaosAuthor:  YASGen & Brian Damgaard
-
-Solution/Moves
-dDuurrddLLrrddLLUlluuRDRddrruuLLrruullDlldddRRuULrrruullDldRddlUruuurr
-ddddLLuuRlddrruUUdlldlldRRuuulDrddlluRurrrddLLUluRRlddrruUlldlldRRRllu
-uulD
-----------------------------------------------------------------------
-
-More level examples:
-
 Demo Level 01
 
-Demo Level 01#######
+#######
 ###p .#
 # b #.#
 #  bb #
 #.  # #
 #   b.#
 #######
-
-This demo level is trivial, but it suffices to demonstrate
-the file-format.
-A Sokoban program can add key/value pairs within the notes,
-such as:
-
+Author:  TheComet
 Solution/Moves
-rurrdDuLulDD
+dDuurrddLLrrddLLUlluuRDRddrruuLLrruullDlldddRRuULrrruullDldRddlUruuurr
+ddddLLuuRlddrruUUdlldlldRRuuulDrddlluRurrrddLLUluRRlddrruUlldlldRRRllu
+uulD
 
-The title of a snapshot does not bear any special meaning.
-This snapshot just happens to be the best solution found
-(so far). The demo-program automatically saves best solutions.
+Level #1
 
-Snapshot 7/0
-urrrrdd
-
-This is an example of a snapshot saved by the user.
-Later he/she can continue work on this path.
-
-Snapshot 9/2
-urrrrddLL*ruulDD
-
-Another snapshot saved by the user. The '*' indicates
-current position, i.e., the last moves were taken back,
-but are still available for the "redo" function.
-
-
-Demo Level 02
-
-Demo Level 02########
+########
 #      #
 #@ $   #
 #   $  #
 # . .  #
-########
-Author:  nn
-Website:  http:
-
-Just another trivial demo level. The number of levels in a
-file is limited by available memory only.
-
-Solution/Moves
-rRRRdrUdlLLulD
-
-Reverse Mode Snapshot 13/6
-[rrrd]UUrLLLdrD
-
-This is an example of a reverse mode snapshot.
-
-Reverse mode snapshots always have a leading jump-sequence,
-
-
-Demo Level 03
-
-Demo Level 03########
-#     .#
-#@ $   #
-#   $  #
-# . *  #
-########
- example:  "[]Ulld...".
-
-Solution/Moves
-rrruulLrDuullDD
-
-
-
-Level #1########
-#      #
-#  $   #
-#   $  #
-# + .  #
 ########

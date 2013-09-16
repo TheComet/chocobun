@@ -70,7 +70,7 @@ public:
      * @param fileName The file name to save to
      * @param levelMap An std::map of levels to save
      */
-    void save( const std::string& fileName, std::map<std::string, Level*>& levelMap );
+    void save( const std::string& collectionName, const std::string& fileName, std::map<std::string, Level*>& levelMap );
 
 };
 
