@@ -175,8 +175,10 @@ public:
      * This is used to save the level data to a file
      *
      * @param stream The stream object to stream to
+     * @param newLine If set to true (default), new lines are inserted.
+     * Otherwise, "|" are inserted (for RLE compression)
      */
-    void streamAllTileData( std::ostream& stream );
+    void streamAllTileData( std::ostream& stream, bool newLine = true );
 
     /*!
      * @brief Adds level notes to this level

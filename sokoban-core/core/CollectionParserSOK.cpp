@@ -45,7 +45,7 @@ CollectionParserSOK::~CollectionParserSOK( void )
 // --------------------------------------------------------------
 bool CollectionParserSOK::isLevelData( const std::string& str )
 {
-    std::string levelChars( Level::validTiles + "()0123456789" );
+    std::string levelChars( Level::validTiles + "()0123456789|" );
     Int32 threshold = 0;
     for( size_t i = 0; i != str.size(); ++i )
         if( levelChars.find_first_of(str[i]) == std::string::npos )
@@ -228,12 +228,12 @@ void CollectionParserSOK::save( const std::string& collectionName, std::ofstream
         file << std::endl << (*it)->getLevelName() << std::endl << std::endl;
 
         // write tile data with optional RLE compression
-        (*it)->streamAllTileData( file );
-        /*std::stringstream ss;
-        it->second->streamAllTileData( ss );
+        std::stringstream ss;
+        (*it)->streamAllTileData( ss, !m_EnableRLE );
         std::string compressed = ss.str();
+        size_t pos = 0;
         if( m_EnableRLE ) rle.multiPassCompress( compressed );
-        file << compressed;*/
+        file << compressed;
 
         // add meta data below tile data
         (*it)->streamAllMetaData( file );

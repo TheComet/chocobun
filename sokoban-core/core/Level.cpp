@@ -121,14 +121,18 @@ void Level::insertTileLine( const Sokoban::Uint32& y, const std::string& tiles )
 }
 
 // --------------------------------------------------------------
-void Level::streamAllTileData( std::ostream& stream )
+void Level::streamAllTileData( std::ostream& stream, bool newLine )
 {
     for( size_t y = 0; y != m_LevelArray[0].size(); ++y )
     {
         for( size_t x = 0; x != m_LevelArray.size(); ++x )
             stream << m_LevelArray[x][y];
-        stream << std::endl;
+        if( newLine )
+            stream << std::endl;
+        else
+            stream << "|";
     }
+    if( !newLine ) stream << std::endl;
 }
 
 // --------------------------------------------------------------
