@@ -106,6 +106,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::map<std::strin
             std::getline( file, inBuf );
             if( inBuf.size() > 1 )
                 break;
+            lvl->addCommentData( "" ); // preserves line breaks when exporting again
             lastLineWasBlank = true;
         }
 

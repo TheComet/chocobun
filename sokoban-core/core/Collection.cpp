@@ -56,7 +56,7 @@ void Collection::deinitialise( void )
 
     // export levels
     CollectionParser cp;
-    //cp.save( m_FileName, m_LevelMap );
+    cp.save( m_FileName + "out", m_LevelMap );
 }
 
 // --------------------------------------------------------------

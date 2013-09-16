@@ -25,6 +25,8 @@
 #include <core/Level.hpp>
 #include <core/Exception.hpp>
 
+#include <iostream>
+
 const std::string Sokoban::Level::validTiles = "#@+$*. _pPbB";
 
 namespace Sokoban {
@@ -46,6 +48,7 @@ void Level::addMetaData( const std::string& key, const std::string& value )
     if( m_MetaData.find( key ) != m_MetaData.end() )
         throw Exception( "[Level::addMetaData] meta data already exists" );
     m_MetaData[key] = value;
+    std::cout << "added meta data: " << key << ":" << value << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -68,6 +71,7 @@ void Level::streamAllMetaData( std::ostream& stream )
 void Level::addCommentData( const std::string& comment )
 {
     m_Comments.push_back( comment );
+    std::cout << "added comment data: " << comment << std::endl;
 }
 
 // --------------------------------------------------------------

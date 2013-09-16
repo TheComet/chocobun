@@ -68,7 +68,7 @@ void CollectionParser::save( const std::string& fileName, std::map<std::string,L
     //
 
     // open the file
-    std::ofstream file( fileName.c_str() );
+    std::ofstream file( fileName.c_str(), std::ofstream::out );
     if( !file.is_open() )
         throw Exception( "[CollectionParser::save] unable to open file for saving" );
 
