@@ -28,6 +28,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 namespace Sokoban {
 
@@ -45,10 +46,10 @@ CollectionParserSOK::~CollectionParserSOK( void )
 // --------------------------------------------------------------
 bool CollectionParserSOK::isLevelData( const std::string& str )
 {
-    std::string levelChars( Level::validTiles + "()0123456789|" );
+    std::string levelChars( Level::validTiles + "()0123456789|" ); // RLE compression contains these characters
     Int32 threshold = 0;
     for( size_t i = 0; i != str.size(); ++i )
-        if( levelChars.find_first_of(str[i]) == std::string::npos )
+        if( levelChars.find(str[i]) == std::string::npos )
             threshold-=2;
         else
             ++threshold;
@@ -59,25 +60,29 @@ bool CollectionParserSOK::isLevelData( const std::string& str )
 bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& key, std::string& value )
 {
 
-    size_t pos = str.find_first_of( ":" ); // key-value pairs are split by a colon
+    size_t pos = str.find( ":" ); // key-value pairs are split by a colon
     if( pos == std::string::npos )
         return false;
 
-    size_t pos2 = pos; // scan back until a space or tab is found
-    while( str[pos2] != 32 && str[pos2] != 9 && pos2 != 0 ) --pos2;
+    if( pos < 2 ) // empty key value pairs
+        return false;
 
-    size_t pos3 = pos+1; // scan forward until comment starts, or end of line is found
-    while( pos3 != str.size() && str[pos3] != ':' ) ++pos3;
+    if( str.find( "::" ) != std::string::npos ) // comments are not permitted
+        return false;
 
-    if( pos2 != pos && pos3 != pos+1 )
-    {
-        key = str.substr(pos2, pos-pos2);
-        while( str[pos+1] == ' ' ) ++pos; // cut spaces preceeding value
-        value = str.substr(pos+1, pos3-pos);
-        return true;
-    }
+    // extract key and value
+    key = str.substr(0, pos);
+    value = str.substr(pos+1, str.size()-pos);
 
-    return false;
+    // trim key and value from leading and trailing spaces
+    size_t strBegin = key.find_first_not_of( " " );
+    size_t strEnd = key.find_last_not_of( " " );
+    key = key.substr(strBegin, strEnd-strBegin+1);
+    strBegin = value.find_first_not_of( " " );
+    strEnd = value.find_last_not_of( " " );
+    value = value.substr(strBegin, strEnd-strBegin+1);
+
+    return true;
 }
 
 // --------------------------------------------------------------
@@ -103,7 +108,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>
 
         // read line from file and filter out any blank lines
         // additionally, flag if a blank line was found and save the last line
-        // in an old buffer so the title of the level can be determined
+        // in an old buffer so the title of the level can be determined later on
         lastLineWasBlank = false;
         oldInBuf = inBuf;
         while(!file.eof())
@@ -114,6 +119,13 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>
             lastLineWasBlank = true;
         }
 
+        // remove tabs
+        inBuf.erase(std::remove(inBuf.begin(), inBuf.end(), '\t'), inBuf.end());
+
+        // so checks are only performed once
+        lastLineWasLevelData = isLevelData;
+        isLevelData = this->isLevelData( inBuf );
+
         // requirements for a level title are:
         // - the last non-blank line before a puzzle, saved game, or solution
         // - must be preceeded by a blank line
@@ -121,16 +133,14 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>
         // copying the last line as the level title before getting a new line
         // from the file to meet these requirements
 
-        lastLineWasLevelData = isLevelData; // so checks are only performed once
-        isLevelData = this->isLevelData( inBuf );
-
-        if( lastLineWasBlank && oldInBuf.find("::") == std::string::npos && isLevelData )
+        if( lastLineWasBlank && oldInBuf.find("::") == std::string::npos && isLevelData && !this->isLevelData( oldInBuf ) )
         {
-            std::string key, value;
-            if( !this->isLevelData( oldInBuf ) && !this->getKeyValuePair(oldInBuf, key, value) )
+            std::string key("");
+            std::string value("");
+            if( !this->getKeyValuePair(oldInBuf, key, value) )
             {
                 tempLevelName = oldInBuf;
-                if( levelName.size() == 0 )
+                if( levelName.size() == 0 && !levelDataReadForFirstTime )
                     levelName = tempLevelName;
             }
         }
@@ -143,6 +153,9 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>
             {
                 lvl->removeHeaderData( levelName ); // level name was added in the last pass, remove it again
                 lvl->removeLevelNote( levelName );
+            }
+            if( tempLevelName.size() != 0 )
+            {
                 lvl->removeHeaderData( tempLevelName );
                 lvl->removeLevelNote( tempLevelName );
             }
@@ -168,7 +181,8 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>
             }
 
             // determine if it is a key-value pair
-            std::string key, value;
+            std::string key("");
+            std::string value("");
             if( this->getKeyValuePair( inBuf, key, value ) )
             {
 
@@ -215,7 +229,6 @@ void CollectionParserSOK::save( const std::string& collectionName, std::ofstream
 {
 
     // write all levels to std::cout
-    // levels need to be written in reverse order
     file << "Collection: " << collectionName << std::endl;
     RLE rle;
     for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
