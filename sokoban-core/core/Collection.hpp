@@ -77,11 +77,36 @@ public:
      */
     void setName( const std::string& name );
 
+    /*!
+     * @brief Gets the name of this collection
+     *
+     * @return The name of the collection
+     */
+    std::string getName( void ) const;
+
+    /*!
+     * @brief Enables compression of exported files
+     *
+     * Depending on what exporter is selected, a corresponding
+     * compression algorithm is applied.
+     *
+     * @note Default is <b>disabled</b>
+     */
+    virtual void enableCompression( void );
+
+    /*!
+     * @brief Disables compression of exported files
+     *
+     * @note Default is <b>disabled</b>
+     */
+    virtual void disableCompression( void );
+
 private:
 
     std::string m_FileName;
     std::string m_CollectionName;
     std::vector<Level*> m_Levels;
+    bool m_EnableCompression;
 };
 
 } // namespace Sokoban

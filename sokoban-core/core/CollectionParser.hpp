@@ -69,8 +69,9 @@ public:
      *
      * @param fileName The file name to save to
      * @param levels An std::vector of levels to save
+     * @param enableCompression
      */
-    void save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels );
+    void save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels, bool enableCompression = false );
 
 };
 

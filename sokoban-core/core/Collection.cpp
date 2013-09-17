@@ -32,7 +32,8 @@ namespace Sokoban {
 
 // --------------------------------------------------------------
 Collection::Collection( const std::string& fileName ) :
-    m_FileName( fileName )
+    m_FileName( fileName ),
+    m_EnableCompression( false )
 {
 }
 
@@ -56,13 +57,25 @@ void Collection::deinitialise( void )
 
     // export levels
     CollectionParser cp;
-    cp.save( m_CollectionName, m_FileName, m_Levels );
+    cp.save( m_CollectionName, m_FileName, m_Levels, m_EnableCompression );
 }
 
 // --------------------------------------------------------------
 void Collection::setName( const std::string& name )
 {
     m_CollectionName = name;
+}
+
+// --------------------------------------------------------------
+void Collection::enableCompression( void )
+{
+    m_EnableCompression = true;
+}
+
+// --------------------------------------------------------------
+void Collection::disableCompression( void )
+{
+    m_EnableCompression = false;
 }
 
 } // namespace Sokoban
