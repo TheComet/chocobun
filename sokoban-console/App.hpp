@@ -28,6 +28,10 @@
 // --------------------------------------------------------------
 // forward declarations
 
+namespace Sokoban {
+    class Collection;
+}
+
 /*!
  * @brief The application object
  */
@@ -51,6 +55,10 @@ public:
      * @note Will throw std::exception if anything fails
      */
     void go( void );
+
+private:
+
+    Sokoban::Collection* m_Collection;
 };
 
 #endif // __APP_HPP__

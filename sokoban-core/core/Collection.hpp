@@ -25,6 +25,8 @@
 // --------------------------------------------------------------
 // include files
 
+#include <core/Export.hpp>
+
 #include <vector>
 #include <string>
 
@@ -38,9 +40,11 @@ class Level;
 /*!
  * @brief Holds a collection of levels which can be read from a file
  */
-class Collection
+class SOKOBAN_CORE_API Collection
 {
 public:
+
+    typedef std::vector<Level*>::iterator iterator;
 
     /*!
      * @brief Constructs a collection from a given file
@@ -54,6 +58,8 @@ public:
 
     /*!
      * @brief Destructor
+     *
+     * Unloads everything (this calls the deinitialise method)
      */
     ~Collection( void );
 
@@ -67,11 +73,25 @@ public:
 
     /*!
      * @brief De-initialises the collection, freeing up all memory
+     *
+     * This can be called when switching collections to save memory.
+     * While it is not necessary to do so, it is recommended, because progress
+     * is only saved once this is called. You can also keep all of
+     * the levels loaded for later usage, but you run the risk of something
+     * going wrong and losing all progress.
+     *
+     * @note You may initialise and deinitialise as many times as you like.
+     * The file is parsed again whenever initialise is called, and saved whenever
+     * deinitialise is called.
      */
     void deinitialise( void );
 
     /*!
      * @brief Sets the name of this collection
+     *
+     * The name is read from the file when initialise is called, but
+     * can be changed afterwards with this method. If you change the name,
+     * the new name will be written to the file when deinitialise is called.
      *
      * @param name The name to set
      */
@@ -79,6 +99,9 @@ public:
 
     /*!
      * @brief Gets the name of this collection
+     *
+     * The name is read from the file when initialise is called, and can be
+     * retrieved with this method.
      *
      * @return The name of the collection
      */
@@ -92,14 +115,27 @@ public:
      *
      * @note Default is <b>disabled</b>
      */
-    virtual void enableCompression( void );
+    void enableCompression( void );
 
     /*!
      * @brief Disables compression of exported files
      *
      * @note Default is <b>disabled</b>
      */
-    virtual void disableCompression( void );
+    void disableCompression( void );
+
+    /*!
+     * @brief Writes a list of level names into an std::vector<std::string> object
+     *
+     * This is useful for letting the end-user know what level he/she/it is playing,
+     * and can also be used to get more information from a specific level (such as tile data)
+     *
+     * @param vs The std::vector<std::string> to write to.
+     * @note The vector-string is <b>cleared</b> when calling this.
+     */
+    void getLevelNames( std::vector<std::string>& vs );
+
+
 
 private:
 
@@ -107,6 +143,7 @@ private:
     std::string m_CollectionName;
     std::vector<Level*> m_Levels;
     bool m_EnableCompression;
+    bool m_IsInitialised;
 };
 
 } // namespace Sokoban

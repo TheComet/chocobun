@@ -33,31 +33,46 @@ namespace Sokoban {
 // --------------------------------------------------------------
 Collection::Collection( const std::string& fileName ) :
     m_FileName( fileName ),
-    m_EnableCompression( false )
+    m_EnableCompression( false ),
+    m_IsInitialised( false )
 {
 }
 
 // --------------------------------------------------------------
 Collection::~Collection( void )
 {
+    this->deinitialise();
 }
 
 // --------------------------------------------------------------
 void Collection::initialise( void )
 {
 
+    if( m_IsInitialised ) return;
+
     // load and parse levels
     CollectionParser cp;
     m_CollectionName = cp.parse( m_FileName, m_Levels );
+
+    m_IsInitialised = true;
 }
 
 // --------------------------------------------------------------
 void Collection::deinitialise( void )
 {
 
+    if( !m_IsInitialised ) return;
+
     // export levels
     CollectionParser cp;
     cp.save( m_CollectionName, m_FileName, m_Levels, m_EnableCompression );
+
+    // unload levels
+    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
+        delete *it;
+    m_Levels.clear();
+
+    m_IsInitialised = false;
 }
 
 // --------------------------------------------------------------
@@ -76,6 +91,14 @@ void Collection::enableCompression( void )
 void Collection::disableCompression( void )
 {
     m_EnableCompression = false;
+}
+
+// --------------------------------------------------------------
+void Collection::getLevelNames( std::vector<std::string>& vs )
+{
+    vs.clear();
+    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
+        vs.push_back( (*it)->getLevelName() );
 }
 
 } // namespace Sokoban
