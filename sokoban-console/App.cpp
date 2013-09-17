@@ -88,16 +88,25 @@ void App::go( void )
                 do
                 {
 
-                    // double dash option
-                    if( input.substr(pos2,3) == " --" )
+                    // split spaces
+                    if( input.at(pos2) == ' ' )
                     {
-                        pos2 = input.find_first_of(" ",pos2);
+                        argList.push_back( input.substr(pos, pos2-pos) );
+                        pos = pos2+1;
+                    }
+
+                    // double dash option
+                    while( input.substr(pos2,3) == " --" )
+                    {
+                        pos2 = input.find_first_of(" ",pos2+1);
                         optionList.push_back( input.substr(pos,pos2-pos) );
                         pos = pos2+1;
+                    }
 
                     // single dash options
-                    }else if( input.substr(pos2,2) == " -" )
+                    while( input.substr(pos2,2) == " -" )
                     {
+
                         pos2 += 2;
                         if( pos2 == input.size() || input.at(pos2) == ' ' )
                         {
@@ -113,24 +122,12 @@ void App::go( void )
                         }
                         pos = pos2+1;
 
-                    // split spaces
-                    }else if( input.at(pos2) == ' ' )
-                    {
-                        argList.push_back( input.substr(pos, pos2-pos) );
-                        pos = pos2+1;
                     }
 
                     ++pos2;
                 }while( pos2 != input.size() );
             }
             if( argList.size() == 0 ) break;
-
-            std::cout << "arg list" << std::endl;
-            for( std::vector<std::string>::iterator it = argList.begin(); it != argList.end(); ++it )
-                std::cout << *it << std::endl;
-            std::cout << "option list" << std::endl;
-            for( std::vector<std::string>::iterator it = optionList.begin(); it != optionList.end(); ++it )
-                std::cout << *it << std::endl;
 
             // collection command
             if( argList[0].compare("collection") == 0)
