@@ -101,4 +101,11 @@ void Collection::getLevelNames( std::vector<std::string>& vs )
         vs.push_back( (*it)->getLevelName() );
 }
 
+// --------------------------------------------------------------
+void Collection::streamLevelNames( std::ostream& stream )
+{
+    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
+        stream << (*it)->getLevelName() << std::endl;
+}
+
 } // namespace Sokoban

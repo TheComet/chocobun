@@ -64,6 +64,7 @@ void App::go( void )
     std::cout << "     -r, --reset        resets the level" << std::endl;
     std::cout << std::endl;
     std::cout << "Type the letters 'u', 'd', 'l', or 'r' to move around in a level." << std::endl;
+    std::cout << "Type the letter 'z' to undo a move" << std::endl;
     std::cout << "You may chain together as many as required" << std::endl;
 
     bool shutdown = false;
@@ -165,6 +166,7 @@ void App::go( void )
                         if( m_Collection )
                             delete m_Collection;
                         m_Collection = new Sokoban::Collection( fileName );
+                        m_Collection->initialise();
                         std::cout << "Successfully opened collection \"" << fileName << "\"" << std::endl;
                     }
                 }
@@ -180,6 +182,42 @@ void App::go( void )
                     }else
                     {
                         std::cout << "No collection open." << std::endl;
+                    }
+                }
+
+                break;
+            }
+
+            // level command
+            if( argList[0].compare("level") == 0 )
+            {
+
+                // level options
+                bool list = false;
+                bool open = false;
+                bool close = false;
+                bool reset = false;
+                std::vector<std::string>::iterator it = optionList.begin();
+                for( ; it != optionList.end(); ++it )
+                {
+                    if( it->compare("l") == 0 || it->compare("--list") == 0 ){ list=true; continue; }
+                    if( it->compare("o") == 0 || it->compare("--open") == 0 ){ open=true; continue; }
+                    if( it->compare("c") == 0 || it->compare("--close") == 0 ){ close=true; continue; }
+                    if( it->compare("r") == 0 || it->compare("--reset") == 0 ){ reset=true; continue; }
+                    std::cout << "Error: Unkown option \"" << *it << "\"" << std::endl;
+                    break;
+                }
+                if( it != optionList.end() ) break;
+
+                // list levels
+                if( list )
+                {
+                    if( m_Collection )
+                    {
+                        m_Collection->streamLevelNames( std::cout );
+                    }else
+                    {
+                        std::cout << "Error: You haven't opened a collection yet." << std::endl;
                     }
                 }
 

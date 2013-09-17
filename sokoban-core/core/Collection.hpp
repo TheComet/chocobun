@@ -135,7 +135,15 @@ public:
      */
     void getLevelNames( std::vector<std::string>& vs );
 
-
+    /*!
+     * @brief Streams all level names to an output stream object
+     *
+     * This is usefull for letting the end-user know what level he/she/it is playing,
+     * and can also be used to get more information from a specific level (such as tile data)
+     *
+     * @param stream An output stream object
+     */
+    void streamLevelNames( std::ostream& stream );
 
 private:
 
