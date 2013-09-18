@@ -43,29 +43,12 @@ App::~App( void )
 }
 
 // --------------------------------------------------------------
-// launch application
 void App::go( void )
 {
 
     // welcome message
     std::cout << "Welcome to Sokoban!" << std::endl;
-    std::cout << std::endl;
-    std::cout << "Command list:" << std::endl;
-    std::cout << " help                   displays this message" << std::endl;
-    std::cout << " collection [OPTIONS]" << std::endl;
-    std::cout << "     -l, --list         lists collections ready to load" << std::endl;
-    std::cout << "     -o, --open         opens the specified collection" << std::endl;
-    std::cout << "     -c, --close        closes the current collection" << std::endl;
-    std::cout << std::endl;
-    std::cout << " level [OPTIONS]" << std::endl;
-    std::cout << "     -l, --list         lists levels ready to load" << std::endl;
-    std::cout << "     -o, --open         opens the specified level" << std::endl;
-    std::cout << "     -c, --close        closes the current level" << std::endl;
-    std::cout << "     -r, --reset        resets the level" << std::endl;
-    std::cout << std::endl;
-    std::cout << "Type the letters 'u', 'd', 'l', or 'r' to move around in a level." << std::endl;
-    std::cout << "Type the letter 'z' to undo a move" << std::endl;
-    std::cout << "You may chain together as many as required" << std::endl;
+    this->displayHelp( "help" );
 
     bool shutdown = false;
     while( !shutdown )
@@ -86,49 +69,69 @@ void App::go( void )
                 input.append(" ");
                 size_t pos = 0;
                 size_t pos2 = 0;
+                bool parenthesisOpen = false;
                 do
                 {
 
-                    // split spaces
-                    if( input.at(pos2) == ' ' )
+                    // open and close parenthesis
+                    if( input.at(pos2) == '"' )
                     {
-                        argList.push_back( input.substr(pos, pos2-pos) );
-                        pos = pos2+1;
+                        parenthesisOpen = 1-parenthesisOpen;
+                        input.erase(pos2,1);
                     }
 
-                    // double dash option
-                    while( input.substr(pos2,3) == " --" )
-                    {
-                        pos2 = input.find_first_of(" ",pos2+1);
-                        optionList.push_back( input.substr(pos,pos2-pos) );
-                        pos = pos2+1;
-                    }
-
-                    // single dash options
-                    while( input.substr(pos2,2) == " -" )
+                    // don't process anything if parenthesis are open
+                    if( !parenthesisOpen )
                     {
 
-                        pos2 += 2;
-                        if( pos2 == input.size() || input.at(pos2) == ' ' )
+                        // split spaces
+                        if( input.at(pos2) == ' ' )
                         {
-                            std::cout << "Error: Unfinished option" << std::endl;
-                            argList.clear();
-                            break;
+                            argList.push_back( input.substr(pos, pos2-pos) );
+                            pos = pos2+1;
                         }
-                        while( pos2 != input.size() )
-                        {
-                            if( input.at(pos2) == ' ' ) break;
-                            optionList.push_back( input.substr(pos2,1) );
-                            ++pos2;
-                        }
-                        pos = pos2+1;
 
+                        // double dash option
+                        while( input.substr(pos2,3) == " --" )
+                        {
+                            pos2 = input.find_first_of(" ",pos2+1);
+                            optionList.push_back( input.substr(pos,pos2-pos) );
+                            pos = pos2+1;
+                        }
+
+                        // single dash options
+                        while( input.substr(pos2,2) == " -" )
+                        {
+
+                            pos2 += 2;
+                            if( pos2 == input.size() || input.at(pos2) == ' ' )
+                            {
+                                std::cout << "Error: Unfinished option" << std::endl;
+                                argList.clear();
+                                break;
+                            }
+                            while( pos2 != input.size() )
+                            {
+                                if( input.at(pos2) == ' ' ) break;
+                                optionList.push_back( input.substr(pos2,1) );
+                                ++pos2;
+                            }
+                            pos = pos2+1;
+
+                        }
                     }
 
                     ++pos2;
                 }while( pos2 != input.size() );
             }
             if( argList.size() == 0 ) break;
+
+            // help command
+            if( argList[0].compare("help") == 0 )
+            {
+                this->displayHelp( argList.at( argList.size()-1 ) );
+                break;
+            }
 
             // collection command
             if( argList[0].compare("collection") == 0)
@@ -209,16 +212,26 @@ void App::go( void )
                 }
                 if( it != optionList.end() ) break;
 
+                // collection must be open
+                if( !m_Collection )
+                {
+                    std::cout << "Error: You haven't opened a collection yet." << std::endl;
+                    break;
+                }
+
                 // list levels
                 if( list )
                 {
-                    if( m_Collection )
-                    {
-                        m_Collection->streamLevelNames( std::cout );
-                    }else
-                    {
-                        std::cout << "Error: You haven't opened a collection yet." << std::endl;
-                    }
+                    m_Collection->streamLevelNames( std::cout );
+                }
+
+                // open level
+                if( open )
+                {
+                    if( m_Collection->setActiveLevel( argList.at( argList.size()-1 ) ) )
+                        std::cout << "Opened level \"" << argList.at( argList.size()-1 ) << std::endl;
+                    else
+                        std::cout << "Error: Level \"" << argList.at( argList.size()-1 ) << "\" does not exist" << std::endl;
                 }
 
                 break;
@@ -237,4 +250,48 @@ void App::go( void )
         }
 
     }
+}
+
+// --------------------------------------------------------------
+bool App::displayHelp( const std::string& cmd )
+{
+    bool helped = false;
+    std::cout << std::endl;
+    if( cmd.compare("help") == 0 )
+    {
+        std::cout << " help                   displays this message" << std::endl;
+        helped = true;
+    }
+    if( cmd.compare("quit") == 0 || cmd.compare("help") == 0 )
+    {
+        std::cout << " quit                   saves and quits the game" << std::endl;
+        helped = true;
+    }
+    if( cmd.compare("collection") == 0 || cmd.compare("help") == 0 )
+    {
+        std::cout << " collection [OPTIONS]" << std::endl;
+        std::cout << "     -l, --list         lists collections ready to load" << std::endl;
+        std::cout << "     -o, --open         opens the specified collection" << std::endl;
+        std::cout << "     -c, --close        closes the current collection" << std::endl;
+        helped = true;
+    }
+    if( cmd.compare("level") == 0 || cmd.compare("help") == 0 )
+    {
+        std::cout << " level [OPTIONS]" << std::endl;
+        std::cout << "     -l, --list         lists levels ready to load" << std::endl;
+        std::cout << "     -o, --open         opens the specified level" << std::endl;
+        std::cout << "     -c, --close        closes the current level" << std::endl;
+        std::cout << "     -r, --reset        resets the level" << std::endl;
+        helped = true;
+    }
+    if( cmd.compare("move") == 0 || cmd.compare("help") == 0 )
+    {
+        std::cout << "Type the letters 'u', 'd', 'l', or 'r' to move around in a level." << std::endl;
+        std::cout << "Type the letter 'z' to undo a move" << std::endl;
+        std::cout << "You may chain together as many as required" << std::endl;
+        helped = true;
+    }
+    std::cout << std::endl;
+    if( !helped)
+        std::cout << "Error: Unknown help topic \"" << cmd << "\"" << std::endl;
 }

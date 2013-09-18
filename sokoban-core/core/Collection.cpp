@@ -34,7 +34,8 @@ namespace Sokoban {
 Collection::Collection( const std::string& fileName ) :
     m_FileName( fileName ),
     m_EnableCompression( false ),
-    m_IsInitialised( false )
+    m_IsInitialised( false ),
+    m_ActiveLevel( 0 )
 {
 }
 
@@ -106,6 +107,20 @@ void Collection::streamLevelNames( std::ostream& stream )
 {
     for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
         stream << (*it)->getLevelName() << std::endl;
+}
+
+// --------------------------------------------------------------
+bool Collection::setActiveLevel( const std::string& levelName )
+{
+    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
+    {
+        if( (*it)->getLevelName().compare( levelName ) == 0 )
+        {
+            m_ActiveLevel = (*it);
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace Sokoban

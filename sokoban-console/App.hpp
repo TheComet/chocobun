@@ -25,6 +25,8 @@
 // --------------------------------------------------------------
 // include files
 
+#include <iostream>
+
 // --------------------------------------------------------------
 // forward declarations
 
@@ -57,6 +59,11 @@ public:
     void go( void );
 
 private:
+
+    /*!
+     * @brief Displays help text for a specific command
+     */
+    bool displayHelp( const std::string& cmd );
 
     Sokoban::Collection* m_Collection;
 };

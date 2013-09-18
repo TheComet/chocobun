@@ -44,8 +44,6 @@ class SOKOBAN_CORE_API Collection
 {
 public:
 
-    typedef std::vector<Level*>::iterator iterator;
-
     /*!
      * @brief Constructs a collection from a given file
      *
@@ -145,11 +143,25 @@ public:
      */
     void streamLevelNames( std::ostream& stream );
 
+    /*!
+     * @brief Selects a level so it is ready to play
+     *
+     * When a level is selected, everything about the level can be retrieved through
+     * "getActiveLevel..." methods. Internally, the only thing that's happening is
+     * a pointer is set to point to the active level.
+     *
+     * @param levelName The name of the level
+     * @note You can retrieve a list of names with <b>getLevelNames</b>
+     * @return If the active level doesn't exist, false is returned, otherwise true is returned.
+     */
+    bool setActiveLevel( const std::string& levelName );
+
 private:
 
     std::string m_FileName;
     std::string m_CollectionName;
     std::vector<Level*> m_Levels;
+    Level* m_ActiveLevel;
     bool m_EnableCompression;
     bool m_IsInitialised;
 };
