@@ -1,18 +1,18 @@
 /*
- * This file is part of Sokoban.
+ * This file is part of Chocobun.
  *
- * Sokoban is free software: you can redistribute it and/or modify
+ * Chocobun is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Sokoban is distributed in the hope that it will be useful,
+ * Chocobun is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Sokoban.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Chocobun.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // --------------------------------------------------------------
@@ -22,7 +22,7 @@
 #include <core/RLE.hpp>
 #include <core/Config.hpp>
 
-namespace Sokoban {
+namespace Chocobun {
 
 // --------------------------------------------------------------
 RLE::RLE( void )
@@ -153,11 +153,11 @@ size_t RLE::decompress( std::string& str )
         if( str[pos] == ')' ) break;
 
         // get expansion
-        Sokoban::Int32 expansionCount = 0, digit = 1;
+        Chocobun::Int32 expansionCount = 0, digit = 1;
         while( str[pos] > 47 && str[pos] < 58 )
         {
             expansionCount *= digit;
-            expansionCount += static_cast<Sokoban::Int32>( str[pos]-48 );
+            expansionCount += static_cast<Chocobun::Int32>( str[pos]-48 );
             digit *= 10;
             ++pos;
         }
@@ -174,7 +174,7 @@ size_t RLE::decompress( std::string& str )
             expansionString.push_back( str[pos] );
 
         // expand
-        for( Sokoban::Int32 i = 0; i != expansionCount; ++i )
+        for( Chocobun::Int32 i = 0; i != expansionCount; ++i )
             ret.append( expansionString );
         ++pos;
     }
@@ -182,4 +182,4 @@ size_t RLE::decompress( std::string& str )
     return pos+1; // +1 to skip closing parenthesis
 }
 
-} // namespace Sokoban
+} // namespace Chocobun

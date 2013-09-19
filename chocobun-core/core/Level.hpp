@@ -1,26 +1,26 @@
 /*
- * This file is part of Sokoban.
+ * This file is part of Chocobun.
  *
- * Sokoban is free software: you can redistribute it and/or modify
+ * Chocobun is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Sokoban is distributed in the hope that it will be useful,
+ * Chocobun is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Sokoban.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Chocobun.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // --------------------------------------------------------------
 // Level
 // --------------------------------------------------------------
 
-#ifndef __SOKOBAN_CORE_LEVEL_HPP__
-#define __SOKOBAN_CORE_LEVEL_HPP__
+#ifndef __CHOCOBUN_CORE_LEVEL_HPP__
+#define __CHOCOBUN_CORE_LEVEL_HPP__
 
 // --------------------------------------------------------------
 // include files
@@ -33,7 +33,7 @@
 
 #include <iostream>
 
-namespace Sokoban {
+namespace Chocobun {
 
 /*!
  * @brief Holds information of a loaded level
@@ -69,7 +69,7 @@ public:
      * @note Keys are case sensitive and should be converted to lower case
      * before adding the meta data.
      *
-     * @exception Sokoban::Exception If the key already exists
+     * @exception Chocobun::Exception If the key already exists
      *
      * @param key The key of the entry (used to get the data back later on)
      * @param value The value of the entry (can by any text string)
@@ -79,7 +79,7 @@ public:
     /*!
      * @brief Retrieves meta data of the level
      *
-     * @exception Sokoban::Exception if the key was not found
+     * @exception Chocobun::Exception if the key was not found
      *
      * @param key The key of the entry to search for
      * @return The value tied to the key
@@ -140,13 +140,13 @@ public:
      * -   Floor (space)
      * - _ Floor
      *
-     * @exception Sokoban::Exception if an invalid character is passed
+     * @exception Chocobun::Exception if an invalid character is passed
      *
      * @param x The X coordinate for the tile to insert
      * @param y The Y coordinate for the tile to insert
      * @param tile The type of tile
      */
-    void insertTile( const Sokoban::Uint32& x, const Sokoban::Uint32& y, const char& tile );
+    void insertTile( const Chocobun::Uint32& x, const Chocobun::Uint32& y, const char& tile );
 
     /*!
      * @brief Inserts a whole line instead of a single tile
@@ -162,12 +162,12 @@ public:
      * -   Floor (space)
      * - _ Floor
      *
-     * @exception Sokoban::Exception if an invalid character is passed
+     * @exception Chocobun::Exception if an invalid character is passed
      *
      * @param y The Y coordinate for the tile line to insert
      * @param tiles The line of tiles to insert
      */
-    void insertTileLine( const Sokoban::Uint32& y, const std::string& tiles );
+    void insertTileLine( const Chocobun::Uint32& y, const std::string& tiles );
 
     /*!
      * @brief Streams all tile data to a stream object
@@ -324,6 +324,6 @@ private:
 
 };
 
-} // namespace Sokoban
+} // namespace Chocobun
 
-#endif // __SOKOBAN_CORE_LEVEL_HPP__
+#endif // __CHOCOBUN_CORE_LEVEL_HPP__

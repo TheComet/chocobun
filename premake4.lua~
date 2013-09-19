@@ -74,7 +74,7 @@ elseif os.get() == "linux" then
 	}
 	
 -- MAAAC
-elseif os.get() == "macosx" then
+elseif os.get() == "macosx"
 
 	-- header search directories
 	headerSearchDirs = {

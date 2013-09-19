@@ -1,18 +1,18 @@
 /*
- * This file is part of Sokoban.
+ * This file is part of Chocobun.
  *
- * Sokoban is free software: you can redistribute it and/or modify
+ * Chocobun is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Sokoban is distributed in the hope that it will be useful,
+ * Chocobun is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Sokoban.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Chocobun.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // --------------------------------------------------------------
@@ -25,9 +25,9 @@
 #include <core/Level.hpp>
 #include <core/Exception.hpp>
 
-const std::string Sokoban::Level::validTiles = "#@+$*. _pPbB";
+const std::string Chocobun::Level::validTiles = "#@+$*. _pPbB";
 
-namespace Sokoban {
+namespace Chocobun {
 
 // --------------------------------------------------------------
 Level::Level( void ) :
@@ -92,7 +92,7 @@ void Level::streamAllHeaderData( std::ostream& stream )
 }
 
 // --------------------------------------------------------------
-void Level::insertTile( const Sokoban::Uint32& x, const Sokoban::Uint32& y, const char& tile )
+void Level::insertTile( const Chocobun::Uint32& x, const Chocobun::Uint32& y, const char& tile )
 {
 
     // check if character is valid
@@ -115,7 +115,7 @@ void Level::insertTile( const Sokoban::Uint32& x, const Sokoban::Uint32& y, cons
 }
 
 // --------------------------------------------------------------
-void Level::insertTileLine( const Sokoban::Uint32& y, const std::string& tiles )
+void Level::insertTileLine( const Chocobun::Uint32& y, const std::string& tiles )
 {
     for( size_t x = 0; x != tiles.size(); ++x )
         this->insertTile( x, y, tiles[x] );
@@ -325,4 +325,4 @@ void Level::redo( void )
     if( !m_IsLevelValid ) return;
 }
 
-} // namespace Sokoban
+} // namespace Chocobun
