@@ -130,15 +130,15 @@ public:
      * @brief Inserts a tile into the level at the given coordinate
      *
      * Internally the map array is resized accordingly so it remains square.
-     * Valid tile characters are:
-     * -# Wall
-     * -@ Pusher
-     * -+ Pusher on goal square
-     * -$ Box
-     * -* Box on goal square
-     * -. Goal square
-     * -  Floor (space)
-     * -_ Floor
+     * <b>Valid tile characters are:</b>
+     * - # Wall
+     * - @ Pusher
+     * - + Pusher on goal square
+     * - $ Box
+     * - * Box on goal square
+     * - . Goal square
+     * -   Floor (space)
+     * - _ Floor
      *
      * @exception Sokoban::Exception if an invalid character is passed
      *
@@ -152,15 +152,15 @@ public:
      * @brief Inserts a whole line instead of a single tile
      *
      * Internally the map array is resized accordingly so it remains square.
-     * Valid tile characters are:
-     * -# Wall
-     * -@ Pusher
-     * -+ Pusher on goal square
-     * -$ Box
-     * -* Box on goal square
-     * -. Goal square
-     * -  Floor (space)
-     * -_ Floor
+     * <b>Valid tile characters are:</b>
+     * - # Wall
+     * - @ Pusher
+     * - + Pusher on goal square
+     * - $ Box
+     * - * Box on goal square
+     * - . Goal square
+     * -   Floor (space)
+     * - _ Floor
      *
      * @exception Sokoban::Exception if an invalid character is passed
      *
@@ -179,6 +179,39 @@ public:
      * Otherwise, "|" are inserted (for RLE compression)
      */
     void streamAllTileData( std::ostream& stream, bool newLine = true );
+
+    /*!
+     * @brief Gets the array of tile data
+     *
+     * @return Returns a 2-dimensional array of chars containing tile data
+     */
+    const std::vector< std::vector<char> >& getTileData( void ) const;
+
+    /*!
+     * @brief Gets a single tile from the level
+     *
+     * Will retrieve the tile data specified by the x and y parameters
+     *
+     * @param x The X-coordinate of the tile
+     * @param y The Y-coordinate of the tile
+     * @return Returns the tile at the specified coordinates. If the tile couldn't
+     * be retrieved, a null character ('\0') is returned.
+     */
+    char getTile( Uint32 x, Uint32 y ) const;
+
+    /*!
+     * @brief Returns the X-size of the level
+     *
+     * @return The X-size of the level
+     */
+    Uint32 getSizeX( void ) const;
+
+    /*!
+     * @brief Returns the Y-size of the level
+     *
+     * @return The Y-size of the level
+     */
+    Uint32 getSizeY( void ) const;
 
     /*!
      * @brief Adds level notes to this level
@@ -213,7 +246,69 @@ public:
      */
     std::string getLevelName( void ) const;
 
+    /*!
+     * @brief Validates the level
+     *
+     * Will perform various checks to see if the level is valid. This includes:
+     * - Only one player can exist on a level
+     * - All boxes can be reached by the player
+     * - All boxes which can't be reached by the player are placed on goal squares
+     * - The level is closed off entirely by a wall
+     *
+     * @note It is essential to call this method before using the level for game play.
+     * This method also 'finalises' the level by performing some internal setup on the
+     * provided tile data.
+     *
+     * @return If any of these fail, false is returned. If the level is considered valid, true is returned.
+     */
+    bool validateLevel( void );
+
+    /*!
+     * @brief Moves the player up by one tile
+     * @note If the move is not possible, this method will silently fail
+     */
+    void moveUp( void );
+
+    /*!
+     * @brief Moves the player down by one tile
+     * @note If the move is not possible, this method will silently fail
+     */
+    void moveDown( void );
+
+    /*!
+     * @brief Moves the player left by one tile
+     * @note If the move is not possible, this method will silently fail
+     */
+    void moveLeft( void );
+
+    /*!
+     * @brief Moves the player right by one tile
+     * @note If the move is not possible, this method will silently fail
+     */
+    void moveRight( void );
+
+    /*!
+     * @brief Undoes the last move
+     * @note If no undo data exists, this method will silently fail
+     */
+    void undo( void );
+
+    /*!
+     * @brief Redoes a move
+     * @note If no redo data exists, this method will silently fail
+     */
+    void redo( void );
+
 private:
+
+    /*!
+     * @brief Moves the player and updates all tiles
+     *
+     * @param newX The new x position the player should have
+     * @param newY The new y position the player should have
+     * @return Returns true if the move was successful, false if otherwise
+     */
+    bool movePlayer( const Uint32 newX, const Uint32 newY );
 
     std::vector< std::vector<char> > m_LevelArray;
     std::map<std::string, std::string> m_MetaData;
@@ -221,6 +316,11 @@ private:
     std::vector<std::string> m_Notes;
     std::vector<char> m_UndoData;
     std::string m_LevelName;
+
+    Uint32 m_PlayerX;
+    Uint32 m_PlayerY;
+
+    bool m_IsLevelValid;
 
 };
 

@@ -26,6 +26,7 @@
 // include files
 
 #include <iostream>
+#include <vector>
 
 // --------------------------------------------------------------
 // forward declarations
@@ -59,6 +60,16 @@ public:
     void go( void );
 
 private:
+
+    /*!
+     * @brief Splits the input command into a list of arguments and options
+     *
+     * @param input The input string to split
+     * @param argList The output argument list to write the arguments to
+     * @param optionList The output option list to write the option parameters to
+     * @return If the input string was invalid, false is returned, otherwise true is returned
+     */
+    bool splitCommand( const std::string& in, std::vector<std::string>& argList, std::vector<std::string>& optionList );
 
     /*!
      * @brief Displays help text for a specific command

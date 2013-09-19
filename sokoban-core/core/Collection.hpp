@@ -70,7 +70,7 @@ public:
     void initialise( void );
 
     /*!
-     * @brief De-initialises the collection, freeing up all memory
+     * @brief De-initialises the collection, saving it to disk and freeing up all memory
      *
      * This can be called when switching collections to save memory.
      * While it is not necessary to do so, it is recommended, because progress
@@ -155,6 +155,141 @@ public:
      * @return If the active level doesn't exist, false is returned, otherwise true is returned.
      */
     bool setActiveLevel( const std::string& levelName );
+
+    /*!
+     * @brief Checks if a level is selected as active or not
+     *
+     * @return True if a level is selected as active, false if otherwise
+     */
+    bool hasActiveLevel( void );
+
+    /*!
+     * @brief Returns all tiles of the active level
+     *
+     * All tiles of the active level are contained within a dynamic 2-dimensional
+     * array or chars (std::vector< std::vector<char> >).
+     *
+     * <b>Valid tiles are:</b>
+     * - # Wall
+     * - @ Pusher
+     * - + Pusher on goal square
+     * - $ Box
+     * - * Box on goal square
+     * - . Goal square
+     * -   Floor (space)
+     * - _ Floor
+     *
+     * @note If the tiles could not be retrieved, an empty array is returned.
+     *
+     * @exception Throws an std::exception if an active level wasn't selected
+     * before calling this method
+     *
+     * @return Returns a 2-dimensional array of chars containing level data of the active level
+     */
+    const std::vector< std::vector<char> >& getTileData( void ) const;
+
+    /*!
+     * @brief Streams all tiles of the active level to an output stream object
+     *
+     * If the streaming fails, the stream object will be unchanged.
+     *
+     * @param stream The output stream object to stream to
+     */
+    void streamTileData( std::ostream& stream );
+
+    /*!
+     * @brief Retrieves a specific tile from the active level
+     *
+     *
+     * <b>Valid tiles are:</b>
+     * - # Wall
+     * - @ Pusher
+     * - + Pusher on goal square
+     * - $ Box
+     * - * Box on goal square
+     * - . Goal square
+     * -   Floor (space)
+     * - _ Floor
+     *
+     * @param x The X-coordinate of the tile to retrieve
+     * @param y The Y-coordinate of the tile to retrieve
+     * @return Returns the tile at the specified locations. If the tile couldn't be
+     * retrieved, a null character ('\0') is returned.
+     */
+    char getTile( Uint32 x, Uint32 y );
+
+    /*!
+     * @brief Returns the X-size of the active level
+     *
+     * @return The X-size of the active level
+     */
+    Uint32 getSizeX( void ) const;
+
+    /*!
+     * @brief Returns the Y-size of the active level
+     *
+     * @return The Y-size of the active level
+     */
+    Uint32 getSizeY( void ) const;
+
+    /*!
+     * @brief Validates the active level
+     *
+     * Will perform various checks to see if the level is valid. This includes:
+     * - Only one player can exist on a level
+     * - All boxes can be reached by the player
+     * - All boxes which can't be reached by the player are placed on goal squares
+     * - The level is closed off entirely by a wall
+     *
+     * @note It is essential to call this method before using the level for game play.
+     * This method also 'finalises' the level by performing some internal setup on the
+     * provided tile data
+     *
+     * If there is no active level selected, false is returned.
+     *
+     * @return If any of these fail, false is returned. If the level is considered valid, true is returned.
+     */
+    bool validateLevel( void ) const;
+
+    /*!
+     * @brief Moves the player up in the active level
+     *
+     * The tile data is internally updated and can be retrieved with
+     * either <b>getTileData</b>, <b>streamTileData</b> or <b>getTile</b>
+     *
+     * If the move is not possible, this method will silently fail
+     */
+    void moveUp( void );
+
+    /*!
+     * @brief Moves the player down in the active level
+     */
+    void moveDown( void );
+
+    /*!
+     * @brief Moves the player left in the active level
+     */
+    void moveLeft( void );
+
+    /*!
+     * @brief Moves the player right in the active level
+     */
+    void moveRight( void );
+
+    /*!
+     * @brief Undoes a move in the active level if any
+     */
+    void undo( void );
+
+    /*!
+     * @brief Redoes a move in the active level if any
+     */
+    void redo( void );
+
+    /*!
+     * @brief Resets the active level to its initial state and erases all undo data
+     */
+    void reset( void );
 
 private:
 
