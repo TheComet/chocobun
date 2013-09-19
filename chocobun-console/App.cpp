@@ -48,7 +48,11 @@ void App::go( void )
 
     // welcome message
     std::cout << "Welcome to Chocobun!" << std::endl;
-    this->displayHelp( "help" );
+    std::cout << std::endl;
+    std::cout << "This is a crappy knock-off of the linux command line." << std::endl;
+    std::cout << "Auto-completion (tab) and up and down arrows do not work. Enjoy." << std::endl;
+    std::cout << std::endl;
+    std::cout << "Type 'help' for a list of commands." << std::endl;
 
     bool shutdown = false;
     while( !shutdown )
