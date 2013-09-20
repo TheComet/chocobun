@@ -24,6 +24,7 @@
 
 #include <core/CollectionParser.hpp>
 #include <core/CollectionParserSOK.hpp>
+#include <core/CollectionParserSLC.hpp>
 #include <core/RLE.hpp>
 #include <core/Level.hpp>
 #include <core/Exception.hpp>
