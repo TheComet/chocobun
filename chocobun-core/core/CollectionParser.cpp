@@ -37,7 +37,7 @@ namespace Chocobun {
 // --------------------------------------------------------------
 CollectionParser::CollectionParser( void )
 {
-    this->setFileFormat(FORMAT_SOK);
+    this->setFileFormat(FORMAT_SLC);
 }
 
 // --------------------------------------------------------------
@@ -88,15 +88,15 @@ void CollectionParser::save( const std::string& collectionName, const std::strin
 
     switch( this->getFileFormat() ) {
         case FORMAT_SLC:
-
-        break;
+            parser = new CollectionParserSLC();
+            break;
 
         case FORMAT_SOK:
             parser = new CollectionParserSOK();
-            if( enableCompression ) parser->enableCompression();
             break;
     }
 
+    if( enableCompression ) parser->enableCompression();
     parser->save( collectionName, file, levels );
     delete parser;
 
