@@ -42,6 +42,8 @@ class CollectionParser
 {
 public:
 
+    enum FILE_FORMAT { FORMAT_SOK, FORMAT_SLC };
+
     /*!
      * @brief Constructor
      */
@@ -72,6 +74,14 @@ public:
      * @param enableCompression
      */
     void save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels, bool enableCompression = false );
+
+    void setFileFormat( FILE_FORMAT fileFormat );
+
+    FILE_FORMAT getFileFormat();
+
+private:
+
+    FILE_FORMAT m_fileFormat;
 
 };
 

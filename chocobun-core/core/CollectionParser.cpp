@@ -37,6 +37,7 @@ namespace Chocobun {
 // --------------------------------------------------------------
 CollectionParser::CollectionParser( void )
 {
+    this->setFileFormat(FORMAT_SOK);
 }
 
 // --------------------------------------------------------------
@@ -83,9 +84,19 @@ void CollectionParser::save( const std::string& collectionName, const std::strin
     if( !file.is_open() )
         throw Exception( "[CollectionParser::save] unable to open file for saving" );
 
-    // default export format is SOK
-    CollectionParserBase* parser = new CollectionParserSOK();
-    if( enableCompression ) parser->enableCompression();
+    CollectionParserBase* parser;
+
+    switch( this->getFileFormat() ) {
+        case FORMAT_SLC:
+
+        break;
+
+        case FORMAT_SOK:
+            parser = new CollectionParserSOK();
+            if( enableCompression ) parser->enableCompression();
+            break;
+    }
+
     parser->save( collectionName, file, levels );
     delete parser;
 
@@ -102,4 +113,13 @@ void CollectionParser::save( const std::string& collectionName, const std::strin
 */
 }
 
+void CollectionParser::setFileFormat( CollectionParser::FILE_FORMAT fileFormat ) 
+{
+    this->m_fileFormat = fileFormat;
+}
+
+CollectionParser::FILE_FORMAT CollectionParser::getFileFormat()
+{
+    return this->m_fileFormat;
+}
 } // namespace Chocobun
