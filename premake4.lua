@@ -23,9 +23,9 @@ if os.get() == "windows" then
 	}
 	
 	-- link libraries
-	linklibs_chocobun_core_debug = { ""
+	linklibs_chocobun_core_debug = {
 	}
-	linklibs_chocobun_core_release = { ""
+	linklibs_chocobun_core_release = {
 	}
 	linklibs_chocobun_console_debug = {
 		"chocobun-core_d"
