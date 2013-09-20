@@ -33,6 +33,9 @@
 
 namespace Chocobun {
 
+const int CollectionParserSLC::NUM_META_TAG_NAMES = 4;
+const char* CollectionParserSLC::META_TAG_NAMES[] = {"Title", "Description", "Email", "Url"};
+
 // --------------------------------------------------------------
 CollectionParserSLC::CollectionParserSLC( void )
 {
@@ -57,29 +60,41 @@ std::string CollectionParserSLC::parse( std::ifstream& file, std::vector<Level*>
 
     rapidxml::xml_node<>* rootNode = doc.first_node("SokobanLevels");
 
-    std::string collectionName = rootNode->first_node("Title")->value();
-    std::string collectionDescription = rootNode->first_node("Description")->value();
-    std::string collectionEmail = rootNode->first_node("Email")->value();
-    std::string collectionUrl = rootNode->first_node("Url")->value();
+    // read all the meta tags into the metaTagValues array
+    std::string metaTagValues [NUM_META_TAG_NAMES];
+    for( int i = 0; i < NUM_META_TAG_NAMES; ++i ) 
+    {
+        metaTagValues[i] = rootNode->first_node(META_TAG_NAMES[i])->value();
+    }
 
     rapidxml::xml_node<>* levelCollectionNode = rootNode->first_node("LevelCollection");
 
-    for (rapidxml::xml_node<>* levelNode = levelCollectionNode->first_node("Level"); levelNode; levelNode = levelNode->next_sibling())
+    std::string levelCollectionCopyright = levelCollectionNode->first_attribute("Copyright")->value();
+
+    for( rapidxml::xml_node<>* levelNode = levelCollectionNode->first_node("Level"); levelNode; levelNode = levelNode->next_sibling() )
     {
         std::string levelName = levelNode->first_attribute("Id")->value();
 
         Level* lvl = new Level();
+        lvl->addMetaData("Author", levelCollectionCopyright);
+
+        // set the meta tags from the collection tag for the level
+        for( int i = 0; i < NUM_META_TAG_NAMES; ++i ) 
+        {
+            lvl->addMetaData(META_TAG_NAMES[i], metaTagValues[i]);
+        }
+
         this->registerLevel( lvl, levelName, levels );
 
         int y = 0;
 
-        for (rapidxml::xml_node<>* levelLineNode = levelNode->first_node("L"); levelLineNode; levelLineNode = levelLineNode->next_sibling())
+        for( rapidxml::xml_node<>* levelLineNode = levelNode->first_node("L"); levelLineNode; levelLineNode = levelLineNode->next_sibling() )
         {
             lvl->insertTileLine(y++, levelLineNode->value());
         }
     }
 
-    return collectionName;
+    return metaTagValues[0];
 }
 
 
