@@ -63,8 +63,8 @@ public:
      * therefore this method allows any key-value pair to be registered.
      *
      * Supported internal keys are
-     * -Collection
-     * -Author
+     * - Collection
+     * - Author
      *
      * @note Keys are case sensitive and should be converted to lower case
      * before adding the meta data.
