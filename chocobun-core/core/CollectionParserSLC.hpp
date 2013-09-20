@@ -39,6 +39,9 @@ class CollectionParserSLC :
 {
 public:
 
+    static const int NUM_META_TAG_NAMES;
+    static const char* META_TAG_NAMES[];
+
     /*!
      * @brief Constructor
      */
