@@ -22,83 +22,60 @@
 #ifndef __CHOCOBUN_CORE_COLLECTION_PARSER_SLC_HPP__
 #define __CHOCOBUN_CORE_COLLECTION_PARSER_SLC_HPP__
 
-// namespace Chocobun {
+// --------------------------------------------------------------
+// include files
 
-// /*!
-//  * @brief Universal .SLC format parser
-//  *
-//  * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
-//  */
-// class CollectionParserSLC :
-//     public CollectionParserBase
-// {
-// public:
+#include <core/CollectionParserBase.hpp>
 
-//     /*!
-//      * @brief Constructor
-//      */
-//     CollectionParserSLC( void );
+namespace Chocobun {
 
-//     /*!
-//      * @brief Destructor
-//      */
-//     ~CollectionParserSLC( void );
+/*!
+ * @brief Universal .SLC format parser
+ *
+ * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
+ */
+class CollectionParserSLC :
+    public CollectionParserBase
+{
+public:
 
-//     /*!
-//      * @brief Parses a .SLC file
-//      *
-//      * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
-//      *
-//      * @param file An open file object to read from
-//      * @param levelMap An std::vector of levels to write to
-//      * @return Returns the name of the collection (if any), otherwise the string
-//      * is empty
-//      */
-//     std::string parse( std::ifstream& file, std::vector<Level*>& levelMap );
+    /*!
+     * @brief Constructor
+     */
+    CollectionParserSLC( void );
 
-//     !
-//      * @brief Universal .SLC format exporter
-//      *
-//      * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
-//      *
-//      * @param file An open file object to write data to
-//      * @param levelMap An std::vector of levels to read from
-     
-//     void save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
+    /*!
+     * @brief Destructor
+     */
+    ~CollectionParserSLC( void );
 
-//     /*!
-//      * @brief Enables RLE compression for tile data when exporting
-//      * @note Default is <b>disabled</b>
-//      */
-//     void enableCompression( void );
+    /*!
+     * @brief Parses a .SLC file
+     *
+     * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
+     *
+     * @param file An open file object to read from
+     * @param levelMap An std::vector of levels to write to
+     * @return Returns the name of the collection (if any), otherwise the string
+     * is empty
+     */
+    std::string parse( std::ifstream& file, std::vector<Level*>& levelMap );
 
-//     /*!
-//      * @brief Disables RLE compression for tile data when exporting
-//      * @note Default is <b>disabled</b>
-//      */
-//     void disableCompression( void );
+    /* !
+     * @brief Universal .SLC format exporter
+     *
+     * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
+     *
+     * @param file An open file object to write data to
+     * @param levelMap An std::vector of levels to read from
+     */
+    void save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
 
-// private:
+private:
 
-//     /*!
-//      * @brief Returns true if the string is level data
-//      */
-//     bool isLevelData( const std::string& str );
 
-//     /*!
-//      * @brief Extracts key value pairs and returns true or false if successful
-//      *
-//      * @param str The string to search for key-value pairs
-//      * @param key Output string where the key is written to
-//      * @param value Output string where the value is written to
-//      * @return True if a key-value pair was found, false if otherwise
-//      */
-//     bool getKeyValuePair( const std::string& str, std::string& key, std::string& value );
+};
 
-//     bool m_EnableRLE;
-
-// };
-
-// } // namespace Chocobun
+} // namespace Chocobun
 
 #endif // __CHOCOBUN_CORE_COLLECTION_PARSER_SLC_HPP__
