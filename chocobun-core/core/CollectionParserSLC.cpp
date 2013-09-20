@@ -99,8 +99,6 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*
     return metaTagValues[0];
 }
 
-
-
 // --------------------------------------------------------------
 void CollectionParserSLC::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {

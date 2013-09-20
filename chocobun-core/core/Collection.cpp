@@ -36,7 +36,8 @@ Collection::Collection( const std::string& fileName ) :
     m_FileName( fileName ),
     m_EnableCompression( false ),
     m_IsInitialised( false ),
-    m_ActiveLevel( 0 )
+    m_ActiveLevel( 0 ),
+	m_FileFormat( CollectionParser::FORMAT_SOK )
 {
 }
 
@@ -100,6 +101,18 @@ void Collection::enableCompression( void )
 void Collection::disableCompression( void )
 {
     m_EnableCompression = false;
+}
+
+// --------------------------------------------------------------
+void Collection::setFileFormat( CollectionParser::FILE_FORMAT fileFormat )
+{
+	m_FileFormat = fileFormat;
+}
+
+// --------------------------------------------------------------
+CollectionParser::FILE_FORMAT Collection::getFileFormat( void )
+{
+	return m_FileFormat;
 }
 
 // --------------------------------------------------------------

@@ -254,8 +254,6 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         // add level notes below meta data
         (*it)->streamAllNotes( file );
     }
-
-	std::cout << "Maximum dimensions: " << this->getMaxLevelWidth() << "," << this->getMaxLevelHeigth() << std::endl;
 }
 
 } // namespace Chocobun
