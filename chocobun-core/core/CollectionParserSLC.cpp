@@ -29,6 +29,8 @@
 #include <sstream>
 #include <algorithm>
 
+#include <rapidxml-1.13/rapidxml.hpp>
+
 namespace Chocobun {
 
 // --------------------------------------------------------------
@@ -44,8 +46,43 @@ CollectionParserSLC::~CollectionParserSLC( void )
 // --------------------------------------------------------------
 std::string CollectionParserSLC::parse( std::ifstream& file, std::vector<Level*>& levels )
 {
-    return "";
+    rapidxml::xml_document<> doc;
+
+    // Read file into vector<char>
+    std::vector<char> buffer( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>( ) );
+    buffer.push_back( '\0' );
+
+    // parse the darn thing with rapidxml
+    doc.parse<0>( &buffer[0] ); 
+
+    rapidxml::xml_node<>* rootNode = doc.first_node("SokobanLevels");
+
+    std::string collectionName = rootNode->first_node("Title")->value();
+    std::string collectionDescription = rootNode->first_node("Description")->value();
+    std::string collectionEmail = rootNode->first_node("Email")->value();
+    std::string collectionUrl = rootNode->first_node("Url")->value();
+
+    rapidxml::xml_node<>* levelCollectionNode = rootNode->first_node("LevelCollection");
+
+    for (rapidxml::xml_node<>* levelNode = levelCollectionNode->first_node("Level"); levelNode; levelNode = levelNode->next_sibling())
+    {
+        std::string levelName = levelNode->first_attribute("Id")->value();
+
+        Level* lvl = new Level();
+        this->registerLevel( lvl, levelName, levels );
+
+        int y = 0;
+
+        for (rapidxml::xml_node<>* levelLineNode = levelNode->first_node("L"); levelLineNode; levelLineNode = levelLineNode->next_sibling())
+        {
+            lvl->insertTileLine(y++, levelLineNode->value());
+        }
+    }
+
+    return collectionName;
 }
+
+
 
 // --------------------------------------------------------------
 void CollectionParserSLC::save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
