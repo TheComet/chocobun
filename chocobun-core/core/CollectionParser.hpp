@@ -42,7 +42,14 @@ class CollectionParser
 {
 public:
 
-    enum FILE_FORMAT { FORMAT_SOK, FORMAT_SLC };
+	/*!
+	 * @brief List of file formats that are supported for export
+	 */
+    enum FILE_FORMAT
+	{
+		FORMAT_SOK,
+		FORMAT_SLC
+	};
 
     /*!
      * @brief Constructor
@@ -75,9 +82,19 @@ public:
      */
     void save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels, bool enableCompression = false );
 
+	/*!
+	 * @brief Sets the export file format to be used for every future save
+	 *
+	 * @param fileFormat The file format
+	 */
     void setFileFormat( FILE_FORMAT fileFormat );
 
-    FILE_FORMAT getFileFormat();
+	/*!
+	 * @brief Gets the set export file format being used
+	 *
+	 * @return The export format
+	 */
+    FILE_FORMAT getFileFormat( void );
 
 private:
 

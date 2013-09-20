@@ -26,6 +26,7 @@
 // include files
 
 #include <core/Export.hpp>
+#include <core/CollectionParser.hpp>
 
 #include <vector>
 #include <string>
@@ -121,6 +122,20 @@ public:
      * @note Default is <b>disabled</b>
      */
     void disableCompression( void );
+
+	/*!
+	 * @brief Sets the export file format to be used for every future save
+	 *
+	 * @param fileFormat The file format
+	 */
+	void setFileFormat( CollectionParser::FILE_FORMAT fileFormat );
+
+	/*!
+	 * @brief Gets the set export file format being used
+	 *
+	 * @return The export format
+	 */
+    CollectionParser::FILE_FORMAT getFileFormat( void );
 
     /*!
      * @brief Writes a list of level names into an std::vector<std::string> object
@@ -299,6 +314,8 @@ private:
     Level* m_ActiveLevel;
     bool m_EnableCompression;
     bool m_IsInitialised;
+
+	CollectionParser::FILE_FORMAT m_FileFormat;
 };
 
 } // namespace Chocobun

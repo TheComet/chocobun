@@ -86,6 +86,7 @@ void App::go( void )
                 bool list = false;
                 bool open = false;
                 bool close = false;
+				bool format = false;
                 bool compressOn = false;
                 bool compressOff = false;
                 std::vector<std::string>::iterator it = optionList.begin();
@@ -94,6 +95,7 @@ void App::go( void )
                     if( it->compare("l") == 0 || it->compare("--list") == 0 ){ list = true; continue; }
                     if( it->compare("o") == 0 || it->compare("--open") == 0 ){ open = true; continue; }
                     if( it->compare("c") == 0 || it->compare("--close") == 0 ){ close = true; continue; }
+					if( it->compare("f") == 0 || it->compare("--format") == 0 ){ format = true; continue; }
                     if( it->compare("x") == 0 || it->compare("--compress-on") == 0 ){ compressOn = true; continue; }
                     if( it->compare("X") == 0 || it->compare("--compress-off") == 0 ){ compressOff = true; continue; }
                     std::cout << "Error: Unkown option \"" << *it << "\"" << std::endl;
@@ -148,6 +150,24 @@ void App::go( void )
                         std::cout << "Comrpession deisabled for all future levels" << std::endl;
                     }
                 }
+
+				// file format
+				if( format )
+				{
+					if( m_Collection )
+					{
+						std::string format = argList.at( argList.size()-1 );
+						std::cout << "setting file format to \"" << format << "\"" << std::endl;
+						for(;;){
+							if( format.compare( "sok" ) == 0 ){ m_Collection->setFileFormat( Chocobun::CollectionParser::FORMAT_SOK ); break; }
+							if( format.compare( "slc" ) == 0 ){ m_Collection->setFileFormat( Chocobun::CollectionParser::FORMAT_SLC ); break; }
+							std::cout << "Error: Unknown file format \"" << format << "\"" << std::endl; break;
+						}
+					}else
+					{
+						std::cout << "Error: You haven't opened a collection yet." << std::endl;
+					}
+				}
 
                 // close collection
                 if( close )
@@ -366,6 +386,8 @@ bool App::displayHelp( const std::string& cmd )
         std::cout << "     -c, --close        closes the current collection" << std::endl;
         std::cout << "     -x, --compress-on  enables compression for all future saves" << std::endl;
         std::cout << "     -X, --compress-off disables compression for all future saves" << std::endl;
+		std::cout << "     -f, --format       sets the file format when saving (default: sok)" << std::endl;
+		std::cout << "           available formats: 'sok', 'slc'" << std::endl;
         helped = true;
     }
     if( cmd.compare("level") == 0 || cmd.compare("help") == 0 )
