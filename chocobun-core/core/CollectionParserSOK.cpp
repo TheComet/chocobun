@@ -86,7 +86,7 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
-std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>& levels )
+std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*>& levels )
 {
 
     // the first level is a requirement
@@ -159,7 +159,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>
                 lvl->removeHeaderData( tempLevelName );
                 lvl->removeLevelNote( tempLevelName );
             }
-            this->registerLevel( lvl, levelName, levels );
+            this->_registerLevel( lvl, levelName, levels );
             lvl = new Level();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
@@ -207,7 +207,7 @@ std::string CollectionParserSOK::parse( std::ifstream& file, std::vector<Level*>
     }
 
     // register still open level
-    this->registerLevel( lvl, levelName, levels );
+    this->_registerLevel( lvl, levelName, levels );
 
     return collectionName;
 }
@@ -225,7 +225,7 @@ void CollectionParserSOK::disableCompression( void )
 }
 
 // --------------------------------------------------------------
-void CollectionParserSOK::save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
+void CollectionParserSOK::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {
 
     // write all levels to std::cout
@@ -254,6 +254,8 @@ void CollectionParserSOK::save( const std::string& collectionName, std::ofstream
         // add level notes below meta data
         (*it)->streamAllNotes( file );
     }
+
+	std::cout << "Maximum dimensions: " << this->getMaxLevelWidth() << "," << this->getMaxLevelHeigth() << std::endl;
 }
 
 } // namespace Chocobun

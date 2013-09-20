@@ -44,7 +44,7 @@ CollectionParserSLC::~CollectionParserSLC( void )
 }
 
 // --------------------------------------------------------------
-std::string CollectionParserSLC::parse( std::ifstream& file, std::vector<Level*>& levels )
+std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*>& levels )
 {
     rapidxml::xml_document<> doc;
 
@@ -69,7 +69,7 @@ std::string CollectionParserSLC::parse( std::ifstream& file, std::vector<Level*>
         std::string levelName = levelNode->first_attribute("Id")->value();
 
         Level* lvl = new Level();
-        this->registerLevel( lvl, levelName, levels );
+        this->_registerLevel( lvl, levelName, levels );
 
         int y = 0;
 
@@ -85,7 +85,7 @@ std::string CollectionParserSLC::parse( std::ifstream& file, std::vector<Level*>
 
 
 // --------------------------------------------------------------
-void CollectionParserSLC::save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
+void CollectionParserSLC::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {
 }
 

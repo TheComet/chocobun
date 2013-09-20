@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <core/Config.hpp>
 
 namespace Chocobun {
 
@@ -51,10 +52,23 @@ public:
      */
     virtual ~CollectionParserBase( void );
 
-    /*!
+	/*!
+	 * @brief Saves a vector of level objects to a file
+	 *
+	 * This method performs some internal calculations, such as calculating
+	 * the maximum width and height of all of the levels, and then calls
+	 * the abstract method _save.
+	 *
+	 * @param collectionName The name of the collection to be saved
+	 * @param file An output file stream object to save to
+	 * @param levels A vector of level pointers to save
+	 */
+	void save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
+
+	/*!
      * @brief Parses and loads all levels into a vector of Level objects
      *
-     * This method is pure virtual and must be implemented by the inheriting class.
+     * This method calls the abstract method _parse
 	 *
 	 * @param file An open file input stream object, ready to read from
 	 * @param levels An empty vector in which the newly constructed levels can be
@@ -63,16 +77,9 @@ public:
 	 * to display it. If no collection name is available, it is recommended to return
 	 * "collection".
      */
-    virtual std::string parse( std::ifstream& file, std::vector<Level*>& levels ) = 0;
+    std::string parse( std::ifstream& file, std::vector<Level*>& levels );
 
-    /*!
-     * @brief Saves a vector of level objects to a file
-     *
-     * This method is pure virtual and must be implemented by the inheriting class
-     */
-    virtual void save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels ) = 0;
-
-    /*!
+	/*!
      * @brief Enables compression of exported files
      *
      * Depending on what exporter is selected, a corresponding
@@ -91,10 +98,60 @@ public:
 
 protected:
 
+	/*!
+     * @brief Parses and loads all levels into a vector of Level objects
+     *
+     * This method is pure virtual and must be implemented by the inheriting class.
+	 *
+	 * @param file An open file input stream object, ready to read from
+	 * @param levels An empty vector in which the newly constructed levels can be
+	 * saved
+	 * @return Must return the name of the collection, so the host application is able
+	 * to display it. If no collection name is available, it is recommended to return
+	 * "collection".
+     */
+    virtual std::string _parse( std::ifstream& file, std::vector<Level*>& levels ) = 0;
+
+    /*!
+     * @brief Saves a vector of level objects to a file
+     *
+     * This method is pure virtual and must be implemented by the inheriting class
+	 *
+	 * @param collectionName The name of the collection to be saved
+	 * @param file An output file stream object to save to
+	 * @param levels A vector of level pointers to save
+     */
+    virtual void _save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels ) = 0;
+
     /*!
      * @brief Registers a level to a level vector
      */
-    void registerLevel( Level* level, std::string& levelName, std::vector<Level*>& levels );
+    void _registerLevel( Level* level, std::string& levelName, std::vector<Level*>& levels );
+
+	/*!
+	 * @brief Returns the maximum width of the level with the largest width.
+	 *
+	 * Returns the maximum width of the largest level in a collection. This
+	 * value is updated every time save is called.
+	 *
+	 * @return Maximum width of the largest level in this collection
+	 */
+	Uint32 getMaxLevelWidth( void );
+
+	/*!
+	 * @brief Returns the maximum height of all of the levels
+	 *
+	 * Returns the maximum height of the largest level in a collection. This
+	 * value is updated every time save is called.
+	 *
+	 * @return Maximum height of the largets level in this collection
+	 */
+	Uint32 getMaxLevelHeigth( void );
+
+private:
+
+	Uint32 m_MaxLevelWidth;
+	Uint32 m_MaxLevelHeight;
 
 };
 

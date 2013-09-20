@@ -49,7 +49,9 @@ public:
      */
     ~CollectionParserSLC( void );
 
-    /*!
+private:
+
+	/*!
      * @brief Parses a .SLC file
      *
      * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
@@ -59,7 +61,7 @@ public:
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    std::string parse( std::ifstream& file, std::vector<Level*>& levelMap );
+    std::string _parse( std::ifstream& file, std::vector<Level*>& levelMap );
 
     /* !
      * @brief Universal .SLC format exporter
@@ -69,10 +71,7 @@ public:
      * @param file An open file object to write data to
      * @param levelMap An std::vector of levels to read from
      */
-    void save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
-
-private:
-
+    void _save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
 
 };
 

@@ -37,7 +37,7 @@ CollectionParserBase::~CollectionParserBase( void )
 }
 
 // --------------------------------------------------------------
-void CollectionParserBase::registerLevel( Level* level, std::string& levelName, std::vector<Level*>& levels )
+void CollectionParserBase::_registerLevel( Level* level, std::string& levelName, std::vector<Level*>& levels )
 {
     std::stringstream ss;
     std::vector<Level*>::iterator it;
@@ -61,6 +61,31 @@ void CollectionParserBase::registerLevel( Level* level, std::string& levelName, 
 }
 
 // --------------------------------------------------------------
+std::string CollectionParserBase::parse( std::ifstream& file, std::vector<Level*>& levels )
+{
+	return this->_parse( file, levels );
+}
+
+// --------------------------------------------------------------
+void CollectionParserBase::save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
+{
+
+	// calculate maximum level width and height
+	m_MaxLevelWidth = 0;
+	m_MaxLevelHeight = 0;
+	for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
+	{
+		std::size_t tmp = (*it)->getSizeX();
+		if( tmp > m_MaxLevelWidth ) m_MaxLevelWidth = tmp;
+		tmp = (*it)->getSizeY();
+		if( tmp > m_MaxLevelHeight ) m_MaxLevelHeight = tmp;
+	}
+
+	// call overridden save method
+	this->_save( collectionName, file, levels );
+}
+
+// --------------------------------------------------------------
 void CollectionParserBase::enableCompression( void )
 {
 }
@@ -68,6 +93,18 @@ void CollectionParserBase::enableCompression( void )
 // --------------------------------------------------------------
 void CollectionParserBase::disableCompression( void )
 {
+}
+
+// --------------------------------------------------------------
+Uint32 CollectionParserBase::getMaxLevelWidth( void )
+{
+	return m_MaxLevelWidth;
+}
+
+// --------------------------------------------------------------
+Uint32 CollectionParserBase::getMaxLevelHeigth( void )
+{
+	return m_MaxLevelHeight;
 }
 
 } // namespace Chocobun
