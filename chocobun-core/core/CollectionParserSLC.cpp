@@ -30,6 +30,7 @@
 #include <algorithm>
 
 #include <rapidxml-1.13/rapidxml.hpp>
+#include <rapidxml-1.13/rapidxml_print.hpp>
 
 namespace Chocobun {
 
@@ -103,6 +104,13 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*
 // --------------------------------------------------------------
 void CollectionParserSLC::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {
+    rapidxml::xml_document<> doc;
+    // rapidxml::xml_node<>* decl = doc.allocate_node(rapidxml::node_declaration);
+    // decl->append_attribute(doc.allocate_attribute("version", "1.0"));
+    // decl->append_attribute(doc.allocate_attribute("encoding", "UTF-8"));
+    // doc.append_node(decl);
+
+    file << doc;
 }
 
 } // namespace Chocobun
