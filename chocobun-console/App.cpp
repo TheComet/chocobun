@@ -120,7 +120,8 @@ void App::go( void )
                             delete m_Collection;
                         m_Collection = new Chocobun::Collection( fileName );
                         m_Collection->initialise();
-                        std::cout << "Successfully opened collection \"" << fileName << "\"" << std::endl;
+                        std::cout << "Successfully opened collection \"" << m_Collection->getName() << "\"";
+						std::cout << " from file \"" << fileName << "\"" << std::endl;
                     }
                 }
 

@@ -85,6 +85,12 @@ void Collection::setName( const std::string& name )
 }
 
 // --------------------------------------------------------------
+std::string Collection::getName( void ) const
+{
+	return m_CollectionName;
+}
+
+// --------------------------------------------------------------
 void Collection::enableCompression( void )
 {
     m_EnableCompression = true;
