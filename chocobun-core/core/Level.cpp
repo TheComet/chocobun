@@ -324,7 +324,7 @@ bool Level::movePlayer( char direction )
     // generate undo data
     if( isPushingBox ) direction -= 32; // convert to upper case for pushing boxes
     if( m_UndoDataIndex != -1 )
-        while( m_UndoData.size() != m_UndoDataIndex )
+        while( m_UndoData.size()-1 != m_UndoDataIndex )
             m_UndoData.pop_back();
     m_UndoData.push_back( direction );
     ++m_UndoDataIndex;
@@ -358,14 +358,14 @@ void Level::undo( void )
     if( move == 'r' ) --oldX;
 
     // calculate previous step player would have taken if he were traveling linearly
-    Uint32 previousX = oldX + (oldX-m_PlayerX);
-    Uint32 previousY = oldY + (oldY-m_PlayerY);
+    Uint32 previousX = oldX - (oldX-m_PlayerX);
+    Uint32 previousY = oldY - (oldY-m_PlayerY);
 
     // revert back player position
     if( m_LevelArray[m_PlayerX][m_PlayerY] == '@' )
         m_LevelArray[m_PlayerX][m_PlayerY] = ' ';
     else
-        m_LevelArray[m_PlayerX][m_PlayerY] = '+';
+        m_LevelArray[m_PlayerX][m_PlayerY] = '.';
     if( m_LevelArray[oldX][oldY] == ' ' )
         m_LevelArray[oldX][oldY] = '@';
     else
@@ -378,11 +378,13 @@ void Level::undo( void )
             m_LevelArray[previousX][previousY] = ' ';
         else
             m_LevelArray[previousX][previousY] = '.';
-        if( m_LevelArray[oldX][oldY] == ' ')
-            m_LevelArray[oldX][oldY] = '$';
+        if( m_LevelArray[m_PlayerX][m_PlayerY] == ' ')
+            m_LevelArray[m_PlayerX][m_PlayerY] = '$';
         else
-            m_LevelArray[oldX][oldY] = '*';
+            m_LevelArray[m_PlayerX][m_PlayerY] = '*';
     }
+	m_PlayerX = oldX;
+	m_PlayerY = oldY;
 
 }
 

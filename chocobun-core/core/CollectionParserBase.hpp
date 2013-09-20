@@ -54,7 +54,14 @@ public:
     /*!
      * @brief Parses and loads all levels into a vector of Level objects
      *
-     * This method is pure virtual and must be implemented by the inheriting class
+     * This method is pure virtual and must be implemented by the inheriting class.
+	 *
+	 * @param file An open file input stream object, ready to read from
+	 * @param levels An empty vector in which the newly constructed levels can be
+	 * saved
+	 * @return Must return the name of the collection, so the host application is able
+	 * to display it. If no collection name is available, it is recommended to return
+	 * "collection".
      */
     virtual std::string parse( std::ifstream& file, std::vector<Level*>& levels ) = 0;
 
