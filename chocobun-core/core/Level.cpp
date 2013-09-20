@@ -241,7 +241,6 @@ void Level::moveUp( void )
 {
     if( !m_IsLevelValid ) return;
     if( !this->movePlayer( 'u' ) ) return;
-    --m_PlayerY;
 }
 
 // --------------------------------------------------------------
@@ -249,7 +248,6 @@ void Level::moveDown( void )
 {
     if( !m_IsLevelValid ) return;
     if( !this->movePlayer( 'd' ) ) return;
-    ++m_PlayerY;
 }
 
 // --------------------------------------------------------------
@@ -257,7 +255,6 @@ void Level::moveLeft( void )
 {
     if( !m_IsLevelValid ) return;
     if( !this->movePlayer( 'l' ) ) return;
-    --m_PlayerX;
 }
 
 // --------------------------------------------------------------
@@ -265,11 +262,10 @@ void Level::moveRight( void )
 {
     if( !m_IsLevelValid ) return;
     if( !this->movePlayer( 'r' ) ) return;
-    ++m_PlayerX;
 }
 
 // --------------------------------------------------------------
-bool Level::movePlayer( char direction )
+bool Level::movePlayer( char direction, bool updateUndoData )
 {
 
     bool isPushingBox = false;
@@ -285,10 +281,10 @@ bool Level::movePlayer( char direction )
     Uint32 nextX = newX + (newX-m_PlayerX);
     Uint32 nextY = newY + (newY-m_PlayerY);
 
-    // can't move up if there is a wall
+    // can't move if there is a wall
     if( m_LevelArray[newX][newY] == '#' ) return false;
 
-    // can't move up if box is against a wall or another box
+    // can't move if box is against a wall or another box
     if( m_LevelArray[newX][newY] == '$' || m_LevelArray[newX][newY] == '*' )
     {
         if( m_LevelArray[nextX][nextY] == '#' ||
@@ -298,7 +294,7 @@ bool Level::movePlayer( char direction )
         isPushingBox = true;
     }
 
-    // move box up (if any)
+    // move box (if any)
     if( isPushingBox )
     {
         if( m_LevelArray[newX][newY] == '$' )
@@ -311,7 +307,7 @@ bool Level::movePlayer( char direction )
             m_LevelArray[nextX][nextY] = '$';     // target is floor, place box on floor
     }
 
-    // move player up
+    // move player
     if( m_LevelArray[newX][newY] == ' ' )
         m_LevelArray[newX][newY] = '@';     // target is floor, place player on floor
     else
@@ -319,15 +315,20 @@ bool Level::movePlayer( char direction )
     if( m_LevelArray[m_PlayerX][m_PlayerY] == '@')
         m_LevelArray[m_PlayerX][m_PlayerY] = ' ';
     else
-        m_LevelArray[m_PlayerX][m_PlayerY] = '+';
+        m_LevelArray[m_PlayerX][m_PlayerY] = '.';
+	m_PlayerX = newX;
+	m_PlayerY = newY;
 
     // generate undo data
-    if( isPushingBox ) direction -= 32; // convert to upper case for pushing boxes
-    if( m_UndoDataIndex != -1 )
-        while( m_UndoData.size()-1 != m_UndoDataIndex )
-            m_UndoData.pop_back();
-    m_UndoData.push_back( direction );
-    ++m_UndoDataIndex;
+	if( updateUndoData )
+	{
+		if( isPushingBox ) direction -= 32; // convert to upper case for pushing boxes
+		if( m_UndoDataIndex != -1 )
+			while( m_UndoData.size()-1 != m_UndoDataIndex )
+				m_UndoData.pop_back();
+		m_UndoData.push_back( direction );
+		++m_UndoDataIndex;
+	}
 
     return true;
 }
@@ -358,8 +359,8 @@ void Level::undo( void )
     if( move == 'r' ) --oldX;
 
     // calculate previous step player would have taken if he were traveling linearly
-    Uint32 previousX = oldX - (oldX-m_PlayerX);
-    Uint32 previousY = oldY - (oldY-m_PlayerY);
+    Uint32 previousX = m_PlayerX + (m_PlayerX-oldX);
+    Uint32 previousY = m_PlayerY + (m_PlayerY-oldY);
 
     // revert back player position
     if( m_LevelArray[m_PlayerX][m_PlayerY] == '@' )
@@ -392,9 +393,11 @@ void Level::undo( void )
 void Level::redo( void )
 {
     if( !m_IsLevelValid ) return;
-    if( m_UndoDataIndex == m_UndoData.size()-1 ) return;
-    this->movePlayer( m_UndoData.at(m_UndoDataIndex) );
-    ++m_UndoDataIndex;
+    if( m_UndoDataIndex+1 == m_UndoData.size() ) return;
+	char move = m_UndoData.at(m_UndoDataIndex+1);
+	if( move == 'U' || move == 'D' || move == 'L' || move == 'R' ) move += 32; // convert to lower case
+    this->movePlayer( move, false );
+	++m_UndoDataIndex;
 }
 
 } // namespace Chocobun

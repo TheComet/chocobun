@@ -304,11 +304,13 @@ private:
     /*!
      * @brief Moves the player and updates all tiles
      *
-     * @param newX The new x position the player should have
-     * @param newY The new y position the player should have
+     * @param direction The direction to move the player, can be either
+	 * u, d, l, or r (can <b>NOT</b> be upper case)
+	 * @param updateUndoData Set this to false if this move should not be
+	 * registered as a move that can be undone
      * @return Returns true if the move was successful, false if otherwise
      */
-    bool movePlayer( char direction );
+    bool movePlayer( char direction, bool updateUndoData = true );
 
     std::map<std::string, std::string> m_MetaData;
     std::vector< std::vector<char> > m_LevelArray;
