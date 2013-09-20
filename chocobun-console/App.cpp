@@ -102,6 +102,7 @@ void App::go( void )
                 if( it != optionList.end() ) break;
 
                 // list collection
+				// TODO search for collection files
                 if( list );
 
                 // open collection
@@ -386,4 +387,5 @@ bool App::displayHelp( const std::string& cmd )
     std::cout << std::endl;
     if( !helped)
         std::cout << "Error: Unknown help topic \"" << cmd << "\"" << std::endl;
+	return helped;
 }

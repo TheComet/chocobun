@@ -19,6 +19,9 @@
 // Base class for all collection parsers
 // --------------------------------------------------------------
 
+#ifndef __CHOCOBUN_CORE_COLLECTION_PARSER_BASE_HPP__
+#define __CHOCOBUN_CORE_COLLECTION_PARSER_BASE_HPP__
+
 // --------------------------------------------------------------
 // include files
 
@@ -89,3 +92,5 @@ protected:
 };
 
 } // namespace Chocobun
+
+#endif // __CHOCOBUN_CORE_COLLECTION_PARSER_BASE_HPP__
