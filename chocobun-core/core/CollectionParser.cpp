@@ -53,8 +53,20 @@ std::string CollectionParser::parse( const std::string& fileName, std::vector<Le
     if( !file.is_open() )
         throw Exception( "[CollectionParser::parse] attempt to open collection file failed" );
 
-    // TODO determine file format
-    CollectionParserBase* parser = new CollectionParserSOK();
+    std::string inBuf("");
+    std::getline( file, inBuf );
+    file.seekg( 0 ); // reset file pointer
+
+    CollectionParserBase* parser;
+
+    if( "<?xml" == inBuf.substr(0,5) ) // if the file starts with the xml magic bytes, we assume the format is SLC...
+    {   
+        parser = new CollectionParserSLC();
+    }
+    else // ... else we assume the file format is SOK
+    {
+        parser = new CollectionParserSOK();
+    }    
 
     // parse
     std::string result = parser->parse( file, levels );
