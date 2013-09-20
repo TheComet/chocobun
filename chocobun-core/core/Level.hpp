@@ -308,10 +308,10 @@ private:
      * @param newY The new y position the player should have
      * @return Returns true if the move was successful, false if otherwise
      */
-    bool movePlayer( const Uint32 newX, const Uint32 newY );
+    bool movePlayer( char direction );
 
-    std::vector< std::vector<char> > m_LevelArray;
     std::map<std::string, std::string> m_MetaData;
+    std::vector< std::vector<char> > m_LevelArray;
     std::vector<std::string> m_HeaderData;
     std::vector<std::string> m_Notes;
     std::vector<char> m_UndoData;
@@ -319,9 +319,9 @@ private:
 
     Uint32 m_PlayerX;
     Uint32 m_PlayerY;
+    Uint32 m_UndoDataIndex;
 
     bool m_IsLevelValid;
-
 };
 
 } // namespace Chocobun

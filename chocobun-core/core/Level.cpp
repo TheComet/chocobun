@@ -31,7 +31,8 @@ namespace Chocobun {
 
 // --------------------------------------------------------------
 Level::Level( void ) :
-    m_IsLevelValid( false )
+    m_IsLevelValid( false ),
+    m_UndoDataIndex( -1 ) // type is unsigned, but the wrap around is intended
 {
     m_LevelArray.push_back( std::vector<char>(0) );
 }
@@ -239,7 +240,7 @@ bool Level::validateLevel( void )
 void Level::moveUp( void )
 {
     if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( m_PlayerX, m_PlayerY-1 ) ) return;
+    if( !this->movePlayer( 'u' ) ) return;
     --m_PlayerY;
 }
 
@@ -247,7 +248,7 @@ void Level::moveUp( void )
 void Level::moveDown( void )
 {
     if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( m_PlayerX, m_PlayerY+1 ) ) return;
+    if( !this->movePlayer( 'd' ) ) return;
     ++m_PlayerY;
 }
 
@@ -255,7 +256,7 @@ void Level::moveDown( void )
 void Level::moveLeft( void )
 {
     if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( m_PlayerX-1, m_PlayerY ) ) return;
+    if( !this->movePlayer( 'l' ) ) return;
     --m_PlayerX;
 }
 
@@ -263,15 +264,22 @@ void Level::moveLeft( void )
 void Level::moveRight( void )
 {
     if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( m_PlayerX+1, m_PlayerY ) ) return;
+    if( !this->movePlayer( 'r' ) ) return;
     ++m_PlayerX;
 }
 
 // --------------------------------------------------------------
-bool Level::movePlayer( const Uint32 newX, const Uint32 newY )
+bool Level::movePlayer( char direction )
 {
 
     bool isPushingBox = false;
+
+    // calculate new positions of player
+    Uint32 newX = m_PlayerX, newY = m_PlayerY;
+    if( direction == 'u' ) --newY;
+    if( direction == 'd' ) ++newY;
+    if( direction == 'l' ) --newX;
+    if( direction == 'r' ) ++newX;
 
     // calculate next step the player would take if traveling linearly
     Uint32 nextX = newX + (newX-m_PlayerX);
@@ -308,7 +316,18 @@ bool Level::movePlayer( const Uint32 newX, const Uint32 newY )
         m_LevelArray[newX][newY] = '@';     // target is floor, place player on floor
     else
         m_LevelArray[newX][newY] = '+';     // target is goal, place player on goal
-    m_LevelArray[m_PlayerX][m_PlayerY] = ' ';
+    if( m_LevelArray[m_PlayerX][m_PlayerY] == '@')
+        m_LevelArray[m_PlayerX][m_PlayerY] = ' ';
+    else
+        m_LevelArray[m_PlayerX][m_PlayerY] = '+';
+
+    // generate undo data
+    if( isPushingBox ) direction -= 32; // convert to upper case for pushing boxes
+    if( m_UndoDataIndex != -1 )
+        while( m_UndoData.size() != m_UndoDataIndex )
+            m_UndoData.pop_back();
+    m_UndoData.push_back( direction );
+    ++m_UndoDataIndex;
 
     return true;
 }
@@ -317,12 +336,63 @@ bool Level::movePlayer( const Uint32 newX, const Uint32 newY )
 void Level::undo( void )
 {
     if( !m_IsLevelValid ) return;
+    if( m_UndoDataIndex == -1 ) return;
+
+    // get undo move
+    char move = m_UndoData.at( m_UndoDataIndex );
+    --m_UndoDataIndex;
+
+    // determine if a box was pushed and convert to lower case
+    bool boxPushed = false;
+    if( move == 'U' || move == 'D' || move == 'L' || move == 'R' )
+    {
+        boxPushed = true;
+        move += 32; // convert to lower case
+    }
+
+    // calculate old positions
+    Uint32 oldX = m_PlayerX, oldY = m_PlayerY;
+    if( move == 'u' ) ++oldY;
+    if( move == 'd' ) --oldY;
+    if( move == 'l' ) ++oldX;
+    if( move == 'r' ) --oldX;
+
+    // calculate previous step player would have taken if he were traveling linearly
+    Uint32 previousX = oldX + (oldX-m_PlayerX);
+    Uint32 previousY = oldY + (oldY-m_PlayerY);
+
+    // revert back player position
+    if( m_LevelArray[m_PlayerX][m_PlayerY] == '@' )
+        m_LevelArray[m_PlayerX][m_PlayerY] = ' ';
+    else
+        m_LevelArray[m_PlayerX][m_PlayerY] = '+';
+    if( m_LevelArray[oldX][oldY] == ' ' )
+        m_LevelArray[oldX][oldY] = '@';
+    else
+        m_LevelArray[oldX][oldY] = '+';
+
+    // player was pushing a box
+    if( boxPushed )
+    {
+        if( m_LevelArray[previousX][previousY] == '$' )
+            m_LevelArray[previousX][previousY] = ' ';
+        else
+            m_LevelArray[previousX][previousY] = '.';
+        if( m_LevelArray[oldX][oldY] == ' ')
+            m_LevelArray[oldX][oldY] = '$';
+        else
+            m_LevelArray[oldX][oldY] = '*';
+    }
+
 }
 
 // --------------------------------------------------------------
 void Level::redo( void )
 {
     if( !m_IsLevelValid ) return;
+    if( m_UndoDataIndex == m_UndoData.size()-1 ) return;
+    this->movePlayer( m_UndoData.at(m_UndoDataIndex) );
+    ++m_UndoDataIndex;
 }
 
 } // namespace Chocobun
