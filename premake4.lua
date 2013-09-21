@@ -33,10 +33,6 @@ if os.get() == "windows" then
 	linklibs_chocobun_console_release = {
 		"chocobun-core"
 	}
-	linklibs_chocobun_sfml_debug = {
-	}
-	linklibs_chocobun_sfml_release = {
-	}
 
 elseif os.get() == "linux" then
 
@@ -67,10 +63,6 @@ elseif os.get() == "linux" then
 	}
 	linklibs_chocobun_console_release = {
 		"chocobun-core"
-	}
-	linklibs_chocobun_sfml_debug = {
-	}
-	linklibs_chocobun_sfml_release = {
 	}
 	
 -- MAAAC
@@ -103,10 +95,6 @@ elseif os.get() == "macosx" then
 	}
 	linklibs_chocobun_console_release = {
 		"chocobun-core"
-	}
-	linklibs_chocobun_sfml_debug = {
-	}
-	linklibs_chocobun_sfml_release = {
 	}
 
 -- OS couldn't be determined

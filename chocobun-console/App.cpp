@@ -23,7 +23,7 @@
 // include files
 
 #include <App.hpp>
-#include <core/Collection.hpp>
+#include <ChocobunInterface.hpp>
 
 #include <iostream>
 #include <fstream>

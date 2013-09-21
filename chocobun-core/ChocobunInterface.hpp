@@ -14,3 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Chocobun.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifndef __CHOCOBUN_INTERFACE_HPP__
+#define __CHOCOBUN_INTERFACE_HPP__
+
+#include <core/Collection.hpp>
+
+#endif // __CHOCOBUN_INTERFACE_HPP__

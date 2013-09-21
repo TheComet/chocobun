@@ -43,8 +43,8 @@ Here is an example of building it using GNU makefiles.
 To simply answer this, you can't run it. Why? Because it's an
 *engine*. It's designed to function as a back-end for a game.
 
-With that said, there are two projects included with Chocobun.
-A console front-end, and an SFML-2.1 front-end. These both use
+With that said, there is a simple developer 'test' project
+included with Chocobun: A console front-end. It links against
 Chocobun, and should serve as an example of how to interface
 the engine.
 
@@ -65,7 +65,3 @@ linked. This involves some terminal interaction:
 
     # now we can run it
     $ ./chocobun-console
-
-### Running chocobun-sfml
-
-This program hasn't been written yet.
