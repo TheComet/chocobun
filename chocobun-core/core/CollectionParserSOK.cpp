@@ -188,12 +188,20 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*
 
                 // special case for collection name
                 if( key.compare("Collection") == 0 )
+				{
                     collectionName = value;
+					break;
+				}
+
+				// special case for snapshots
+				if( key.compare("Snapshot") == 0 )
+				{
+					lvl->importUndoData( value );
+					break;
+				}
 
                 // add meta data to level
-                else
-                    lvl->addMetaData( key, value );
-
+                lvl->addMetaData( key, value );
                 break;
             }
 
@@ -228,7 +236,7 @@ void CollectionParserSOK::disableCompression( void )
 void CollectionParserSOK::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {
 
-    // write all levels to std::cout
+    // write all levels to file stream
     file << "Collection: " << collectionName << std::endl;
     RLE rle;
     for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
@@ -240,7 +248,13 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         // place level name above tile data between two empty lines
         file << std::endl << (*it)->getLevelName() << std::endl << std::endl;
 
+		// need to get undo data before resetting level state
+		std::string undoData;
+		bool undoDataExists = (*it)->undoDataExists();
+		if( undoDataExists ) undoData = (*it)->exportUndoData();
+
         // write tile data with optional RLE compression
+		(*it)->reset(); // reset to initial state for saving
         std::stringstream ss;
         (*it)->streamAllTileData( ss, !m_EnableRLE );
         std::string compressed = ss.str();
@@ -251,8 +265,10 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         // add meta data below tile data
         (*it)->streamAllMetaData( file );
 
-        // add level notes below meta data
-        (*it)->streamAllNotes( file );
+		// save snapshot
+		if( undoDataExists )
+			file << "Snapshot: " << undoData << std::endl;
+
     }
 }
 

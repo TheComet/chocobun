@@ -35,9 +35,9 @@
 namespace Chocobun {
 
 // --------------------------------------------------------------
-CollectionParser::CollectionParser( void )
+CollectionParser::CollectionParser( void ) :
+	m_fileFormat( FORMAT_SOK )
 {
-    this->setFileFormat(FORMAT_SLC);
 }
 
 // --------------------------------------------------------------

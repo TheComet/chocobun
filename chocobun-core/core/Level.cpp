@@ -202,6 +202,63 @@ std::string Level::getLevelName( void ) const
 }
 
 // --------------------------------------------------------------
+std::string Level::exportUndoData( void )
+{
+	std::string undoData( m_UndoData.begin(), m_UndoData.end() );
+	if( this->undoDataExists() ) undoData.insert( m_UndoDataIndex+1, "*" );
+	return undoData;
+}
+
+// --------------------------------------------------------------
+void Level::importUndoData( const std::string& undoData )
+{
+	if( undoData.size() == 0 ) return;
+	std::vector<char> tmp( undoData.begin(), undoData.end() );
+	std::size_t pos = 0;
+	for( std::vector<char>::iterator it = tmp.begin(); it != tmp.end(); ++it )
+	{
+		if( *it == '*' )
+		{
+			tmp.erase( it );
+			break;
+		}
+		++pos;
+
+		// validate characters
+		switch( *it )
+		{
+			case 'u':break;
+			case 'd':break;
+			case 'l':break;
+			case 'r':break;
+			case 'U':break;
+			case 'D':break;
+			case 'L':break;
+			case 'R':break;
+			default: return; break;
+		}
+	}
+
+	// set level state
+	this->reset();
+	m_UndoData = tmp;
+	m_UndoDataIndex = pos-1;
+	if( m_IsLevelValid )
+		if( this->undoDataExists() )
+			for( pos = 0; pos != m_UndoDataIndex; ++pos )
+				this->movePlayer( m_UndoData.at(pos), false );
+	
+}
+
+// --------------------------------------------------------------
+void Level::reset( void )
+{
+	while( this->undo() );
+	m_UndoData.clear();
+	m_UndoDataIndex = -1;
+}
+
+// --------------------------------------------------------------
 bool Level::validateLevel( void )
 {
 
@@ -215,7 +272,7 @@ bool Level::validateLevel( void )
     {
         for( size_t y = 0; y != m_LevelArray[0].size(); ++y )
         {
-            if( m_LevelArray[x][y] == '@' )
+            if( m_LevelArray[x][y] == '@' || m_LevelArray[x][y] == '+' )
             {
                 if( playerFound )
                 {
@@ -230,6 +287,12 @@ bool Level::validateLevel( void )
             }
         }
     }
+	if( !playerFound ) return false;
+
+	// fast-forward player according to undo/redo data
+	if( this->undoDataExists() )
+		for( std::size_t pos = 0; pos != m_UndoDataIndex+1; ++pos )
+			this->movePlayer( m_UndoData.at(pos), false );
 
     // arriving here means the level is valid
     m_IsLevelValid = true;
@@ -269,6 +332,9 @@ bool Level::movePlayer( char direction, bool updateUndoData )
 {
 
     bool isPushingBox = false;
+
+	// convert to lower case
+	if( direction == 'U' || direction == 'D' || direction == 'L' || direction == 'R' ) direction += 32;
 
     // calculate new positions of player
     Uint32 newX = m_PlayerX, newY = m_PlayerY;
@@ -323,7 +389,7 @@ bool Level::movePlayer( char direction, bool updateUndoData )
 	if( updateUndoData )
 	{
 		if( isPushingBox ) direction -= 32; // convert to upper case for pushing boxes
-		if( m_UndoDataIndex != -1 )
+		if( this->undoDataExists() )
 			while( m_UndoData.size()-1 != m_UndoDataIndex )
 				m_UndoData.pop_back();
 		m_UndoData.push_back( direction );
@@ -334,10 +400,10 @@ bool Level::movePlayer( char direction, bool updateUndoData )
 }
 
 // --------------------------------------------------------------
-void Level::undo( void )
+bool Level::undo( void )
 {
-    if( !m_IsLevelValid ) return;
-    if( m_UndoDataIndex == -1 ) return;
+    if( !m_IsLevelValid ) return false;
+	if( !this->undoDataExists() ) return false;
 
     // get undo move
     char move = m_UndoData.at( m_UndoDataIndex );
@@ -387,17 +453,24 @@ void Level::undo( void )
 	m_PlayerX = oldX;
 	m_PlayerY = oldY;
 
+	return true;
 }
 
 // --------------------------------------------------------------
-void Level::redo( void )
+inline bool Level::undoDataExists( void )
 {
-    if( !m_IsLevelValid ) return;
-    if( m_UndoDataIndex+1 == m_UndoData.size() ) return;
+	return (m_UndoDataIndex!=-1);
+}
+
+// --------------------------------------------------------------
+bool Level::redo( void )
+{
+    if( !m_IsLevelValid ) return false;
+    if( m_UndoDataIndex+1 >= m_UndoData.size() ) return false;
 	char move = m_UndoData.at(m_UndoDataIndex+1);
-	if( move == 'U' || move == 'D' || move == 'L' || move == 'R' ) move += 32; // convert to lower case
     this->movePlayer( move, false );
 	++m_UndoDataIndex;
+	return true;
 }
 
 } // namespace Chocobun

@@ -246,6 +246,23 @@ public:
      */
     std::string getLevelName( void ) const;
 
+	/*!
+	 * @brief Returns all undo/redo data in the form of a string
+	 *
+	 * This is used to save undo/redo data to a file so it can be
+	 * imported again.
+	 *
+	 * @return The undo/redo data string
+	 */
+	std::string exportUndoData( void );
+
+	/*!
+	 * @brief Imports an undo/redo data string previously exported
+	 *
+	 * @param undoData The undo/redo data string
+	 */
+	void importUndoData( const std::string& undoData );
+
     /*!
      * @brief Validates the level
      *
@@ -289,15 +306,26 @@ public:
 
     /*!
      * @brief Undoes the last move
-     * @note If no undo data exists, this method will silently fail
+     * @return Returns false if there is no more undo data, otherwise true is returned
      */
-    void undo( void );
+    bool undo( void );
+
+	/*!
+	 * @brief Checks if undo data exists or not
+	 * @return Returns true if undo data exists, false if it doesn't
+	 */
+	inline bool undoDataExists( void );
 
     /*!
      * @brief Redoes a move
-     * @note If no redo data exists, this method will silently fail
+	 * @return Returns false if there is no more data to redo, otherwise true is returned
      */
-    void redo( void );
+    bool redo( void );
+
+	/*!
+	 * @brief Resets the level to its initial state
+	 */
+	void reset( void );
 
 private:
 
@@ -305,7 +333,7 @@ private:
      * @brief Moves the player and updates all tiles
      *
      * @param direction The direction to move the player, can be either
-	 * u, d, l, or r (can <b>NOT</b> be upper case)
+	 * u, d, l, r, or U, D, L, R (upper case or lower case - it does the same thing)
 	 * @param updateUndoData Set this to false if this move should not be
 	 * registered as a move that can be undone
      * @return Returns true if the move was successful, false if otherwise
@@ -321,7 +349,7 @@ private:
 
     Uint32 m_PlayerX;
     Uint32 m_PlayerY;
-    Uint32 m_UndoDataIndex;
+	std::size_t m_UndoDataIndex;
 
     bool m_IsLevelValid;
 };
