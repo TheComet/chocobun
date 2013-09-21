@@ -252,7 +252,6 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         std::stringstream ss;
         (*it)->streamInitialTileData( ss, !m_EnableRLE );
         std::string compressed = ss.str();
-        size_t pos = 0;
         if( m_EnableRLE ) rle.multiPassCompress( compressed );
         file << compressed;
 
