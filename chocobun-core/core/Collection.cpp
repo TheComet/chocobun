@@ -235,4 +235,11 @@ void Collection::redo( void )
     m_ActiveLevel->redo();
 }
 
+// --------------------------------------------------------------
+void Collection::reset( void )
+{
+    if( !m_ActiveLevel ) return;
+    m_ActiveLevel->reset();
+}
+
 } // namespace Chocobun

@@ -220,6 +220,13 @@ void App::go( void )
                     m_Collection->streamLevelNames( std::cout );
                 }
 
+                // reset level
+                if( reset )
+                {
+                    m_Collection->reset();
+                    m_Collection->streamTileData( std::cout );
+                }
+
                 // open level
                 if( open )
                 {
