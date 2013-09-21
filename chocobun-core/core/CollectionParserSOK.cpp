@@ -248,15 +248,9 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         // place level name above tile data between two empty lines
         file << std::endl << (*it)->getLevelName() << std::endl << std::endl;
 
-		// need to get undo data before resetting level state
-		std::string undoData;
-		bool undoDataExists = (*it)->undoDataExists();
-		if( undoDataExists ) undoData = (*it)->exportUndoData();
-
         // write tile data with optional RLE compression
-		(*it)->reset(); // reset to initial state for saving
         std::stringstream ss;
-        (*it)->streamAllTileData( ss, !m_EnableRLE );
+        (*it)->streamInitialTileData( ss, !m_EnableRLE );
         std::string compressed = ss.str();
         size_t pos = 0;
         if( m_EnableRLE ) rle.multiPassCompress( compressed );
@@ -266,8 +260,8 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         (*it)->streamAllMetaData( file );
 
 		// save snapshot
-		if( undoDataExists )
-			file << "Snapshot: " << undoData << std::endl;
+		if( (*it)->undoDataExists() )
+			file << "Snapshot: " << (*it)->exportUndoData() << std::endl;
 
     }
 }

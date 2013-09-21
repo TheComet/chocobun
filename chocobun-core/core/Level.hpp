@@ -170,22 +170,35 @@ public:
     void insertTileLine( const Chocobun::Uint32& y, const std::string& tiles );
 
     /*!
-     * @brief Streams all tile data to a stream object
+     * @brief Streams all current tile data to a stream object
      *
-     * This is used to save the level data to a file
+     * This can be used to retrieve all of the tiles to update
+     * the screen when a move is made
      *
-     * @param stream The stream object to stream to
-     * @param newLine If set to true (default), new lines are inserted.
+     * @param stream The output stream object to stream to
+     * @param newLine If set to true (default), new line breaks are inserted.
      * Otherwise, "|" are inserted (for RLE compression)
      */
     void streamAllTileData( std::ostream& stream, bool newLine = true );
 
     /*!
-     * @brief Gets the array of tile data
+     * @brief Gets the array of current tile data
      *
      * @return Returns a 2-dimensional array of chars containing tile data
      */
     const std::vector< std::vector<char> >& getTileData( void ) const;
+
+    /*!
+     * @brief Streams the tile data of this level in its initial state
+     *
+     * Retrieves all of the tiles as they initially were. This is best used
+     * to save levels to a file.
+     *
+     * @param stream The output stream object to stream to
+     * @param newLine If set to true (default), new line breaks are insterted.
+     * Otherwise, "|" are inserted (for RLE compression)
+     */
+    void streamInitialTileData( std::ostream& stream, bool newLine = true );
 
     /*!
      * @brief Gets a single tile from the level
@@ -314,7 +327,7 @@ public:
 	 * @brief Checks if undo data exists or not
 	 * @return Returns true if undo data exists, false if it doesn't
 	 */
-	inline bool undoDataExists( void );
+	bool undoDataExists( void );
 
     /*!
      * @brief Redoes a move

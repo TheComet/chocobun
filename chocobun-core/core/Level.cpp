@@ -138,6 +138,38 @@ void Level::streamAllTileData( std::ostream& stream, bool newLine )
 }
 
 // --------------------------------------------------------------
+void Level::streamInitialTileData( std::ostream& stream, bool newLine )
+{
+
+    // save progress temporarily and reset to initial state
+    std::size_t undoDataIndex = m_UndoDataIndex;
+    if( m_IsLevelValid )
+    {
+        while( this->undo() );
+    }
+
+    // stream data
+    for( std::size_t y = 0; y != m_LevelArray[0].size(); ++y )
+    {
+        for( std::size_t x = 0; x != m_LevelArray.size(); ++x )
+            stream << m_LevelArray[x][y];
+        if( newLine )
+            stream << std::endl;
+        else
+            stream << "|";
+    }
+    if( !newLine ) stream << std::endl;
+
+    // fast forward again to restore last state
+    m_UndoDataIndex = undoDataIndex;
+    if( m_IsLevelValid )
+		if( undoDataIndex != -1 )
+			for( std::size_t pos = 0; pos != m_UndoDataIndex; ++pos )
+				this->movePlayer( m_UndoData.at(pos), false );
+
+}
+
+// --------------------------------------------------------------
 const std::vector< std::vector<char> >& Level::getTileData( void ) const
 {
     return m_LevelArray;
@@ -247,7 +279,7 @@ void Level::importUndoData( const std::string& undoData )
 		if( this->undoDataExists() )
 			for( pos = 0; pos != m_UndoDataIndex; ++pos )
 				this->movePlayer( m_UndoData.at(pos), false );
-	
+
 }
 
 // --------------------------------------------------------------
@@ -457,7 +489,7 @@ bool Level::undo( void )
 }
 
 // --------------------------------------------------------------
-inline bool Level::undoDataExists( void )
+bool Level::undoDataExists( void )
 {
 	return (m_UndoDataIndex!=-1);
 }
