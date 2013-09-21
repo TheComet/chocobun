@@ -176,7 +176,7 @@ const std::vector< std::vector<char> >& Level::getTileData( void ) const
 }
 
 // --------------------------------------------------------------
-char Level::getTile( Uint32 x, Uint32 y ) const
+char Level::getTile( std::size_t x, std::size_t y ) const
 {
     if( x < 1 || x > m_LevelArray.size() ) return '\0';
     if( y < 1 || y > m_LevelArray[0].size() ) return '\0';
@@ -184,13 +184,13 @@ char Level::getTile( Uint32 x, Uint32 y ) const
 }
 
 // --------------------------------------------------------------
-Uint32 Level::getSizeX( void ) const
+std::size_t Level::getSizeX( void ) const
 {
     return m_LevelArray.size();
 }
 
 // --------------------------------------------------------------
-Uint32 Level::getSizeY( void ) const
+std::size_t Level::getSizeY( void ) const
 {
     return m_LevelArray[0].size();
 }
