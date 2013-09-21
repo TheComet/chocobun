@@ -4,22 +4,16 @@
 
 -- Windows specific settings
 if os.get() == "windows" then
-
-	-- root directories of required libraries
-	local rootDir_SFML = "$(SFML_HOME)"
 	
 	-- global header include directories
 	headerSearchDirs = {
 		"chocobun-core",
-		"chocobun-console",
-		"chocobun-sfml"
+		"chocobun-console"
 	}
 	
 	-- lib include directories
 	libSearchDirs = {
 		"bin/lib",
-		
-		rootDir_SFML .. "/lib"
 	}
 	
 	-- link libraries
@@ -40,9 +34,7 @@ elseif os.get() == "linux" then
 	headerSearchDirs = {
 		"chocobun-core",
 		"chocobun-console",
-		"chocobun-sfml",
 		"usr/local/include/",
-		"usr/local/include/SFML"
 	}
 
 	-- lib include directories
@@ -72,9 +64,7 @@ elseif os.get() == "macosx" then
 	headerSearchDirs = {
 		"chocobun-core",
 		"chocobun-console",
-		"chocobun-sfml",
-		"usr/include/",
-		"usr/include/SFML"
+		"usr/include/"
 	}
 
 	-- lib include directories
