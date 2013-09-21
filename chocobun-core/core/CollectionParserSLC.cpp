@@ -103,10 +103,79 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*
 void CollectionParserSLC::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {
     rapidxml::xml_document<> doc;
-    rapidxml::xml_node<>* decl = doc.allocate_node(rapidxml::node_declaration);
-    decl->append_attribute(doc.allocate_attribute("version", "1.0"));
-    decl->append_attribute(doc.allocate_attribute("encoding", "UTF-8"));
-    doc.append_node(decl);
+    rapidxml::xml_node<>* declaration = doc.allocate_node( rapidxml::node_declaration );
+    declaration->append_attribute( doc.allocate_attribute( "version", "1.0" ) );
+    declaration->append_attribute( doc.allocate_attribute( "encoding", "UTF-8" ) );
+    doc.append_node( declaration );
+
+    rapidxml::xml_node<>* root = doc.allocate_node( rapidxml::node_element, "SokobanLevels" );
+    root->append_attribute( doc.allocate_attribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" ) ); 
+    root->append_attribute( doc.allocate_attribute( "xsi:schemaLocation", "SokobanLev.xsd" ) );
+    doc.append_node( root );
+
+    Level* lvl = levels[0];
+    for( int i = 0; i < NUM_META_TAG_NAMES; ++i ) 
+    {
+        std::string tagName = META_TAG_NAMES[i];
+        
+        rapidxml::xml_node<>* metaDataNode = doc.allocate_node( rapidxml::node_element, doc.allocate_string(tagName.c_str()) );
+        metaDataNode->value( doc.allocate_string( lvl->getMetaData(tagName).c_str() ) );
+        root->append_node( metaDataNode );
+    }
+
+    rapidxml::xml_node<>* levelCollectionNode = doc.allocate_node( rapidxml::node_element, doc.allocate_string("LevelCollection") );
+
+    levelCollectionNode->append_attribute( doc.allocate_attribute( "Copyright", lvl->getMetaData("Author").c_str() ) ); 
+
+    std::stringstream ss1;
+    ss1 <<  this->getMaxLevelWidth();
+    std::string ss1s = ss1.str();
+    levelCollectionNode->append_attribute( doc.allocate_attribute( "MaxWidth", ss1s.c_str() ) );
+
+    std::stringstream ss2;
+    ss2 <<  this->getMaxLevelHeight();
+    std::string ss2s = ss2.str();
+    levelCollectionNode->append_attribute( doc.allocate_attribute( "MaxHeight", ss2s.c_str() ) ); 
+
+    const char* attributeValue;
+
+    std::stringstream ss3;
+    std::stringstream ss4;
+
+    for ( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
+    {
+        rapidxml::xml_node<>* levelNode = doc.allocate_node( rapidxml::node_element, doc.allocate_string("Level") );
+
+        levelNode->append_attribute( doc.allocate_attribute( "Id", (*it)->getLevelName().c_str() ) ); 
+
+        ss3.str("");
+        ss3 <<  (*it)->getSizeX();
+
+        attributeValue = doc.allocate_string( ss3.str().c_str() );
+        levelNode->append_attribute( doc.allocate_attribute( "Width", attributeValue ) );
+
+        ss4.str("");
+        ss4 <<  (*it)->getSizeY();
+
+        attributeValue = doc.allocate_string( ss4.str().c_str() );
+        levelNode->append_attribute( doc.allocate_attribute( "Height", attributeValue ) );
+
+        std::stringstream ss;
+        (*it)->streamInitialTileData( ss );
+        std::istringstream levelData( ss.str() );
+        std::string line;    
+
+        while( std::getline( levelData, line ) ) {
+            rapidxml::xml_node<>* lineNode = doc.allocate_node( rapidxml::node_element, doc.allocate_string("L") );
+            lineNode->value( doc.allocate_string( line.c_str() ) );
+            levelNode->append_node( lineNode );
+        }
+
+        levelCollectionNode->append_node(levelNode);
+        
+    }
+
+    root->append_node( levelCollectionNode );
 
     file << doc;
 }

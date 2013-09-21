@@ -68,6 +68,7 @@ void Collection::deinitialise( void )
 
     // export levels
     CollectionParser cp;
+    cp.setFileFormat( m_FileFormat );
     cp.save( m_CollectionName, m_FileName, m_Levels, m_EnableCompression );
 
     // unload levels

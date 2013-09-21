@@ -102,7 +102,7 @@ Uint32 CollectionParserBase::getMaxLevelWidth( void )
 }
 
 // --------------------------------------------------------------
-Uint32 CollectionParserBase::getMaxLevelHeigth( void )
+Uint32 CollectionParserBase::getMaxLevelHeight( void )
 {
 	return m_MaxLevelHeight;
 }

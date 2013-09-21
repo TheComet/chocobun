@@ -146,7 +146,7 @@ protected:
 	 *
 	 * @return Maximum height of the largets level in this collection
 	 */
-	Uint32 getMaxLevelHeigth( void );
+	Uint32 getMaxLevelHeight( void );
 
 private:
 
