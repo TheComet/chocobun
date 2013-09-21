@@ -323,12 +323,6 @@ public:
      */
     bool undo( void );
 
-	/*!
-	 * @brief Checks if undo data exists or not
-	 * @return Returns true if undo data exists, false if it doesn't
-	 */
-	bool undoDataExists( void );
-
     /*!
      * @brief Redoes a move
 	 * @return Returns false if there is no more data to redo, otherwise true is returned
@@ -339,6 +333,18 @@ public:
 	 * @brief Resets the level to its initial state
 	 */
 	void reset( void );
+
+	/*!
+	 * @brief Checks if undo data exists or not
+	 * @return Returns true if undo data exists, false if it doesn't
+	 */
+	bool undoDataExists( void );
+
+	/*!
+	 * @brief Checks if redo data exists or not
+	 * @return Returns true if redo data exists, false if it doesn't
+	 */
+    bool redoDataExists( void );
 
 private:
 

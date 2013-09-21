@@ -237,7 +237,7 @@ std::string Level::getLevelName( void ) const
 std::string Level::exportUndoData( void )
 {
 	std::string undoData( m_UndoData.begin(), m_UndoData.end() );
-	if( this->undoDataExists() ) undoData.insert( m_UndoDataIndex+1, "*" );
+	if( this->undoDataExists() || this->redoDataExists() ) undoData.insert( m_UndoDataIndex+1, "*" );
 	return undoData;
 }
 
@@ -489,20 +489,26 @@ bool Level::undo( void )
 }
 
 // --------------------------------------------------------------
-bool Level::undoDataExists( void )
-{
-	return (m_UndoDataIndex!=-1);
-}
-
-// --------------------------------------------------------------
 bool Level::redo( void )
 {
     if( !m_IsLevelValid ) return false;
-    if( m_UndoDataIndex+1 >= m_UndoData.size() ) return false;
+    if( !this->redoDataExists() ) return false;
 	char move = m_UndoData.at(m_UndoDataIndex+1);
     this->movePlayer( move, false );
 	++m_UndoDataIndex;
 	return true;
+}
+
+// --------------------------------------------------------------
+bool Level::undoDataExists( void )
+{
+	return ( m_UndoDataIndex!=-1 );
+}
+
+// --------------------------------------------------------------
+bool Level::redoDataExists( void )
+{
+    return ( m_UndoDataIndex+1 < m_UndoData.size() );
 }
 
 } // namespace Chocobun

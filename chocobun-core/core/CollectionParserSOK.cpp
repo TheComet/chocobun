@@ -260,7 +260,7 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         (*it)->streamAllMetaData( file );
 
 		// save snapshot
-		if( (*it)->undoDataExists() )
+		if( (*it)->undoDataExists() || (*it)->redoDataExists() )
 			file << "Snapshot: " << (*it)->exportUndoData() << std::endl;
 
     }
