@@ -19,5 +19,6 @@
 #define __CHOCOBUN_INTERFACE_HPP__
 
 #include <core/Collection.hpp>
+#include <core/LevelListener.hpp>
 
 #endif // __CHOCOBUN_INTERFACE_HPP__

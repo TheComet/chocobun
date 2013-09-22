@@ -35,6 +35,8 @@
 
 namespace Chocobun {
 
+class LevelListener;
+
 /*!
  * @brief Holds information of a loaded level
  */
@@ -213,6 +215,17 @@ public:
     char getTile( Uint32 x, Uint32 y ) const;
 
     /*!
+     * @brief Sets the specified tile and informs all listeners
+     *
+     * All listeners are informed about the tile change when this is called.
+     *
+     * @param x The x-coordinate of the tile
+     * @param y The y-coordinate of the tile
+     * @param tile The tile to set it to
+     */
+    bool setTile( const Uint32& x, const Uint32& y, const char& tile );
+
+    /*!
      * @brief Returns the X-size of the level
      *
      * @return The X-size of the level
@@ -259,22 +272,22 @@ public:
      */
     std::string getLevelName( void ) const;
 
-	/*!
-	 * @brief Returns all undo/redo data in the form of a string
-	 *
-	 * This is used to save undo/redo data to a file so it can be
-	 * imported again.
-	 *
-	 * @return The undo/redo data string
-	 */
-	std::string exportUndoData( void );
+    /*!
+     * @brief Returns all undo/redo data in the form of a string
+     *
+     * This is used to save undo/redo data to a file so it can be
+     * imported again.
+     *
+     * @return The undo/redo data string
+     */
+    std::string exportUndoData( void );
 
-	/*!
-	 * @brief Imports an undo/redo data string previously exported
-	 *
-	 * @param undoData The undo/redo data string
-	 */
-	void importUndoData( const std::string& undoData );
+    /*!
+     * @brief Imports an undo/redo data string previously exported
+     *
+     * @param undoData The undo/redo data string
+     */
+    void importUndoData( const std::string& undoData );
 
     /*!
      * @brief Validates the level
@@ -329,22 +342,39 @@ public:
      */
     bool redo( void );
 
-	/*!
-	 * @brief Resets the level to its initial state
-	 */
-	void reset( void );
+    /*!
+     * @brief Resets the level to its initial state
+     */
+    void reset( void );
 
-	/*!
-	 * @brief Checks if undo data exists or not
-	 * @return Returns true if undo data exists, false if it doesn't
-	 */
-	bool undoDataExists( void );
+    /*!
+     * @brief Checks if undo data exists or not
+     * @return Returns true if undo data exists, false if it doesn't
+     */
+    bool undoDataExists( void );
 
-	/*!
-	 * @brief Checks if redo data exists or not
-	 * @return Returns true if redo data exists, false if it doesn't
-	 */
+    /*!
+     * @brief Checks if redo data exists or not
+     * @return Returns true if redo data exists, false if it doesn't
+     */
     bool redoDataExists( void );
+
+    /*!
+     * @brief Registers a level listener
+     *
+     * @param listener A pointer to an object inheriting from LevelListener
+     * @return Returns true if the listener was registered successfully,
+     * false if otherwise
+     */
+    bool addListener( LevelListener* listener );
+
+    /*!
+     * @brief Unregisters a level listener
+     * @param listener A pointer to an object inheriting from LevelListener
+     * @return Returns true if the listener was unregistered successfully,
+     * false if otherwise
+     */
+    bool removeListener( LevelListener* listener );
 
 private:
 
@@ -352,12 +382,18 @@ private:
      * @brief Moves the player and updates all tiles
      *
      * @param direction The direction to move the player, can be either
-	 * u, d, l, r, or U, D, L, R (upper case or lower case - it does the same thing)
-	 * @param updateUndoData Set this to false if this move should not be
-	 * registered as a move that can be undone
+     * u, d, l, r, or U, D, L, R (upper case or lower case - it does the same thing)
+     * @param updateUndoData Set this to false if this move should not be
+     * registered as a move that can be undone
      * @return Returns true if the move was successful, false if otherwise
      */
     bool movePlayer( char direction, bool updateUndoData = true );
+
+    /*!
+     * @brief Dispatches the set tile event
+     * This occurs whenever a tile is changed
+     */
+    void dispatchSetTile( const Uint32& x, const Uint32& y, const char& tile );
 
     std::map<std::string, std::string> m_MetaData;
     std::vector< std::vector<char> > m_LevelArray;
@@ -365,10 +401,11 @@ private:
     std::vector<std::string> m_Notes;
     std::vector<char> m_UndoData;
     std::string m_LevelName;
+    std::vector<LevelListener*> m_LevelListeners;
 
     Uint32 m_PlayerX;
     Uint32 m_PlayerY;
-	std::size_t m_UndoDataIndex;
+    std::size_t m_UndoDataIndex;
 
     bool m_IsLevelValid;
 };

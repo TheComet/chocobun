@@ -37,6 +37,7 @@ namespace Chocobun {
 // forward declarations
 
 class Level;
+class LevelListener;
 
 /*!
  * @brief Holds a collection of levels which can be read from a file
@@ -123,18 +124,18 @@ public:
      */
     void disableCompression( void );
 
-	/*!
-	 * @brief Sets the export file format to be used for every future save
-	 *
-	 * @param fileFormat The file format
-	 */
-	void setFileFormat( CollectionParser::FILE_FORMAT fileFormat );
+    /*!
+     * @brief Sets the export file format to be used for every future save
+     *
+     * @param fileFormat The file format
+     */
+    void setFileFormat( CollectionParser::FILE_FORMAT fileFormat );
 
-	/*!
-	 * @brief Gets the set export file format being used
-	 *
-	 * @return The export format
-	 */
+    /*!
+     * @brief Gets the set export file format being used
+     *
+     * @return The export format
+     */
     CollectionParser::FILE_FORMAT getFileFormat( void );
 
     /*!
@@ -231,7 +232,27 @@ public:
      * @return Returns the tile at the specified locations. If the tile couldn't be
      * retrieved, a null character ('\0') is returned.
      */
-    char getTile( Uint32 x, Uint32 y );
+    char getTile( const Uint32 x, const Uint32 y );
+
+    /*!
+     * @brief Sets a specific tile on the active level
+     *
+     * <b>Valid tiles are:</b>
+     * - # Wall
+     * - @ Pusher
+     * - + Pusher on goal square
+     * - $ Box
+     * - * Box on goal square
+     * - . Goal square
+     * -   Floor (space)
+     * - _ Floor
+     *
+     * @param x The X-coordinate of the tile to set
+     * @param y The Y-coordinate of the tile to set
+     * @param tile The tile to set it to
+     * @return Returns true if the tile was successfully set, false if otherwise
+     */
+    bool setTile( const Uint32 x, const Uint32 y, const char tile );
 
     /*!
      * @brief Returns the X-size of the active level
@@ -265,6 +286,21 @@ public:
      * @return If any of these fail, false is returned. If the level is considered valid, true is returned.
      */
     bool validateLevel( void ) const;
+
+    /*!
+     * @brief Adds a level listener
+     * Registers an object inheriting from LevelListener so it can receive level events
+     * @param listener The object to register
+     * @return Returns true if successfully registered, false if otherwise
+     */
+    bool addLevelListener( LevelListener* listener );
+
+    /*!
+     * @brief Removes a level listener
+     * @param listener The object to unregister
+     * @return Returns true if successfully unregistered, false if otherwise
+     */
+    bool removeLevelListener( LevelListener* listener );
 
     /*!
      * @brief Moves the player up in the active level
@@ -311,11 +347,12 @@ private:
     std::string m_FileName;
     std::string m_CollectionName;
     std::vector<Level*> m_Levels;
+    std::vector<LevelListener*> m_LevelListeners;
     Level* m_ActiveLevel;
     bool m_EnableCompression;
     bool m_IsInitialised;
 
-	CollectionParser::FILE_FORMAT m_FileFormat;
+    CollectionParser::FILE_FORMAT m_FileFormat;
 };
 
 } // namespace Chocobun

@@ -23,7 +23,6 @@
 // include files
 
 #include <App.hpp>
-#include <ChocobunInterface.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -122,6 +121,7 @@ void App::go( void )
                             delete m_Collection;
                         m_Collection = new Chocobun::Collection( fileName );
                         m_Collection->initialise();
+                        m_Collection->addLevelListener( this );
                         std::cout << "Successfully opened collection \"" << m_Collection->getName() << "\"";
 						std::cout << " from file \"" << fileName << "\"" << std::endl;
                     }
@@ -418,4 +418,9 @@ bool App::displayHelp( const std::string& cmd )
     if( !helped)
         std::cout << "Error: Unknown help topic \"" << cmd << "\"" << std::endl;
 	return helped;
+}
+
+void App::onSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
+{
+    std::cout << "set tile" << std::endl;
 }

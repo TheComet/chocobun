@@ -134,7 +134,9 @@ solution "Chocobun"
 		configuration "Debug"
 			targetdir "bin/debug"
 			targetsuffix "_d"
-			implibdir "bin/lib"
+			if os.get() == "windows" then
+				implibdir "bin/lib"
+			end
 			defines {
 				"DEBUG",
 				"_DEBUG"
@@ -147,7 +149,9 @@ solution "Chocobun"
 			
 		configuration "Release"
 			targetdir "bin/release"
-			implibdir "bin/lib"
+			if os.get() == "windows" then
+				implibdir "bin/lib"
+			end
 			defines {
 				"NDEBUG"
 			}
@@ -184,7 +188,7 @@ solution "Chocobun"
 			links (linklibs_chocobun_console_debug)
 			
 		configuration "Release"
-			targetdir "bin/relesae"
+			targetdir "bin/release"
 			defines {
 				"NDEBUG"
 			}

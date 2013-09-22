@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <vector>
+#include <ChocobunInterface.hpp>
 
 // --------------------------------------------------------------
 // forward declarations
@@ -38,7 +39,8 @@ namespace Chocobun {
 /*!
  * @brief The application object
  */
-class App
+class App :
+    public Chocobun::LevelListener
 {
 public:
 
@@ -75,6 +77,8 @@ private:
      * @brief Displays help text for a specific command
      */
     bool displayHelp( const std::string& cmd );
+
+    void onSetTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     Chocobun::Collection* m_Collection;
 };

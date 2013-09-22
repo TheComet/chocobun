@@ -167,10 +167,17 @@ void Collection::streamTileData( std::ostream& stream )
 }
 
 // --------------------------------------------------------------
-char Collection::getTile( Uint32 x, Uint32 y )
+char Collection::getTile( const Uint32 x, const Uint32 y )
 {
     if( !m_ActiveLevel ) return '\0';
     return m_ActiveLevel->getTile( x, y );
+}
+
+// --------------------------------------------------------------
+bool Collection::setTile( const Uint32 x, const Uint32 y, const char tile )
+{
+    if( !m_ActiveLevel ) return false;
+    return m_ActiveLevel->setTile( x, y, tile );
 }
 
 // --------------------------------------------------------------
@@ -192,6 +199,32 @@ bool Collection::validateLevel( void ) const
 {
     if( !m_ActiveLevel ) return false;
     return m_ActiveLevel->validateLevel();
+}
+
+// --------------------------------------------------------------
+bool Collection::addLevelListener( LevelListener* listener )
+{
+    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
+        if( (*it) == listener ) return false;
+    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
+        (*it)->addListener( listener );
+    return true;
+}
+
+// --------------------------------------------------------------
+bool Collection::removeLevelListener( LevelListener* listener )
+{
+    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
+    {
+        if( (*it) == listener )
+        {
+            for( std::vector<Level*>::iterator l_it = m_Levels.begin(); l_it != m_Levels.end(); ++l_it )
+                (*l_it)->removeListener( listener );
+            m_LevelListeners.erase( it );
+            return true;
+        }
+    }
+    return false;
 }
 
 // --------------------------------------------------------------
