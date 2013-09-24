@@ -179,16 +179,16 @@ const std::vector< std::vector<char> >& Level::getTileData( void ) const
 // --------------------------------------------------------------
 char Level::getTile( std::size_t x, std::size_t y ) const
 {
-    if( x < 0 || x >= m_LevelArray.size() ) return '\0';
-    if( y < 0 || y >= m_LevelArray[0].size() ) return '\0';
+    if( x >= m_LevelArray.size() ) return '\0';
+    if( y >= m_LevelArray[0].size() ) return '\0';
     return m_LevelArray[x][y];
 }
 
 // --------------------------------------------------------------
 bool Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    if( x < 0 || x >= m_LevelArray.size() ) return false;
-    if( y < 0 || y >= m_LevelArray[0].size() ) return false;
+    if( x >= m_LevelArray.size() ) return false;
+    if( y >= m_LevelArray[0].size() ) return false;
     if( validTiles.find( tile ) == std::string::npos ) return false;
     m_LevelArray[x][y] = tile;
     this->dispatchSetTile( x, y, tile );
