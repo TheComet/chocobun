@@ -148,7 +148,7 @@ public:
      * @param y The Y coordinate for the tile to insert
      * @param tile The type of tile
      */
-    void insertTile( const Chocobun::Uint32& x, const Chocobun::Uint32& y, const char& tile );
+    void insertTile( const Chocobun::std::size_t& x, const Chocobun::std::size_t& y, const char& tile );
 
     /*!
      * @brief Inserts a whole line instead of a single tile
@@ -169,7 +169,7 @@ public:
      * @param y The Y coordinate for the tile line to insert
      * @param tiles The line of tiles to insert
      */
-    void insertTileLine( const Chocobun::Uint32& y, const std::string& tiles );
+    void insertTileLine( const Chocobun::std::size_t& y, const std::string& tiles );
 
     /*!
      * @brief Streams all current tile data to a stream object
@@ -223,21 +223,21 @@ public:
      * @param y The y-coordinate of the tile
      * @param tile The tile to set it to
      */
-    bool setTile( const Uint32& x, const Uint32& y, const char& tile );
+    bool setTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     /*!
      * @brief Returns the X-size of the level
      *
      * @return The X-size of the level
      */
-    Uint32 getSizeX( void ) const;
+    std::size_t getSizeX( void ) const;
 
     /*!
      * @brief Returns the Y-size of the level
      *
      * @return The Y-size of the level
      */
-    Uint32 getSizeY( void ) const;
+    std::size_t getSizeY( void ) const;
 
     /*!
      * @brief Adds level notes to this level
@@ -393,7 +393,7 @@ private:
      * @brief Dispatches the set tile event
      * This occurs whenever a tile is changed
      */
-    void dispatchSetTile( const Uint32& x, const Uint32& y, const char& tile );
+    void dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     std::map<std::string, std::string> m_MetaData;
     std::vector< std::vector<char> > m_LevelArray;
@@ -403,8 +403,8 @@ private:
     std::string m_LevelName;
     std::vector<LevelListener*> m_LevelListeners;
 
-    Uint32 m_PlayerX;
-    Uint32 m_PlayerY;
+    std::size_t m_PlayerX;
+    std::size_t m_PlayerY;
     std::size_t m_UndoDataIndex;
 
     bool m_IsLevelValid;

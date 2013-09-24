@@ -94,7 +94,7 @@ void Level::streamAllHeaderData( std::ostream& stream )
 }
 
 // --------------------------------------------------------------
-void Level::insertTile( const Chocobun::Uint32& x, const Chocobun::Uint32& y, const char& tile )
+void Level::insertTile( const Chocobun::std::size_t& x, const Chocobun::std::size_t& y, const char& tile )
 {
 
     // check if character is valid
@@ -117,7 +117,7 @@ void Level::insertTile( const Chocobun::Uint32& x, const Chocobun::Uint32& y, co
 }
 
 // --------------------------------------------------------------
-void Level::insertTileLine( const Chocobun::Uint32& y, const std::string& tiles )
+void Level::insertTileLine( const Chocobun::std::size_t& y, const std::string& tiles )
 {
     for( std::size_t x = 0; x != tiles.size(); ++x )
         this->insertTile( x, y, tiles[x] );
@@ -185,7 +185,7 @@ char Level::getTile( std::size_t x, std::size_t y ) const
 }
 
 // --------------------------------------------------------------
-bool Level::setTile( const Uint32& x, const Uint32& y, const char& tile )
+bool Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
     if( x < 0 || x >= m_LevelArray.size() ) return false;
     if( y < 0 || y >= m_LevelArray[0].size() ) return false;
@@ -381,15 +381,15 @@ bool Level::movePlayer( char direction, bool updateUndoData )
     if( direction == 'U' || direction == 'D' || direction == 'L' || direction == 'R' ) direction += 32;
 
     // calculate new positions of player
-    Uint32 newX = m_PlayerX, newY = m_PlayerY;
+    std::size_t newX = m_PlayerX, newY = m_PlayerY;
     if( direction == 'u' ) --newY;
     if( direction == 'd' ) ++newY;
     if( direction == 'l' ) --newX;
     if( direction == 'r' ) ++newX;
 
     // calculate next step the player would take if traveling linearly
-    Uint32 nextX = newX + (newX-m_PlayerX);
-    Uint32 nextY = newY + (newY-m_PlayerY);
+    std::size_t nextX = newX + (newX-m_PlayerX);
+    std::size_t nextY = newY + (newY-m_PlayerY);
 
     // can't move if there is a wall
     if( m_LevelArray[newX][newY] == '#' ) return false;
@@ -462,15 +462,15 @@ bool Level::undo( void )
     }
 
     // calculate old positions
-    Uint32 oldX = m_PlayerX, oldY = m_PlayerY;
+    std::size_t oldX = m_PlayerX, oldY = m_PlayerY;
     if( move == 'u' ) ++oldY;
     if( move == 'd' ) --oldY;
     if( move == 'l' ) ++oldX;
     if( move == 'r' ) --oldX;
 
     // calculate previous step player would have taken if he were traveling linearly
-    Uint32 previousX = m_PlayerX + (m_PlayerX-oldX);
-    Uint32 previousY = m_PlayerY + (m_PlayerY-oldY);
+    std::size_t previousX = m_PlayerX + (m_PlayerX-oldX);
+    std::size_t previousY = m_PlayerY + (m_PlayerY-oldY);
 
     // revert back player position
     if( m_LevelArray[m_PlayerX][m_PlayerY] == '@' )
@@ -547,7 +547,7 @@ bool Level::removeListener( LevelListener* listener )
 }
 
 // --------------------------------------------------------------
-void Level::dispatchSetTile( const Uint32& x, const Uint32& y, const char& tile )
+void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onSetTile( x, y, tile );
