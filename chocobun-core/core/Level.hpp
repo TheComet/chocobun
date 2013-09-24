@@ -148,7 +148,7 @@ public:
      * @param y The Y coordinate for the tile to insert
      * @param tile The type of tile
      */
-    void insertTile( const Chocobun::std::size_t& x, const Chocobun::std::size_t& y, const char& tile );
+    void insertTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     /*!
      * @brief Inserts a whole line instead of a single tile
@@ -169,7 +169,7 @@ public:
      * @param y The Y coordinate for the tile line to insert
      * @param tiles The line of tiles to insert
      */
-    void insertTileLine( const Chocobun::std::size_t& y, const std::string& tiles );
+    void insertTileLine( const std::size_t& y, const std::string& tiles );
 
     /*!
      * @brief Streams all current tile data to a stream object

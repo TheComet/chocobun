@@ -94,7 +94,7 @@ void Level::streamAllHeaderData( std::ostream& stream )
 }
 
 // --------------------------------------------------------------
-void Level::insertTile( const Chocobun::std::size_t& x, const Chocobun::std::size_t& y, const char& tile )
+void Level::insertTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
 
     // check if character is valid
@@ -117,7 +117,7 @@ void Level::insertTile( const Chocobun::std::size_t& x, const Chocobun::std::siz
 }
 
 // --------------------------------------------------------------
-void Level::insertTileLine( const Chocobun::std::size_t& y, const std::string& tiles )
+void Level::insertTileLine( const std::size_t& y, const std::string& tiles )
 {
     for( std::size_t x = 0; x != tiles.size(); ++x )
         this->insertTile( x, y, tiles[x] );
