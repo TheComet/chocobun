@@ -212,7 +212,7 @@ public:
      * @return Returns the tile at the specified coordinates. If the tile couldn't
      * be retrieved, a null character ('\0') is returned.
      */
-    char getTile( Uint32 x, Uint32 y ) const;
+    char getTile( std::size_t x, std::size_t y ) const;
 
     /*!
      * @brief Sets the specified tile and informs all listeners
