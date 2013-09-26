@@ -24,10 +24,11 @@
 
 #include <core/CollectionParserSLC.hpp>
 #include <core/Level.hpp>
+#include <core/Exception.hpp>
 
 #include <fstream>
 #include <sstream>
-#include <algorithm>
+#include <algorithm>  // std::find
 
 #include <rapidxml-1.13/rapidxml.hpp>
 #include <rapidxml-1.13/rapidxml_print.hpp>
@@ -36,6 +37,7 @@ namespace Chocobun {
 
 const int CollectionParserSLC::NUM_META_TAG_NAMES = 4;
 const char* CollectionParserSLC::META_TAG_NAMES[] = {"Title", "Description", "Email", "Url"};
+const char* CollectionParserSLC::EXPECTED_TAG_NAMES[] = {"SokobanLevels", "Title", "LevelCollection"};
 
 // --------------------------------------------------------------
 CollectionParserSLC::CollectionParserSLC( void )
@@ -56,25 +58,36 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*
     std::vector<char> buffer( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>( ) );
     buffer.push_back( '\0' );
 
-    // parse the darn thing with rapidxml
-    doc.parse<0>( &buffer[0] ); 
+    try 
+    {
+        // parse the darn thing with rapidxml
+        doc.parse<0>( &buffer[0] ); 
+    } 
+    catch( rapidxml::parse_error& e )
+    {
+        throw Exception( (std::string("Error during xml parsing: ") + e.what()).c_str() );
+    }
 
-    rapidxml::xml_node<>* rootNode = doc.first_node("SokobanLevels");
+    rapidxml::xml_node<>* rootNode = getFirstNode( &doc, "SokobanLevels" );
 
     // read all the meta tags into the metaTagValues array
     std::string metaTagValues [NUM_META_TAG_NAMES];
     for( int i = 0; i < NUM_META_TAG_NAMES; ++i ) 
     {
-        metaTagValues[i] = rootNode->first_node(META_TAG_NAMES[i])->value();
+        rapidxml::xml_node<>* metaTag = getFirstNode( rootNode, META_TAG_NAMES[i] );
+        if (metaTag != 0) // if there actually is such a meta tag
+        {
+            metaTagValues[i] = metaTag->value();
+        }
     }
 
-    rapidxml::xml_node<>* levelCollectionNode = rootNode->first_node("LevelCollection");
+    rapidxml::xml_node<>* levelCollectionNode = getFirstNode(rootNode, "LevelCollection");
 
-    std::string levelCollectionCopyright = levelCollectionNode->first_attribute("Copyright")->value();
+    std::string levelCollectionCopyright = getFirstAttribute(levelCollectionNode, "Copyright");
 
     for( rapidxml::xml_node<>* levelNode = levelCollectionNode->first_node("Level"); levelNode; levelNode = levelNode->next_sibling() )
     {
-        std::string levelName = levelNode->first_attribute("Id")->value();
+        std::string levelName = getFirstAttribute(levelNode, "Id");
 
         Level* lvl = new Level();
 
@@ -178,6 +191,33 @@ void CollectionParserSLC::_save( const std::string& collectionName, std::ofstrea
     root->append_node( levelCollectionNode );
 
     file << doc;
+}
+
+// --------------------------------------------------------------
+rapidxml::xml_node<>* CollectionParserSLC::getFirstNode( rapidxml::xml_node<> * superNode, const char * name)
+{
+    rapidxml::xml_node<>* node = superNode->first_node(name);
+
+    if (node == 0) 
+    {
+        const char ** p = std::find( EXPECTED_TAG_NAMES, EXPECTED_TAG_NAMES+3, name );
+        if( p != EXPECTED_TAG_NAMES+3 ) // name is in the EXCPECTED_TAG_NAMES
+        {
+            throw Exception( std::string("[CollectionParserSLC::parse] Expected node with name ") + name + " was not found" );
+        }
+    }
+
+    return node;
+}
+
+// --------------------------------------------------------------
+const char * CollectionParserSLC::getFirstAttribute( rapidxml::xml_node<> * node, const char * name)
+{
+    rapidxml::xml_attribute<char> * attribute = node->first_attribute(name);
+
+    if (attribute == 0) throw Exception( std::string("[CollectionParserSLC::parse] Expected attribute with name ") + name + " was not found" );
+
+    return attribute->value();
 }
 
 } // namespace Chocobun
