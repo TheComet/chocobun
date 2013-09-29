@@ -174,10 +174,10 @@ char Collection::getTile( const Uint32 x, const Uint32 y )
 }
 
 // --------------------------------------------------------------
-bool Collection::setTile( const Uint32 x, const Uint32 y, const char tile )
+void Collection::setTile( const Uint32 x, const Uint32 y, const char tile )
 {
-    if( !m_ActiveLevel ) return false;
-    return m_ActiveLevel->setTile( x, y, tile );
+    if( !m_ActiveLevel ) throw Exception("[Collection::setTile] An active level hasn't been selected yet.");
+    m_ActiveLevel->setTile( x, y, tile );
 }
 
 // --------------------------------------------------------------
@@ -197,7 +197,7 @@ Uint32 Collection::getSizeY( void ) const
 // --------------------------------------------------------------
 bool Collection::validateLevel( void ) const
 {
-    if( !m_ActiveLevel ) return false;
+    if( !m_ActiveLevel ) throw Exception("[Collection::setTile] An active level hasn't been selected yet.");
     return m_ActiveLevel->validateLevel();
 }
 

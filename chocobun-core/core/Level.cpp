@@ -47,7 +47,7 @@ Level::~Level( void )
 void Level::addMetaData( const std::string& key, const std::string& value )
 {
     if( m_MetaData.find( key ) != m_MetaData.end() )
-        throw Exception( "[Level::addMetaData] meta data already exists" );
+        throw Exception( std::string("[Level::addMetaData] meta data \"") + key + "\" already exists" );
     m_MetaData[key] = value;
 }
 
@@ -56,7 +56,7 @@ const std::string& Level::getMetaData( const std::string& key )
 {
     std::map<std::string, std::string>::iterator p = m_MetaData.find( key );
     if( p == m_MetaData.end() )
-        throw Exception( "[Level::getMetaData] meta data not found" );
+        throw Exception( std::string("[Level::getMetaData] meta data \"") + key + "\" not found" );
     return p->second;
 }
 
@@ -81,7 +81,7 @@ void Level::removeHeaderData( const std::string& header )
         if( it->compare( header ) == 0 )
         {
             m_HeaderData.erase( it );
-            break;
+            return;
         }
     }
 }
@@ -99,7 +99,7 @@ void Level::insertTile( const std::size_t& x, const std::size_t& y, const char& 
 
     // check if character is valid
     if( validTiles.find_first_of(tile) == std::string::npos )
-        throw Exception( "[Level::insertTile] attempt to insert invalid character into level array" );
+        throw Exception( std::string("[Level::insertTile] attempt to insert invalid character \"") + tile + "\" into level array" );
 
     // resize array if necessary
     while( x+1 > m_LevelArray.size() )
@@ -179,20 +179,19 @@ const std::vector< std::vector<char> >& Level::getTileData( void ) const
 // --------------------------------------------------------------
 char Level::getTile( std::size_t x, std::size_t y ) const
 {
-    if( x >= m_LevelArray.size() ) return '\0';
-    if( y >= m_LevelArray[0].size() ) return '\0';
+    if( x >= m_LevelArray.size() ) throw Exception( "[Level::getTile] X-coordinate out of bounds" );
+    if( y >= m_LevelArray[0].size() ) throw Exception( "[Level::getTile] Y-coordinate out of bounds: " );
     return m_LevelArray[x][y];
 }
 
 // --------------------------------------------------------------
-bool Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
+void Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    if( x >= m_LevelArray.size() ) return false;
-    if( y >= m_LevelArray[0].size() ) return false;
-    if( validTiles.find( tile ) == std::string::npos ) return false;
+    if( x >= m_LevelArray.size() ) throw Exception( std::string("[Level::setTile] X-coordinate out of bounds: " + x ) );
+    if( y >= m_LevelArray[0].size() ) throw Exception( std::string("[Level::setTile] Y-coordinate out of bounds: " + y) );
+    if( validTiles.find( tile ) == std::string::npos ) throw Exception( std::string("[Level::setTile] attempt to set tile to invalid character: \"") + tile + "\"" );
     m_LevelArray[x][y] = tile;
     this->dispatchSetTile( x, y, tile );
-    return true;
 }
 
 // --------------------------------------------------------------
@@ -221,7 +220,7 @@ void Level::removeLevelNote( const std::string& note)
         if( it->compare( note ) == 0 )
         {
             m_Notes.erase( it );
-            break;
+            return;
         }
     }
 }
@@ -240,7 +239,7 @@ void Level::setLevelName( const std::string& name )
 }
 
 // --------------------------------------------------------------
-std::string Level::getLevelName( void ) const
+const std::string& Level::getLevelName( void ) const
 {
     return m_LevelName;
 }
@@ -256,7 +255,9 @@ std::string Level::exportUndoData( void )
 // --------------------------------------------------------------
 void Level::importUndoData( const std::string& undoData )
 {
-	if( undoData.size() == 0 ) return;
+	if( undoData.size() == 0 )
+        throw Exception( std::string("[Level::importUndoData] Undo data string is empty") );
+
 	std::vector<char> tmp( undoData.begin(), undoData.end() );
 	std::size_t pos = 0;
 	for( std::vector<char>::iterator it = tmp.begin(); it != tmp.end(); ++it )
@@ -279,7 +280,9 @@ void Level::importUndoData( const std::string& undoData )
 			case 'D':break;
 			case 'L':break;
 			case 'R':break;
-			default: return; break;
+			default:
+                throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + undoData + "\". Import failed." );
+                break;
 		}
 	}
 
@@ -415,6 +418,7 @@ bool Level::movePlayer( char direction, bool updateUndoData )
             this->setTile( nextX, nextY, '*' );   // target is goal, place box on goal
         else
             this->setTile( nextX, nextY, '$' );     // target is floor, place box on floor
+        this->dispatchMoveTile( newX, newY, nextX, nextY );
     }
 
     // move player
@@ -426,6 +430,7 @@ bool Level::movePlayer( char direction, bool updateUndoData )
         this->setTile( m_PlayerX, m_PlayerY, ' ' );
     else
         this->setTile( m_PlayerX, m_PlayerY, '.' );
+    this->dispatchMoveTile( m_PlayerX, m_PlayerY, newX, newY );
 	m_PlayerX = newX;
 	m_PlayerY = newY;
 
@@ -551,6 +556,14 @@ void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const c
 {
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onSetTile( x, y, tile );
+}
+
+// --------------------------------------------------------------
+void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY )
+{
+    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
+        (*it)->onMoveTile( oldX, oldY, newX, newY );
+    std::cout << "move tile dispatched" << std::endl;
 }
 
 } // namespace Chocobun

@@ -26,6 +26,7 @@
 // include files
 
 #include <exception>
+#include <string>
 
 namespace Chocobun {
 
@@ -38,11 +39,16 @@ class Exception :
 public:
 
     /*!
-     * @brief Constructor
-     *
+     * @brief Constructor with const char pointer
      * @param message A string for identifying the error that has occured
      */
     Exception( const char* message ) throw() : m_Message(message) {}
+
+    /*!
+     * @brief Constructor with std::string object
+     * @param message A string for identifying the error that has occured
+     */
+    Exception( const std::string& message ) throw() : m_Message(message) {}
 
     /*!
      * @brief Destructor
@@ -53,10 +59,10 @@ public:
      * @brief Gets the message of the error
      * @note Overridden from std::exception's "what()" method
      */
-    const char* what( void ) const throw() { return m_Message; }
+    const char* what( void ) const throw() { return m_Message.c_str(); }
 
 private:
-    const char* m_Message;
+    const std::string m_Message;
 };
 
 } // namespace Chocobun

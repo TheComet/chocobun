@@ -250,9 +250,8 @@ public:
      * @param x The X-coordinate of the tile to set
      * @param y The Y-coordinate of the tile to set
      * @param tile The tile to set it to
-     * @return Returns true if the tile was successfully set, false if otherwise
      */
-    bool setTile( const Uint32 x, const Uint32 y, const char tile );
+    void setTile( const Uint32 x, const Uint32 y, const char tile );
 
     /*!
      * @brief Returns the X-size of the active level

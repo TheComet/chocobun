@@ -42,6 +42,11 @@ public:
      */
     virtual void onSetTile( const std::size_t& x, const std::size_t& y, const char& tile ){}
 
+    /*!
+     * @brief When a tile moves from an old position to a new position
+     */
+    virtual void onMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY ){}
+
 };
 
 } // namespace Chocobun
