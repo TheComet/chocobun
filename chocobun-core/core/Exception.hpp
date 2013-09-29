@@ -50,6 +50,14 @@ public:
      */
     Exception( const std::string& message ) throw() : m_Message(message) {}
 
+
+    /*!
+     * @brief Constructor
+     *
+     * @param message A string for identifying the error that has occured
+     */
+    Exception( const std::string message ) throw() : m_Message(message.c_str()) {}
+
     /*!
      * @brief Destructor
      */
