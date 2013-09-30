@@ -554,6 +554,7 @@ bool Level::removeListener( LevelListener* listener )
 // --------------------------------------------------------------
 void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
+    // TODO disable dispatches optionally
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onSetTile( x, y, tile );
 }
