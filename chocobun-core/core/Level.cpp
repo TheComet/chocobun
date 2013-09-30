@@ -33,7 +33,8 @@ namespace Chocobun {
 // --------------------------------------------------------------
 Level::Level( void ) :
     m_IsLevelValid( false ),
-    m_UndoDataIndex( -1 ) // type is unsigned, but the wrap around is intended
+    m_UndoDataIndex( -1 ), // type is unsigned, but the wrap around is intended
+    m_DoDispatch( true )
 {
     m_LevelArray.push_back( std::vector<char>(0) );
 }
@@ -142,6 +143,10 @@ void Level::streamAllTileData( std::ostream& stream, bool newLine )
 void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 {
 
+    // disable listeners, as these tile updates are for internal purposes only
+    bool tempDoDispatch = m_DoDispatch;
+    this->doDispatch( false );
+
     // save progress temporarily and reset to initial state
     std::size_t undoDataIndex = m_UndoDataIndex;
     if( m_IsLevelValid )
@@ -168,6 +173,8 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 			for( std::size_t pos = 0; pos != m_UndoDataIndex; ++pos )
 				this->movePlayer( m_UndoData.at(pos), false );
 
+    // restore dispatch settings
+    this->doDispatch( tempDoDispatch );
 }
 
 // --------------------------------------------------------------
@@ -552,9 +559,15 @@ bool Level::removeListener( LevelListener* listener )
 }
 
 // --------------------------------------------------------------
+void Level::doDispatch( bool flag )
+{
+    m_DoDispatch = flag;
+}
+
+// --------------------------------------------------------------
 void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    // TODO disable dispatches optionally
+    if( !m_DoDispatch ) return;
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onSetTile( x, y, tile );
 }
@@ -562,6 +575,7 @@ void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const c
 // --------------------------------------------------------------
 void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY )
 {
+    if( !m_DoDispatch ) return;
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onMoveTile( oldX, oldY, newX, newY );
     std::cout << "move tile dispatched" << std::endl;
