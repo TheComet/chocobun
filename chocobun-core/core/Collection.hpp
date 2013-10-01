@@ -274,7 +274,7 @@ public:
      * - Only one player can exist on a level
      * - All boxes can be reached by the player
      * - All boxes which can't be reached by the player are placed on goal squares
-     * - The level is closed off entirely by a wall
+     * - The level is closed off entirely by walls
      *
      * @note It is essential to call this method before using the level for game play.
      * This method also 'finalises' the level by performing some internal setup on the
@@ -282,9 +282,10 @@ public:
      *
      * If there is no active level selected, false is returned.
      *
-     * @return If any of these fail, false is returned. If the level is considered valid, true is returned.
+     * @exception If the level is invalid, a Chocobun::Exception is thrown with
+     * a detailed description of what went wrong.
      */
-    bool validateLevel( void ) const;
+    void validateLevel( void ) const;
 
     /*!
      * @brief Adds a level listener

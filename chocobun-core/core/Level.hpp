@@ -274,9 +274,10 @@ public:
      * @note It is essential to call this method before using the level for game play.
      * This method also 'finalises' the level by performing some internal setup on the
      * provided tile data.
-     * @return If any of these fail, false is returned. If the level is considered valid, true is returned.
+     * @exception If the level is invalid, a Chocobun::Exception is thrown with
+     * a detailed description of what went wrong.
      */
-    bool validateLevel( void );
+    void validateLevel( void );
 
     /*!
      * @brief Moves the player up by one tile

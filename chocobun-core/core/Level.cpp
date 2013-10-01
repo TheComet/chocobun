@@ -313,11 +313,11 @@ void Level::reset( void )
 }
 
 // --------------------------------------------------------------
-bool Level::validateLevel( void )
+void Level::validateLevel( void )
 {
 
     // does another check need to be done?
-    if( m_IsLevelValid ) return true;
+    if( m_IsLevelValid ) return;
 
     // make sure there's only one player
     // this also sets the internal positions of the player
@@ -330,7 +330,7 @@ bool Level::validateLevel( void )
             {
                 if( playerFound )
                 {
-                    return false;
+                    throw Exception( "[Level::validateLevel] More than one player was found on this level." );
                 }else
                 {
                     m_PlayerX = x;
@@ -341,7 +341,7 @@ bool Level::validateLevel( void )
             }
         }
     }
-	if( !playerFound ) return false;
+	if( !playerFound ) throw Exception( "[Level::validateLevel] No player was found on this level." );
 
 	// fast-forward player according to undo/redo data
 	if( this->undoDataExists() )
@@ -350,7 +350,6 @@ bool Level::validateLevel( void )
 
     // arriving here means the level is valid
     m_IsLevelValid = true;
-    return true;
 }
 
 // --------------------------------------------------------------

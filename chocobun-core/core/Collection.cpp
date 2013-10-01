@@ -195,7 +195,7 @@ Uint32 Collection::getSizeY( void ) const
 }
 
 // --------------------------------------------------------------
-bool Collection::validateLevel( void ) const
+void Collection::validateLevel( void ) const
 {
     if( !m_ActiveLevel ) throw Exception("[Collection::setTile] An active level hasn't been selected yet.");
     return m_ActiveLevel->validateLevel();
