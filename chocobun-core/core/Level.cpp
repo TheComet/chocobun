@@ -492,6 +492,7 @@ bool Level::undo( void )
         this->setTile( oldX, oldY, '@' );
     else
         this->setTile( oldX, oldY, '+' );
+    this->dispatchMoveTile( m_PlayerX, m_PlayerY, oldX, oldY );
 
     // player was pushing a box
     if( boxPushed )
@@ -504,6 +505,7 @@ bool Level::undo( void )
             this->setTile( m_PlayerX, m_PlayerY, '$' );
         else
             this->setTile( m_PlayerX, m_PlayerY, '*' );
+        this->dispatchMoveTile( previousX, previousY, m_PlayerX, m_PlayerY );
     }
 	m_PlayerX = oldX;
 	m_PlayerY = oldY;
