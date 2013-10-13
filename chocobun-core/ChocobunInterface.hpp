@@ -20,5 +20,6 @@
 
 #include <core/Collection.hpp>
 #include <core/LevelListener.hpp>
+#include <core/Exception.hpp>
 
 #endif // __CHOCOBUN_INTERFACE_HPP__

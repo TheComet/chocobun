@@ -27,6 +27,9 @@
 
 #include <core/CollectionParserBase.hpp>
 
+#include <rapidxml-1.13/rapidxml.hpp>
+
+
 namespace Chocobun {
 
 /*!
@@ -41,6 +44,7 @@ public:
 
     static const int NUM_META_TAG_NAMES;
     static const char* META_TAG_NAMES[];
+    static const char* EXPECTED_TAG_NAMES[];
 
     /*!
      * @brief Constructor
@@ -57,8 +61,6 @@ private:
 	/*!
      * @brief Parses a .SLC file
      *
-     * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
-     *
      * @param file An open file object to read from
      * @param levelMap An std::vector of levels to write to
      * @return Returns the name of the collection (if any), otherwise the string
@@ -67,14 +69,32 @@ private:
     std::string _parse( std::ifstream& file, std::vector<Level*>& levelMap );
 
     /* !
-     * @brief Universal .SLC format exporter
-     *
-     * See http://sokobano.de/wiki/index.php?title=Sok_format for more information
+     * @brief .SLC format exporter
      *
      * @param file An open file object to write data to
      * @param levelMap An std::vector of levels to read from
      */
     void _save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
+
+    /* !
+     * @brief Exception checking wrapper for rapidxml::xml_node#first_node
+     *
+     * @param superNode the node in which you wish to find the first child node
+     * @param name the name of the child node you wish to find
+     * @return the node if it was found, 0 otherwise
+     * @throws a Chocobun::Exception in case the node was not found and is not optional
+     */
+    rapidxml::xml_node<>* getFirstNode( rapidxml::xml_node<> * superNode, const char * name);
+
+    /* !
+     * @brief Exception checking wrapper for rapidxml::xml_node#first_attribute
+     *
+     * @param node the node in which you wish to find the first attribute
+     * @param name the name of the attribute you wish to find
+     * @return the value string of the attribute
+     * @throws a Chocobun::Exception in case the attribute was not found
+     */
+    const char * getFirstAttribute( rapidxml::xml_node<> * node, const char * name);
 
 };
 

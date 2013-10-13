@@ -230,22 +230,11 @@ void App::go( void )
                 // open level
                 if( open )
                 {
-                    if( m_Collection->setActiveLevel( argList.at( argList.size()-1 ) ) )
-                    {
-                        if( !m_Collection->validateLevel() )
-                        {
-                            std::cout << "Warning: The selected level is not valid." << std::endl;
-                            std::cout << "You will be unable to play on it" << std::endl;
-                        }else
-                        {
-                            std::cout << "Opened level \"" << argList.at( argList.size()-1 ) << std::endl;
-                            m_Collection->streamTileData( std::cout );
-                        }
-                    }else
-                    {
-                        std::cout << "Error: Level \"" << argList.at( argList.size()-1 ) << "\" does not exist" << std::endl;
-                    }
-                }
+                    m_Collection->setActiveLevel( argList.at( argList.size()-1 ) );
+                    m_Collection->validateLevel();
+                    std::cout << "Opened level \"" << argList.at( argList.size()-1 ) << std::endl;
+                    m_Collection->streamTileData( std::cout );
+               }
 
                 break;
             }

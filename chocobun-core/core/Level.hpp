@@ -60,29 +60,22 @@ public:
 
     /*!
      * @brief Adds meta data to the level
-     *
      * Meta data is very loosely defined in the file format specifications,
      * therefore this method allows any key-value pair to be registered.
      *
      * Supported internal keys are
      * - Collection
      * - Author
-     *
-     * @note Keys are case sensitive and should be converted to lower case
-     * before adding the meta data.
-     *
+     * @note Keys are case sensitive
      * @exception Chocobun::Exception If the key already exists
-     *
      * @param key The key of the entry (used to get the data back later on)
      * @param value The value of the entry (can by any text string)
      */
     void addMetaData( const std::string& key, const std::string& value );
 
     /*!
-     * @brief Retrieves meta data of the level
-     *
+     * @brief Retrieves meta data from the level
      * @exception Chocobun::Exception if the key was not found
-     *
      * @param key The key of the entry to search for
      * @return The value tied to the key
      */
@@ -90,47 +83,39 @@ public:
 
     /*!
      * @brief Formats and streams all meta data to a stream object
-     *
-     * This is used when saving the level's meta data
-     *
+     * This is used when saving the level's meta data. Key and value
+     * are separated by a colon.
      * @param stream The stream object to stream to
      */
     void streamAllMetaData( std::ostream& stream );
 
     /*!
      * @brief Adds Header data and other text for this level
-     *
      * This is used later on when the file is saved to disk again,
      * so headers that would not normally be loaded are preserved
-     *
      * @param header Header to add
      */
     void addHeaderData( const std::string& header );
 
     /*!
      * @brief Removes header data from this level
-     *
      * This is called when a level name is discovered. Because
      * there can be multiple passes of delay before a level name can
      * be confirmed, it usually occurs that it has been added as a
      * Header first. This will remove it again so it isn't exported twice.
-     *
      * @param header The Header string to remove
      */
     void removeHeaderData( const std::string& header );
 
     /*!
      * @brief Streams all header data to a stream object
-     *
      * This is used to save the header data of a level
-     *
      * @param stream The stream object to stream to
      */
     void streamAllHeaderData( std::ostream& stream );
 
     /*!
      * @brief Inserts a tile into the level at the given coordinate
-     *
      * Internally the map array is resized accordingly so it remains square.
      * <b>Valid tile characters are:</b>
      * - # Wall
@@ -141,9 +126,7 @@ public:
      * - . Goal square
      * -   Floor (space)
      * - _ Floor
-     *
      * @exception Chocobun::Exception if an invalid character is passed
-     *
      * @param x The X coordinate for the tile to insert
      * @param y The Y coordinate for the tile to insert
      * @param tile The type of tile
@@ -152,7 +135,6 @@ public:
 
     /*!
      * @brief Inserts a whole line instead of a single tile
-     *
      * Internally the map array is resized accordingly so it remains square.
      * <b>Valid tile characters are:</b>
      * - # Wall
@@ -163,9 +145,7 @@ public:
      * - . Goal square
      * -   Floor (space)
      * - _ Floor
-     *
      * @exception Chocobun::Exception if an invalid character is passed
-     *
      * @param y The Y coordinate for the tile line to insert
      * @param tiles The line of tiles to insert
      */
@@ -173,10 +153,12 @@ public:
 
     /*!
      * @brief Streams all current tile data to a stream object
-     *
      * This can be used to retrieve all of the tiles to update
-     * the screen when a move is made
-     *
+     * the screen when a move is made.
+     * @note This is the <b>current</b> version of the tile data,
+     * not the initial tile data (from when the level was first loaded).
+     * See @a streamInitialTileData to retrieve the tile data of the level
+     * in its initial state.
      * @param stream The output stream object to stream to
      * @param newLine If set to true (default), new line breaks are inserted.
      * Otherwise, "|" are inserted (for RLE compression)
@@ -185,17 +167,14 @@ public:
 
     /*!
      * @brief Gets the array of current tile data
-     *
      * @return Returns a 2-dimensional array of chars containing tile data
      */
-    const std::vector< std::vector<char> >& getTileData( void ) const;
+    void getTileData( std::vector< std::vector<char> >& vvs ) const;
 
     /*!
      * @brief Streams the tile data of this level in its initial state
-     *
      * Retrieves all of the tiles as they initially were. This is best used
      * to save levels to a file.
-     *
      * @param stream The output stream object to stream to
      * @param newLine If set to true (default), new line breaks are insterted.
      * Otherwise, "|" are inserted (for RLE compression)
@@ -204,87 +183,80 @@ public:
 
     /*!
      * @brief Gets a single tile from the level
-     *
      * Will retrieve the tile data specified by the x and y parameters
-     *
+     * @exception Chocobun::Exception if the x and y coordinates exceed
+     * the boundaries of the level.
      * @param x The X-coordinate of the tile
      * @param y The Y-coordinate of the tile
-     * @return Returns the tile at the specified coordinates. If the tile couldn't
-     * be retrieved, a null character ('\0') is returned.
+     * @return Returns the tile at the specified coordinates
      */
     char getTile( std::size_t x, std::size_t y ) const;
 
     /*!
      * @brief Sets the specified tile and informs all listeners
-     *
      * All listeners are informed about the tile change when this is called.
-     *
+     * @exception Chocobun::Exception if either the x and y parameters exceed
+     * the boundaries of the level, or if the tile character is invalid.
      * @param x The x-coordinate of the tile
      * @param y The y-coordinate of the tile
      * @param tile The tile to set it to
      */
-    bool setTile( const std::size_t& x, const std::size_t& y, const char& tile );
+    void setTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     /*!
      * @brief Returns the X-size of the level
-     *
      * @return The X-size of the level
      */
     std::size_t getSizeX( void ) const;
 
     /*!
      * @brief Returns the Y-size of the level
-     *
      * @return The Y-size of the level
      */
     std::size_t getSizeY( void ) const;
 
     /*!
      * @brief Adds level notes to this level
-     *
      * @param note The notes string to add
      */
     void addLevelNote( const std::string& note);
 
     /*!
      * @brief Removes level notes from this level
-     *
+     * @note If the level note doesn't exist, this method will silently fail.
      * @param note The note to search for and remove
      */
     void removeLevelNote( const std::string& note );
 
     /*!
      * @brief Streams all notes to a stream object
-     *
-     * This is used to save the level data to a file
-     *
+     * This is used to save the level data to a file.
      * @param stream The stream object to stream to
      */
     void streamAllNotes( std::ostream& stream );
 
     /*!
      * @brief Sets the name of the level
+     * @note If the level name has already been set, this will overwrite it.
      */
     void setLevelName( const std::string& name );
 
     /*!
      * @brief Gets the name of the level
      */
-    std::string getLevelName( void ) const;
+    const std::string& getLevelName( void ) const;
 
     /*!
      * @brief Returns all undo/redo data in the form of a string
-     *
      * This is used to save undo/redo data to a file so it can be
      * imported again.
-     *
      * @return The undo/redo data string
      */
     std::string exportUndoData( void );
 
     /*!
      * @brief Imports an undo/redo data string previously exported
-     *
+     * @exception Chocobun::Exception if the input string is invalid.
      * @param undoData The undo/redo data string
      */
     void importUndoData( const std::string& undoData );
@@ -297,14 +269,15 @@ public:
      * - All boxes can be reached by the player
      * - All boxes which can't be reached by the player are placed on goal squares
      * - The level is closed off entirely by a wall
+     * // TODO implement these points listed above
      *
      * @note It is essential to call this method before using the level for game play.
      * This method also 'finalises' the level by performing some internal setup on the
      * provided tile data.
-     *
-     * @return If any of these fail, false is returned. If the level is considered valid, true is returned.
+     * @exception If the level is invalid, a Chocobun::Exception is thrown with
+     * a detailed description of what went wrong.
      */
-    bool validateLevel( void );
+    void validateLevel( void );
 
     /*!
      * @brief Moves the player up by one tile
@@ -376,6 +349,18 @@ public:
      */
     bool removeListener( LevelListener* listener );
 
+    /*!
+     * @brief Sets whether messages should be dispatched to listeners or not
+     * In the case of getting the initial tile data of a level, you have to
+     * fast-backwards (undo) to the beginning, return the tile data, then
+     * fast-forwards again. During this, dispatching changing tile data to
+     * listeners is bad.
+     *
+     * This method allows you to disable dispatches.
+     * @param flag If set to true, tile changes are dispatched, otherwise they aren't.
+     */
+    void doDispatch( bool flag );
+
 private:
 
     /*!
@@ -395,6 +380,13 @@ private:
      */
     void dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
+    /*!
+     * @brief Dispatches the move tile event
+     * This occurs whenever a tile moves from an old position to a new
+     * position
+     */
+    void dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY );
+
     std::map<std::string, std::string> m_MetaData;
     std::vector< std::vector<char> > m_LevelArray;
     std::vector<std::string> m_HeaderData;
@@ -408,6 +400,7 @@ private:
     std::size_t m_UndoDataIndex;
 
     bool m_IsLevelValid;
+    bool m_DoDispatch;
 };
 
 } // namespace Chocobun

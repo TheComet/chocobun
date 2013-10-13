@@ -33,7 +33,8 @@ namespace Chocobun {
 // --------------------------------------------------------------
 Level::Level( void ) :
     m_IsLevelValid( false ),
-    m_UndoDataIndex( -1 ) // type is unsigned, but the wrap around is intended
+    m_UndoDataIndex( -1 ), // type is unsigned, but the wrap around is intended
+    m_DoDispatch( true )
 {
     m_LevelArray.push_back( std::vector<char>(0) );
 }
@@ -47,7 +48,7 @@ Level::~Level( void )
 void Level::addMetaData( const std::string& key, const std::string& value )
 {
     if( m_MetaData.find( key ) != m_MetaData.end() )
-        throw Exception( "[Level::addMetaData] meta data already exists" );
+        throw Exception( std::string("[Level::addMetaData] meta data \"") + key + "\" already exists" );
     m_MetaData[key] = value;
 }
 
@@ -56,7 +57,7 @@ const std::string& Level::getMetaData( const std::string& key )
 {
     std::map<std::string, std::string>::iterator p = m_MetaData.find( key );
     if( p == m_MetaData.end() )
-        throw Exception( "[Level::getMetaData] meta data not found" );
+        throw Exception( std::string("[Level::getMetaData] meta data \"") + key + "\" not found" );
     return p->second;
 }
 
@@ -81,7 +82,7 @@ void Level::removeHeaderData( const std::string& header )
         if( it->compare( header ) == 0 )
         {
             m_HeaderData.erase( it );
-            break;
+            return;
         }
     }
 }
@@ -99,7 +100,7 @@ void Level::insertTile( const std::size_t& x, const std::size_t& y, const char& 
 
     // check if character is valid
     if( validTiles.find_first_of(tile) == std::string::npos )
-        throw Exception( "[Level::insertTile] attempt to insert invalid character into level array" );
+        throw Exception( std::string("[Level::insertTile] attempt to insert invalid character \"") + tile + "\" into level array" );
 
     // resize array if necessary
     while( x+1 > m_LevelArray.size() )
@@ -142,6 +143,10 @@ void Level::streamAllTileData( std::ostream& stream, bool newLine )
 void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 {
 
+    // disable listeners, as these tile updates are for internal purposes only
+    bool tempDoDispatch = m_DoDispatch;
+    this->doDispatch( false );
+
     // save progress temporarily and reset to initial state
     std::size_t undoDataIndex = m_UndoDataIndex;
     if( m_IsLevelValid )
@@ -168,31 +173,32 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 			for( std::size_t pos = 0; pos != m_UndoDataIndex; ++pos )
 				this->movePlayer( m_UndoData.at(pos), false );
 
+    // restore dispatch settings
+    this->doDispatch( tempDoDispatch );
 }
 
 // --------------------------------------------------------------
-const std::vector< std::vector<char> >& Level::getTileData( void ) const
+void Level::getTileData( std::vector< std::vector<char> >& vvs ) const
 {
-    return m_LevelArray;
+    vvs = m_LevelArray;
 }
 
 // --------------------------------------------------------------
 char Level::getTile( std::size_t x, std::size_t y ) const
 {
-    if( x >= m_LevelArray.size() ) return '\0';
-    if( y >= m_LevelArray[0].size() ) return '\0';
+    if( x >= m_LevelArray.size() ) throw Exception( "[Level::getTile] X-coordinate out of bounds" );
+    if( y >= m_LevelArray[0].size() ) throw Exception( "[Level::getTile] Y-coordinate out of bounds: " );
     return m_LevelArray[x][y];
 }
 
 // --------------------------------------------------------------
-bool Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
+void Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    if( x >= m_LevelArray.size() ) return false;
-    if( y >= m_LevelArray[0].size() ) return false;
-    if( validTiles.find( tile ) == std::string::npos ) return false;
+    if( x >= m_LevelArray.size() ) throw Exception( std::string("[Level::setTile] X-coordinate out of bounds: " + x ) );
+    if( y >= m_LevelArray[0].size() ) throw Exception( std::string("[Level::setTile] Y-coordinate out of bounds: " + y) );
+    if( validTiles.find( tile ) == std::string::npos ) throw Exception( std::string("[Level::setTile] attempt to set tile to invalid character: \"") + tile + "\"" );
     m_LevelArray[x][y] = tile;
     this->dispatchSetTile( x, y, tile );
-    return true;
 }
 
 // --------------------------------------------------------------
@@ -221,7 +227,7 @@ void Level::removeLevelNote( const std::string& note)
         if( it->compare( note ) == 0 )
         {
             m_Notes.erase( it );
-            break;
+            return;
         }
     }
 }
@@ -240,7 +246,7 @@ void Level::setLevelName( const std::string& name )
 }
 
 // --------------------------------------------------------------
-std::string Level::getLevelName( void ) const
+const std::string& Level::getLevelName( void ) const
 {
     return m_LevelName;
 }
@@ -256,7 +262,9 @@ std::string Level::exportUndoData( void )
 // --------------------------------------------------------------
 void Level::importUndoData( const std::string& undoData )
 {
-	if( undoData.size() == 0 ) return;
+	if( undoData.size() == 0 )
+        throw Exception( std::string("[Level::importUndoData] Undo data string is empty") );
+
 	std::vector<char> tmp( undoData.begin(), undoData.end() );
 	std::size_t pos = 0;
 	for( std::vector<char>::iterator it = tmp.begin(); it != tmp.end(); ++it )
@@ -279,7 +287,9 @@ void Level::importUndoData( const std::string& undoData )
 			case 'D':break;
 			case 'L':break;
 			case 'R':break;
-			default: return; break;
+			default:
+                throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + undoData + "\". Import failed." );
+                break;
 		}
 	}
 
@@ -303,11 +313,11 @@ void Level::reset( void )
 }
 
 // --------------------------------------------------------------
-bool Level::validateLevel( void )
+void Level::validateLevel( void )
 {
 
     // does another check need to be done?
-    if( m_IsLevelValid ) return true;
+    if( m_IsLevelValid ) return;
 
     // make sure there's only one player
     // this also sets the internal positions of the player
@@ -320,7 +330,7 @@ bool Level::validateLevel( void )
             {
                 if( playerFound )
                 {
-                    return false;
+                    throw Exception( "[Level::validateLevel] More than one player was found on this level." );
                 }else
                 {
                     m_PlayerX = x;
@@ -331,7 +341,7 @@ bool Level::validateLevel( void )
             }
         }
     }
-	if( !playerFound ) return false;
+	if( !playerFound ) throw Exception( "[Level::validateLevel] No player was found on this level." );
 
 	// fast-forward player according to undo/redo data
 	if( this->undoDataExists() )
@@ -340,7 +350,6 @@ bool Level::validateLevel( void )
 
     // arriving here means the level is valid
     m_IsLevelValid = true;
-    return true;
 }
 
 // --------------------------------------------------------------
@@ -415,6 +424,7 @@ bool Level::movePlayer( char direction, bool updateUndoData )
             this->setTile( nextX, nextY, '*' );   // target is goal, place box on goal
         else
             this->setTile( nextX, nextY, '$' );     // target is floor, place box on floor
+        this->dispatchMoveTile( newX, newY, nextX, nextY );
     }
 
     // move player
@@ -426,6 +436,7 @@ bool Level::movePlayer( char direction, bool updateUndoData )
         this->setTile( m_PlayerX, m_PlayerY, ' ' );
     else
         this->setTile( m_PlayerX, m_PlayerY, '.' );
+    this->dispatchMoveTile( m_PlayerX, m_PlayerY, newX, newY );
 	m_PlayerX = newX;
 	m_PlayerY = newY;
 
@@ -481,6 +492,7 @@ bool Level::undo( void )
         this->setTile( oldX, oldY, '@' );
     else
         this->setTile( oldX, oldY, '+' );
+    this->dispatchMoveTile( m_PlayerX, m_PlayerY, oldX, oldY );
 
     // player was pushing a box
     if( boxPushed )
@@ -493,6 +505,7 @@ bool Level::undo( void )
             this->setTile( m_PlayerX, m_PlayerY, '$' );
         else
             this->setTile( m_PlayerX, m_PlayerY, '*' );
+        this->dispatchMoveTile( previousX, previousY, m_PlayerX, m_PlayerY );
     }
 	m_PlayerX = oldX;
 	m_PlayerY = oldY;
@@ -547,10 +560,26 @@ bool Level::removeListener( LevelListener* listener )
 }
 
 // --------------------------------------------------------------
+void Level::doDispatch( bool flag )
+{
+    m_DoDispatch = flag;
+}
+
+// --------------------------------------------------------------
 void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
+    if( !m_DoDispatch ) return;
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onSetTile( x, y, tile );
+}
+
+// --------------------------------------------------------------
+void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY )
+{
+    if( !m_DoDispatch ) return;
+    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
+        (*it)->onMoveTile( oldX, oldY, newX, newY );
+    std::cout << "move tile dispatched" << std::endl;
 }
 
 } // namespace Chocobun

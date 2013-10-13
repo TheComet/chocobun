@@ -203,7 +203,7 @@ void Collection::getTileData( std::vector< std::vector<char> >& vvs ) const
 #endif
         return;
     }
-    return m_ActiveLevel->getTileData();
+    m_ActiveLevel->getTileData( vvs );
 }
 
 // --------------------------------------------------------------
@@ -230,7 +230,7 @@ char Collection::getTile( const Uint32 x, const Uint32 y )
 // --------------------------------------------------------------
 void Collection::setTile( const Uint32 x, const Uint32 y, const char tile )
 {
-    if( !m_ActiveLevel )
+   if( !m_ActiveLevel )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::setTile] Warning: Attempt to set a tile without first setting an active level" << std::endl;
