@@ -125,6 +125,12 @@ public:
     void disableCompression( void );
 
     /*!
+     * @brief Checks if compression is enabled or not
+     * @return Returns true if compression is enabled, false if not
+     */
+    bool isCompressionEnabled( void ) const;
+
+    /*!
      * @brief Sets the export file format to be used for every future save
      *
      * @param fileFormat The file format
@@ -170,7 +176,7 @@ public:
      * @note You can retrieve a list of names with <b>getLevelNames</b>
      * @return If the active level doesn't exist, false is returned, otherwise true is returned.
      */
-    bool setActiveLevel( const std::string& levelName );
+    void setActiveLevel( const std::string& levelName );
 
     /*!
      * @brief Checks if a level is selected as active or not
@@ -200,9 +206,9 @@ public:
      * @exception Throws an std::exception if an active level wasn't selected
      * before calling this method
      *
-     * @return Returns a 2-dimensional array of chars containing level data of the active level
+     * @param vvs A 2-dimensional array of chars to write the level data of the active level to
      */
-    const std::vector< std::vector<char> >& getTileData( void ) const;
+    void getTileData( std::vector< std::vector<char> >& vvs ) const;
 
     /*!
      * @brief Streams all tiles of the active level to an output stream object
@@ -250,9 +256,8 @@ public:
      * @param x The X-coordinate of the tile to set
      * @param y The Y-coordinate of the tile to set
      * @param tile The tile to set it to
-     * @return Returns true if the tile was successfully set, false if otherwise
      */
-    bool setTile( const Uint32 x, const Uint32 y, const char tile );
+    void setTile( const Uint32 x, const Uint32 y, const char tile );
 
     /*!
      * @brief Returns the X-size of the active level
@@ -281,11 +286,11 @@ public:
      * This method also 'finalises' the level by performing some internal setup on the
      * provided tile data
      *
-     * If there is no active level selected, false is returned.
+     * @exception If there is no active level selected, an exception is thrown.
      *
-     * @return If any of these fail, false is returned. If the level is considered valid, true is returned.
+     * @exception If any of the tests fail, an exception is thrown.
      */
-    bool validateLevel( void ) const;
+    void validateLevel( void ) const;
 
     /*!
      * @brief Adds a level listener
@@ -293,14 +298,14 @@ public:
      * @param listener The object to register
      * @return Returns true if successfully registered, false if otherwise
      */
-    bool addLevelListener( LevelListener* listener );
+    void addLevelListener( LevelListener* listener );
 
     /*!
      * @brief Removes a level listener
      * @param listener The object to unregister
      * @return Returns true if successfully unregistered, false if otherwise
      */
-    bool removeLevelListener( LevelListener* listener );
+    void removeLevelListener( LevelListener* listener );
 
     /*!
      * @brief Moves the player up in the active level
