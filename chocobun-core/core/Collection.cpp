@@ -15,6 +15,9 @@
  * along with Chocobun.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// TODO Issue #5 - Level objects need to be allocated by the same class
+// that destroys them, not by the respective parsers.
+
 // --------------------------------------------------------------
 // Collection
 // --------------------------------------------------------------

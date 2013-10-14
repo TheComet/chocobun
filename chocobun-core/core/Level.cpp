@@ -27,7 +27,8 @@
 #include <core/Exception.hpp>
 #include <sstream>
 
-// TODO add support for tiles marked with letters too (as seen in the following validTiles definition)
+// TODO Issue #6 - add import support for alternate tiles (as seen in the following validTiles definition)
+// TODO Issue #7 - convert alternate tiles to conventional tiles for internal use
 const std::string Chocobun::Level::validTiles = "#@+$*. _pPbB";
 
 namespace Chocobun {
@@ -145,7 +146,7 @@ void Level::streamAllTileData( std::ostream& stream, bool newLine )
 }
 
 // --------------------------------------------------------------
-// TODO It's cleaner to keep a copy of the initial tile data. Implement that instead of fast-forwarding and fast-backing
+// TODO Issue #8 - It's cleaner to keep a copy of the initial tile data. Implement that instead of fast-forwarding and fast-backing
 void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 {
 
@@ -184,7 +185,7 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 }
 
 // --------------------------------------------------------------
-// TODO consider returning this as a reference again (instead of copying)
+// TODO Issue #9 - consider returning this as a reference again (instead of copying)
 void Level::getTileData( std::vector< std::vector<char> >& vvs ) const
 {
     vvs = m_LevelArray;
@@ -288,7 +289,7 @@ void Level::importUndoData( const std::string& undoData )
         ++pos;
 
         // validate characters
-        // TODO Use static const std::string for validation
+        // TODO Issue #10 - Use static const std::string for validation
         switch( *it )
         {
             case 'u':break;
@@ -317,7 +318,7 @@ void Level::importUndoData( const std::string& undoData )
 }
 
 // --------------------------------------------------------------
-// TODO Cleaner to copy initial tile data into array, and dispatch all tiles
+// TODO Issue #8 - Cleaner to copy initial tile data into array, and dispatch all tiles
 void Level::reset( void )
 {
     while( this->undo() );
@@ -575,7 +576,7 @@ void Level::removeListener( LevelListener* listener )
 }
 
 // --------------------------------------------------------------
-// TODO remove this as soon as a copy of the initial tile data has been implemented,
+// TODO Issue #8 - remove this as soon as a copy of the initial tile data has been implemented,
 // as it won't be required anymore after that
 void Level::doDispatch( bool flag )
 {

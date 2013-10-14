@@ -133,7 +133,7 @@ void RLE::multPassCompress_pass( const size_t& compareSize, std::string& input, 
                 output.append( compare );
         }
 
-        // if no patter was found, simply append the compare pattern
+        // if no pattern was found, simply append the compare pattern
         else
             output.append( compare );
 

@@ -46,13 +46,14 @@ CollectionParser::~CollectionParser( void )
 }
 
 // --------------------------------------------------------------
+// TODO Raw pointers not exception safe
 std::string CollectionParser::parse( const std::string& fileName, std::vector<Level*>& levels )
 {
 
     // open the file
     std::ifstream file( fileName.c_str() );
     if( !file.is_open() )
-        throw Exception( "[CollectionParser::parse] attempt to open collection file failed" );
+        throw Exception( "[CollectionParser::parse] Error: attempt to open collection file failed" );
 
     std::string inBuf("");
     std::getline( file, inBuf );
@@ -67,7 +68,7 @@ std::string CollectionParser::parse( const std::string& fileName, std::vector<Le
     else // ... else we assume the file format is SOK
     {
         parser = new CollectionParserSOK();
-    }    
+    }
 
     // parse
     std::string result = parser->parse( file, levels );
@@ -76,6 +77,7 @@ std::string CollectionParser::parse( const std::string& fileName, std::vector<Le
 }
 
 // --------------------------------------------------------------
+// TODO raw pointers not exceptoin safe
 void CollectionParser::save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels, bool enableCompression )
 {
 
