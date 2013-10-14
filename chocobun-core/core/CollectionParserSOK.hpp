@@ -63,7 +63,7 @@ public:
 
 private:
 
-	/*!
+    /*!
      * @brief Parses a .SOK file
      *
      * See http://sokobano.de/wiki/index.php?title=Sok_format for more information

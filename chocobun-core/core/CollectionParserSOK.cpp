@@ -86,6 +86,8 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
+// TODO Very unclean, the way pointers are handled here in conjunction with new
+// Not exception safe at all. Implement RAII.
 std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*>& levels )
 {
 
@@ -188,17 +190,17 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*
 
                 // special case for collection name
                 if( key.compare("Collection") == 0 )
-				{
+                {
                     collectionName = value;
-					break;
-				}
+                    break;
+                }
 
-				// special case for snapshots
-				if( key.compare("Snapshot") == 0 )
-				{
-					lvl->importUndoData( value );
-					break;
-				}
+                // special case for snapshots
+                if( key.compare("Snapshot") == 0 )
+                {
+                    lvl->importUndoData( value );
+                    break;
+                }
 
                 // add meta data to level
                 lvl->addMetaData( key, value );
@@ -258,9 +260,9 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         // add meta data below tile data
         (*it)->streamAllMetaData( file );
 
-		// save snapshot
-		if( (*it)->undoDataExists() || (*it)->redoDataExists() )
-			file << "Snapshot: " << (*it)->exportUndoData() << std::endl;
+        // save snapshot
+        if( (*it)->undoDataExists() || (*it)->redoDataExists() )
+            file << "Snapshot: " << (*it)->exportUndoData() << std::endl;
 
     }
 }

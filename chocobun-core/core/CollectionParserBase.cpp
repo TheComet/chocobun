@@ -63,48 +63,50 @@ void CollectionParserBase::_registerLevel( Level* level, std::string& levelName,
 // --------------------------------------------------------------
 std::string CollectionParserBase::parse( std::ifstream& file, std::vector<Level*>& levels )
 {
-	return this->_parse( file, levels );
+    return this->_parse( file, levels );
 }
 
 // --------------------------------------------------------------
 void CollectionParserBase::save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
 {
 
-	// calculate maximum level width and height
-	m_MaxLevelWidth = 0;
-	m_MaxLevelHeight = 0;
-	for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
-	{
-		std::size_t tmp = (*it)->getSizeX();
-		if( tmp > m_MaxLevelWidth ) m_MaxLevelWidth = tmp;
-		tmp = (*it)->getSizeY();
-		if( tmp > m_MaxLevelHeight ) m_MaxLevelHeight = tmp;
-	}
+    // calculate maximum level width and height
+    m_MaxLevelWidth = 0;
+    m_MaxLevelHeight = 0;
+    for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
+    {
+        std::size_t tmp = (*it)->getSizeX();
+        if( tmp > m_MaxLevelWidth ) m_MaxLevelWidth = tmp;
+        tmp = (*it)->getSizeY();
+        if( tmp > m_MaxLevelHeight ) m_MaxLevelHeight = tmp;
+    }
 
-	// call overridden save method
-	this->_save( collectionName, file, levels );
+    // call overridden save method
+    this->_save( collectionName, file, levels );
 }
 
 // --------------------------------------------------------------
 void CollectionParserBase::enableCompression( void )
 {
+    // implemented by derived class
 }
 
 // --------------------------------------------------------------
 void CollectionParserBase::disableCompression( void )
 {
+    // implemented by derived class
 }
 
 // --------------------------------------------------------------
 Uint32 CollectionParserBase::getMaxLevelWidth( void )
 {
-	return m_MaxLevelWidth;
+    return m_MaxLevelWidth;
 }
 
 // --------------------------------------------------------------
 Uint32 CollectionParserBase::getMaxLevelHeight( void )
 {
-	return m_MaxLevelHeight;
+    return m_MaxLevelHeight;
 }
 
 } // namespace Chocobun
