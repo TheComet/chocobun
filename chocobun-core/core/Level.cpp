@@ -25,7 +25,9 @@
 #include <core/Level.hpp>
 #include <core/LevelListener.hpp>
 #include <core/Exception.hpp>
+#include <sstream>
 
+// TODO add support for tiles marked with letters too (as seen in the following validTiles definition)
 const std::string Chocobun::Level::validTiles = "#@+$*. _pPbB";
 
 namespace Chocobun {
@@ -48,7 +50,7 @@ Level::~Level( void )
 void Level::addMetaData( const std::string& key, const std::string& value )
 {
     if( m_MetaData.find( key ) != m_MetaData.end() )
-        throw Exception( std::string("[Level::addMetaData] meta data \"") + key + "\" already exists" );
+        throw Exception( std::string("[Level::addMetaData] Error: meta data \"") + key + "\" already exists" );
     m_MetaData[key] = value;
 }
 
@@ -57,7 +59,7 @@ const std::string& Level::getMetaData( const std::string& key )
 {
     std::map<std::string, std::string>::iterator p = m_MetaData.find( key );
     if( p == m_MetaData.end() )
-        throw Exception( std::string("[Level::getMetaData] meta data \"") + key + "\" not found" );
+        throw Exception( std::string("[Level::getMetaData] Error: meta data \"") + key + "\" not found" );
     return p->second;
 }
 
@@ -85,6 +87,9 @@ void Level::removeHeaderData( const std::string& header )
             return;
         }
     }
+#ifdef _DEBUG
+    std::cout << std::string("[Level::removeHeaderData] Warning: Header data \"") + header + "\" does not exist" << std::endl;
+#endif
 }
 
 // --------------------------------------------------------------
@@ -100,7 +105,7 @@ void Level::insertTile( const std::size_t& x, const std::size_t& y, const char& 
 
     // check if character is valid
     if( validTiles.find_first_of(tile) == std::string::npos )
-        throw Exception( std::string("[Level::insertTile] attempt to insert invalid character \"") + tile + "\" into level array" );
+        throw Exception( std::string("[Level::insertTile] Error: attempt to insert invalid character \"") + tile + "\" into level array" );
 
     // resize array if necessary
     while( x+1 > m_LevelArray.size() )
@@ -140,6 +145,7 @@ void Level::streamAllTileData( std::ostream& stream, bool newLine )
 }
 
 // --------------------------------------------------------------
+// TODO It's cleaner to keep a copy of the initial tile data. Implement that instead of fast-forwarding and fast-backing
 void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 {
 
@@ -169,15 +175,16 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
     // fast forward again to restore last state
     m_UndoDataIndex = undoDataIndex;
     if( m_IsLevelValid )
-		if( undoDataIndex != -1 )
-			for( std::size_t pos = 0; pos != m_UndoDataIndex; ++pos )
-				this->movePlayer( m_UndoData.at(pos), false );
+        if( undoDataIndex != -1 )
+            for( std::size_t pos = 0; pos != m_UndoDataIndex; ++pos )
+                this->movePlayer( m_UndoData.at(pos), false );
 
     // restore dispatch settings
     this->doDispatch( tempDoDispatch );
 }
 
 // --------------------------------------------------------------
+// TODO consider returning this as a reference again (instead of copying)
 void Level::getTileData( std::vector< std::vector<char> >& vvs ) const
 {
     vvs = m_LevelArray;
@@ -186,22 +193,23 @@ void Level::getTileData( std::vector< std::vector<char> >& vvs ) const
 // --------------------------------------------------------------
 char Level::getTile( std::size_t x, std::size_t y ) const
 {
-    if( x >= m_LevelArray.size() ) throw Exception( "[Level::getTile] X-coordinate out of bounds" );
-    if( y >= m_LevelArray[0].size() ) throw Exception( "[Level::getTile] Y-coordinate out of bounds: " );
+    if( x >= m_LevelArray.size() ){ std::stringstream ss;  ss << "[Level::getTile] X-coordinate out of bounds: " << x; throw Exception( ss.str() ); }
+    if( y >= m_LevelArray[0].size() ){ std::stringstream ss; ss << "[Level::getTile] Y-coordinate out of bounds: " << y; throw Exception( ss.str() ); }
     return m_LevelArray[x][y];
 }
 
 // --------------------------------------------------------------
 void Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    if( x >= m_LevelArray.size() ) throw Exception( std::string("[Level::setTile] X-coordinate out of bounds: " + x ) );
-    if( y >= m_LevelArray[0].size() ) throw Exception( std::string("[Level::setTile] Y-coordinate out of bounds: " + y) );
+    if( x >= m_LevelArray.size() ) { std::stringstream ss; ss << "[Level::setTile] X-coordinate out of bounds: " << x; throw Exception( ss.str() ); }
+    if( y >= m_LevelArray[0].size() ) { std::stringstream ss; ss << "[Level::setTile] Y-coordinate out of bounds: " << y; throw Exception( ss.str() ); }
     if( validTiles.find( tile ) == std::string::npos ) throw Exception( std::string("[Level::setTile] attempt to set tile to invalid character: \"") + tile + "\"" );
     m_LevelArray[x][y] = tile;
     this->dispatchSetTile( x, y, tile );
 }
 
 // --------------------------------------------------------------
+// TODO Does this actually return 0 if the tile array is empty?
 std::size_t Level::getSizeX( void ) const
 {
     return m_LevelArray.size();
@@ -230,6 +238,9 @@ void Level::removeLevelNote( const std::string& note)
             return;
         }
     }
+#ifdef _DEBUG
+    std::cout << std::string("[Level::removeLevelNote] Warning: note \"") + note + "\" was not found" << std::endl;
+#endif
 }
 
 // --------------------------------------------------------------
@@ -254,62 +265,64 @@ const std::string& Level::getLevelName( void ) const
 // --------------------------------------------------------------
 std::string Level::exportUndoData( void )
 {
-	std::string undoData( m_UndoData.begin(), m_UndoData.end() );
-	if( this->undoDataExists() || this->redoDataExists() ) undoData.insert( m_UndoDataIndex+1, "*" );
-	return undoData;
+    std::string undoData( m_UndoData.begin(), m_UndoData.end() );
+    if( this->undoDataExists() || this->redoDataExists() ) undoData.insert( m_UndoDataIndex+1, "*" );
+    return undoData;
 }
 
 // --------------------------------------------------------------
 void Level::importUndoData( const std::string& undoData )
 {
-	if( undoData.size() == 0 )
+    if( undoData.size() == 0 )
         throw Exception( std::string("[Level::importUndoData] Undo data string is empty") );
 
-	std::vector<char> tmp( undoData.begin(), undoData.end() );
-	std::size_t pos = 0;
-	for( std::vector<char>::iterator it = tmp.begin(); it != tmp.end(); ++it )
-	{
-		if( *it == '*' )
-		{
-			tmp.erase( it );
-			break;
-		}
-		++pos;
+    std::vector<char> tmp( undoData.begin(), undoData.end() );
+    std::size_t pos = 0;
+    for( std::vector<char>::iterator it = tmp.begin(); it != tmp.end(); ++it )
+    {
+        if( *it == '*' )
+        {
+            tmp.erase( it );
+            break;
+        }
+        ++pos;
 
-		// validate characters
-		switch( *it )
-		{
-			case 'u':break;
-			case 'd':break;
-			case 'l':break;
-			case 'r':break;
-			case 'U':break;
-			case 'D':break;
-			case 'L':break;
-			case 'R':break;
-			default:
+        // validate characters
+        // TODO Use static const std::string for validation
+        switch( *it )
+        {
+            case 'u':break;
+            case 'd':break;
+            case 'l':break;
+            case 'r':break;
+            case 'U':break;
+            case 'D':break;
+            case 'L':break;
+            case 'R':break;
+            default:
                 throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + undoData + "\". Import failed." );
                 break;
-		}
-	}
+        }
+    }
 
-	// set level state
-	this->reset();
-	m_UndoData = tmp;
-	m_UndoDataIndex = pos-1;
-	if( m_IsLevelValid )
-		if( this->undoDataExists() )
-			for( pos = 0; pos != m_UndoDataIndex; ++pos )
-				this->movePlayer( m_UndoData.at(pos), false );
+    // set level state
+    this->reset();
+    m_UndoData = tmp;
+    m_UndoDataIndex = pos-1;
+    if( m_IsLevelValid )
+        if( this->undoDataExists() )
+            for( pos = 0; pos != m_UndoDataIndex; ++pos )
+                this->movePlayer( m_UndoData.at(pos), false );
 
 }
 
 // --------------------------------------------------------------
+// TODO Cleaner to copy initial tile data into array, and dispatch all tiles
 void Level::reset( void )
 {
-	while( this->undo() );
-	m_UndoData.clear();
-	m_UndoDataIndex = -1;
+    while( this->undo() );
+    m_UndoData.clear();
+    m_UndoDataIndex = -1;
 }
 
 // --------------------------------------------------------------
@@ -330,7 +343,7 @@ void Level::validateLevel( void )
             {
                 if( playerFound )
                 {
-                    throw Exception( "[Level::validateLevel] More than one player was found on this level." );
+                    throw Exception( "[Level::validateLevel] Error: More than one player was found on this level." );
                 }else
                 {
                     m_PlayerX = x;
@@ -341,12 +354,12 @@ void Level::validateLevel( void )
             }
         }
     }
-	if( !playerFound ) throw Exception( "[Level::validateLevel] No player was found on this level." );
+    if( !playerFound ) throw Exception( "[Level::validateLevel] Error: No player was found on this level." );
 
-	// fast-forward player according to undo/redo data
-	if( this->undoDataExists() )
-		for( std::size_t pos = 0; pos != m_UndoDataIndex+1; ++pos )
-			this->movePlayer( m_UndoData.at(pos), false );
+    // fast-forward player according to undo/redo data
+    if( this->undoDataExists() )
+        for( std::size_t pos = 0; pos != m_UndoDataIndex+1; ++pos )
+            this->movePlayer( m_UndoData.at(pos), false );
 
     // arriving here means the level is valid
     m_IsLevelValid = true;
@@ -355,34 +368,38 @@ void Level::validateLevel( void )
 // --------------------------------------------------------------
 void Level::moveUp( void )
 {
-    if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( 'u' ) ) return;
+    this->movePlayer( 'u' );
 }
 
 // --------------------------------------------------------------
 void Level::moveDown( void )
 {
-    if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( 'd' ) ) return;
+    this->movePlayer( 'd' );
 }
 
 // --------------------------------------------------------------
 void Level::moveLeft( void )
 {
-    if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( 'l' ) ) return;
+    this->movePlayer( 'l' );
 }
 
 // --------------------------------------------------------------
 void Level::moveRight( void )
 {
-    if( !m_IsLevelValid ) return;
-    if( !this->movePlayer( 'r' ) ) return;
+    this->movePlayer( 'r' );
 }
 
 // --------------------------------------------------------------
-bool Level::movePlayer( char direction, bool updateUndoData )
+void Level::movePlayer( char direction, bool updateUndoData )
 {
+
+    if( !m_IsLevelValid )
+    {
+#ifdef _DEBUG
+        std::cout << "[Level::movePlayer] Warning: attempt to move on an invalid level" << std::endl;
+#endif
+        return;
+    }
 
     bool isPushingBox = false;
 
@@ -401,7 +418,7 @@ bool Level::movePlayer( char direction, bool updateUndoData )
     std::size_t nextY = newY + (newY-m_PlayerY);
 
     // can't move if there is a wall
-    if( m_LevelArray[newX][newY] == '#' ) return false;
+    if( m_LevelArray[newX][newY] == '#' ) return;
 
     // can't move if box is against a wall or another box
     if( m_LevelArray[newX][newY] == '$' || m_LevelArray[newX][newY] == '*' )
@@ -409,7 +426,7 @@ bool Level::movePlayer( char direction, bool updateUndoData )
         if( m_LevelArray[nextX][nextY] == '#' ||
             m_LevelArray[nextX][nextY] == '$' ||
             m_LevelArray[nextX][nextY] == '*' )
-            return false;
+            return;
         isPushingBox = true;
     }
 
@@ -450,8 +467,6 @@ bool Level::movePlayer( char direction, bool updateUndoData )
             m_UndoData.push_back( direction );
             ++m_UndoDataIndex;
     }
-
-    return true;
 }
 
 // --------------------------------------------------------------
@@ -537,29 +552,31 @@ bool Level::redoDataExists( void )
 }
 
 // --------------------------------------------------------------
-bool Level::addListener( LevelListener* listener )
+void Level::addListener( LevelListener* listener )
 {
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
-        if( (*it) == listener ) return false;
+        if( (*it) == listener )
+            throw Exception( "[Level::addListener] Error: Listener has already been registered" );
     m_LevelListeners.push_back( listener );
-    return true;
 }
 
 // --------------------------------------------------------------
-bool Level::removeListener( LevelListener* listener )
+void Level::removeListener( LevelListener* listener )
 {
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
     {
         if( (*it) == listener )
         {
             m_LevelListeners.erase( it );
-            return true;
+            return;
         }
     }
-    return false;
+    throw Exception( "[Level::removeListener] Error: Listener could not be removed, as it wasn't registered as a listener to begin with" );
 }
 
 // --------------------------------------------------------------
+// TODO remove this as soon as a copy of the initial tile data has been implemented,
+// as it won't be required anymore after that
 void Level::doDispatch( bool flag )
 {
     m_DoDispatch = flag;

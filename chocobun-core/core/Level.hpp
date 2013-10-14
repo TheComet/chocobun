@@ -339,7 +339,7 @@ public:
      * @return Returns true if the listener was registered successfully,
      * false if otherwise
      */
-    bool addListener( LevelListener* listener );
+    void addListener( LevelListener* listener );
 
     /*!
      * @brief Unregisters a level listener
@@ -347,7 +347,7 @@ public:
      * @return Returns true if the listener was unregistered successfully,
      * false if otherwise
      */
-    bool removeListener( LevelListener* listener );
+    void removeListener( LevelListener* listener );
 
     /*!
      * @brief Sets whether messages should be dispatched to listeners or not
@@ -372,7 +372,7 @@ private:
      * registered as a move that can be undone
      * @return Returns true if the move was successful, false if otherwise
      */
-    bool movePlayer( char direction, bool updateUndoData = true );
+    void movePlayer( char direction, bool updateUndoData = true );
 
     /*!
      * @brief Dispatches the set tile event
