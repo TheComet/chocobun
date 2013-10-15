@@ -50,8 +50,6 @@ CollectionParserSLC::~CollectionParserSLC( void )
 }
 
 // --------------------------------------------------------------
-// TODO Using raw pointers in conjunction with 'new' and exceptions is very dangerous
-// implement RAII by wrapping pointer into a smart pointer
 std::string CollectionParserSLC::_parse( std::ifstream& file, CollectionParserListener* listener )
 {
     rapidxml::xml_document<> doc;

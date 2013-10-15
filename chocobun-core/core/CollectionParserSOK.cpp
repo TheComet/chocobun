@@ -86,8 +86,6 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
-// TODO Very unclean, the way pointers are handled here in conjunction with new
-// Not exception safe at all. Implement RAII.
 // TODO listener could be reference and const?
 std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserListener* listener )
 {
