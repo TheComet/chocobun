@@ -163,8 +163,12 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserLi
                 lvl->removeHeaderData( tempLevelName );
                 lvl->removeLevelNote( tempLevelName );
             }
+
+            // finalise the level name
             listener->_generateLevelName( levelName );
             lvl->setLevelName( levelName );
+
+            // generate new level
             lvl = listener->_constructNewLevel();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
