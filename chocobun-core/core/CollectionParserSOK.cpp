@@ -86,7 +86,6 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
-// TODO listener could be reference and const?
 std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserListener* listener )
 {
 
