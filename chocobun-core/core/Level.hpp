@@ -45,6 +45,7 @@ class Level
 public:
 
     static const std::string validTiles;
+    static const std::string validUndoData;
 
     typedef std::map<std::string, Level*>::iterator metaDataIterator;
 
@@ -370,9 +371,11 @@ private:
      * u, d, l, r, or U, D, L, R (upper case or lower case - it does the same thing)
      * @param updateUndoData Set this to false if this move should not be
      * registered as a move that can be undone
+     * @param ignoreInvalidLevel Set this to true to force the player to move,
+     * regardless if the level has been successfully validated or not
      * @return Returns true if the move was successful, false if otherwise
      */
-    void movePlayer( char direction, bool updateUndoData = true );
+    void movePlayer( char direction, bool updateUndoData = true, bool ignoreInvalidLevel = false );
 
     /*!
      * @brief Dispatches the set tile event
