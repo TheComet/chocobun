@@ -18,119 +18,85 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Array2D.hxx>
+#include <iostream>
+#include <vector>
 
 namespace Chocobun {
 
-// --------------------------------------------------------------
+/*!
+ * @brief Wraps a dynamic 2-dimensional array with std::vector< std::vector<T> > at its core
+ */
 template <class T>
-Array2D<T>::Array2D( void ) :
-    m_DefaultContent( T() ),
-    m_SizeX(0),
-    m_SizeY(0)
+class Array2D
 {
-}
+public:
 
-// --------------------------------------------------------------
-template <class T>
-Array2D<T>::Array2D( const T& content ) :
-    m_DefaultContent( content ),
-    m_SizeX(0),
-    m_SizeY(0)
-{
-}
+    /*!
+     * @brief Default constructor
+     */
+    Array2D( void );
 
-// --------------------------------------------------------------
-template <class T>
-Array2D<T>::Array2D( const Array2D& cp ) :
-    m_DefaultContent( T() ),
-    m_SizeX(0),
-    m_SizeY(0)
-{
-    *this = cp;
-}
+    /*!
+     * @brief Constructor setting the default content of the array
+     * see @a setDefaultContent for more information
+     * @param content The content to use
+     */
+    Array2D( const T& content );
 
-// --------------------------------------------------------------
-template <class T>
-Array2D<T>::Array2D( const Array2D& cp, const T& content ) :
-    m_DefaultContent( content ),
-    m_SizeX(0),
-    m_SizeY(0)
-{
-    *this = cp;
-}
+    /*!
+     * @brief Copy Constructor
+     * @param cp The other 2D array to copy
+     */
+    Array2D( const Array2D& cp );
 
-// --------------------------------------------------------------
-template <class T>
-Array2D<T>::~Array2D( void )
-{
-}
+    /*!
+     * @brief Copy Constructor with setting the default content of the array
+     */
+    Array2D( const Array2D& cp, const T& content );
 
-// --------------------------------------------------------------
-template <class T>
-void Array2D<T>::setDefaultContent( const T& content )
-{
-    m_DefaultContent = content;
-}
+    /*!
+     * @brief Default destructor
+     */
+    ~Array2D( void );
 
-// --------------------------------------------------------------
-template <class T>
-const T& Array2D<T>::getDefaultContent( void ) const
-{
-    return m_DefaultContent;
-}
+    /*!
+     * @brief Sets the default initial content of the array
+     * Sets what content should be inserted into the array
+     * when first allocated or cleared.
+     * @param content The content to use
+     */
+    void setDefaultContent( const T& content );
 
-// --------------------------------------------------------------
-template <class T>
-void Array2D<T>::resize( const std::size_t& x, const std::size_t& y )
-{
+    /*!
+     * @brief Retrieves the default content of the array
+     */
+    const T& getDefaultContent( void ) const;
 
-    // scale x-dimension up
-    if( x > m_SizeX )
-    {
-        m_Array.resize( x );
-        while( x > m_SizeX )
-        {
-            m_Array[m_SizeX] = std::vector<T>(m_DefaultContent);
-            output();
-            m_Array[m_SizeX].resize( m_SizeY, m_DefaultContent );
-            output();
-            ++m_SizeX;
-        }
-    }
+    /*!
+     * @brief Resizes the Array2D to the specified dimensions
+     * @param x The new x-size
+     * @param y The new y-size
+     */
+    void resize( const std::size_t& x, const std::size_t& y );
 
-    // scale x-dimension down
-    if( x < m_SizeX )
-    {
-        m_Array.resize( x );
-        m_SizeX = x;
-    }
+    /*!
+     * @brief Subscript operator overload
+     * Enables the use of writing to the Array2D using [][]
+     */
+    std::vector<T>& operator[]( const std::size_t& index );
 
-    // scale y-dimension up or down
-    if( y != m_SizeY )
-    {
-        for( typename std::vector< std::vector<T> >::iterator it = m_Array.begin(); it != m_Array.end(); ++it )
-        {
-            it->resize( y, m_DefaultContent );
-            output();
-        }
-        m_SizeY = y;
-    }
-}
+    /*!
+     * @brief Subscript operator overload
+     * Enables the use of reading from the Array2D using [][]
+     */
+    const std::vector<T>& operator[]( const std::size_t& index ) const;
 
-// --------------------------------------------------------------
-template <class T>
-std::vector<T>& Array2D<T>::operator[]( const std::size_t& index )
-{
-    return m_Array[index];
-}
+private:
 
-// --------------------------------------------------------------
-template <class T>
-const std::vector<T>& Array2D<T>::operator[]( const std::size_t& index ) const
-{
-    return m_Array[index];
-}
+    T                               m_DefaultContent;
+    std::size_t                     m_SizeX;
+    std::size_t                     m_SizeY;
+    std::vector< std::vector<T> >   m_Array; // NOTE: outer vector: x-dimension, inner vector: y-dimension
+};
 
 } // namespace Chocobun
-
