@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Universal .SOK parser
+// CollectionParserSOK.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -88,11 +88,13 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 // --------------------------------------------------------------
 // TODO Very unclean, the way pointers are handled here in conjunction with new
 // Not exception safe at all. Implement RAII.
-std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*>& levels )
+// TODO listener could be reference and const?
+std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserListener* listener )
 {
 
     // the first level is a requirement
-    Level* lvl = new Level();
+    // request construction of a new level object
+    Level* lvl = listener->_constructNewLevel();
     RLE rle;
 
     Uint32 tileLine = 0;
@@ -161,8 +163,9 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*
                 lvl->removeHeaderData( tempLevelName );
                 lvl->removeLevelNote( tempLevelName );
             }
-            this->_registerLevel( lvl, levelName, levels );
-            lvl = new Level();
+            listener->_generateLevelName( levelName );
+            lvl->setLevelName( levelName );
+            lvl = listener->_constructNewLevel();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
             tileLine = 0;
@@ -217,7 +220,8 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*
     }
 
     // register still open level
-    this->_registerLevel( lvl, levelName, levels );
+    listener->_generateLevelName( levelName );
+    lvl->setLevelName( levelName );
 
     return collectionName;
 }

@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// SLC parser
+// CollectionParserSLC.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -52,7 +52,7 @@ CollectionParserSLC::~CollectionParserSLC( void )
 // --------------------------------------------------------------
 // TODO Using raw pointers in conjunction with 'new' and exceptions is very dangerous
 // implement RAII by wrapping pointer into a smart pointer
-std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*>& levels )
+std::string CollectionParserSLC::_parse( std::ifstream& file, CollectionParserListener* listener )
 {
     rapidxml::xml_document<> doc;
 
@@ -67,7 +67,7 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*
     }
     catch( rapidxml::parse_error& e )
     {
-        throw Exception( (std::string("Error during xml parsing: ") + e.what()).c_str() );
+        throw Exception( std::string("Error during xml parsing: ") + e.what() );
     }
 
     rapidxml::xml_node<>* rootNode = getFirstNode( &doc, "SokobanLevels" );
@@ -91,7 +91,7 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*
     {
         std::string levelName = getFirstAttribute(levelNode, "Id");
 
-        Level* lvl = new Level();
+        Level* lvl = listener->_constructNewLevel();
 
         lvl->addMetaData("Author", levelCollectionCopyright);
 
@@ -101,7 +101,8 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, std::vector<Level*
             lvl->addMetaData(META_TAG_NAMES[i], metaTagValues[i]);
         }
 
-        this->_registerLevel( lvl, levelName, levels );
+        listener->_generateLevelName( levelName );
+        lvl->setLevelName( levelName );
 
         int y = 0;
 

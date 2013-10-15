@@ -16,6 +16,10 @@
  */
 
 // --------------------------------------------------------------
+// CollectionParserBase.cpp
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
 // include files
 
 #include <core/Config.hpp>
@@ -37,6 +41,9 @@ CollectionParserBase::~CollectionParserBase( void )
 }
 
 // --------------------------------------------------------------
+// This has been changed to 'generateLevelName' and is provided as an interface
+// in CollectionParserInterface.
+/*
 void CollectionParserBase::_registerLevel( Level* level, std::string& levelName, std::vector<Level*>& levels )
 {
     std::stringstream ss;
@@ -58,12 +65,12 @@ void CollectionParserBase::_registerLevel( Level* level, std::string& levelName,
     }
     level->setLevelName( levelName );
     levels.push_back( level );
-}
+}*/
 
 // --------------------------------------------------------------
-std::string CollectionParserBase::parse( std::ifstream& file, std::vector<Level*>& levels )
+std::string CollectionParserBase::parse( std::ifstream& file, CollectionParserListener* listener )
 {
-    return this->_parse( file, levels );
+    return this->_parse( file, listener );
 }
 
 // --------------------------------------------------------------

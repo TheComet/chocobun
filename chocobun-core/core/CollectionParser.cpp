@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Collection Parser
+// CollectionParser.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -47,7 +47,7 @@ CollectionParser::~CollectionParser( void )
 
 // --------------------------------------------------------------
 // TODO Raw pointers not exception safe
-std::string CollectionParser::parse( const std::string& fileName, std::vector<Level*>& levels )
+std::string CollectionParser::parse( const std::string& fileName, CollectionParserListener* listener )
 {
 
     // open the file
@@ -71,7 +71,7 @@ std::string CollectionParser::parse( const std::string& fileName, std::vector<Le
     }
 
     // parse
-    std::string result = parser->parse( file, levels );
+    std::string result = parser->parse( file, listener );
     delete parser;
     return result;
 }
