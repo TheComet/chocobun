@@ -140,6 +140,7 @@ void CollectionParserSLC::_save( const std::string& collectionName, std::ofstrea
 
     rapidxml::xml_node<>* levelCollectionNode = doc.allocate_node( rapidxml::node_element, doc.allocate_string("LevelCollection") );
 
+    // TODO issue #11 -Level::getMetaData() will throw an unhandled exception if the requested meta data doesn't exist
     levelCollectionNode->append_attribute( doc.allocate_attribute( "Copyright", lvl->getMetaData("Author").c_str() ) );
 
     std::stringstream ss1;
@@ -187,6 +188,8 @@ void CollectionParserSLC::_save( const std::string& collectionName, std::ofstrea
         }
 
         levelCollectionNode->append_node(levelNode);
+        
+        // TODO issue #12 - Implement the methods Level::exportUndoData() and Level::importUndoData()
 
     }
 
