@@ -116,4 +116,22 @@ Uint32 CollectionParserBase::getMaxLevelHeight( void )
     return m_MaxLevelHeight;
 }
 
+// --------------------------------------------------------------
+void CollectionParserBase::convertTilesToConventional( std::string& tiles )
+{
+    for( std::string::iterator it = tiles.begin(); it != tiles.end(); ++it )
+    {
+        switch( *it )
+        {
+            case 'p' : *it = '@'; break;
+            case 'P' : *it = '+'; break;
+            case 'b' : *it = '$'; break;
+            case 'B' : *it = '*'; break;
+            case '-' : *it = ' '; break;
+            case '_' : *it = ' '; break;
+            default: break; // could potentionally throw an exception here
+        }                   // because the string wouldn't be valid
+    }
+}
+
 } // namespace Chocobun

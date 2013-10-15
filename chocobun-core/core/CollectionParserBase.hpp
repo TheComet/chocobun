@@ -144,6 +144,18 @@ protected:
      */
     Uint32 getMaxLevelHeight( void );
 
+    /*!
+     * @brief Converts a string of tiles to a standard internal format
+     * Some Sokoban level formats differ from the conventional format by using
+     * Capital and non-capital letters instead of symbols. This method converts
+     * those back to conventional symbols to simplify internal use.
+     * @note At this point, it should be definitive that the passed data does
+     * in fact represent tiles and not something else, as no checks are
+     * performed.
+     * @param tiles The tiles to convert
+     */
+    void convertTilesToConventional( std::string& tiles );
+
 private:
 
     Uint32 m_MaxLevelWidth;

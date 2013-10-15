@@ -19,6 +19,10 @@
 // CollectionParserSLC.cpp
 // --------------------------------------------------------------
 
+// TODO Make sure to call this->convertTilesToConvetional( tileString ) on
+// tiles before adding them to the level. More details in issue #7
+// (the method above is a base class of CollectionParserSLC)
+
 // --------------------------------------------------------------
 // include files
 

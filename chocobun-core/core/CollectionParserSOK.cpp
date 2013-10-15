@@ -47,6 +47,8 @@ CollectionParserSOK::~CollectionParserSOK( void )
 bool CollectionParserSOK::isLevelData( const std::string& str )
 {
     std::string levelChars( Level::validTiles + "()0123456789|" ); // RLE compression contains these characters
+
+    // fuzzy evaluation
     Int32 threshold = 0;
     for( size_t i = 0; i != str.size(); ++i )
         if( levelChars.find(str[i]) == std::string::npos )
@@ -86,6 +88,7 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
+// TODO Remove return string. It's cleaner to pass the collection name through the listener
 std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserListener* listener )
 {
 
@@ -177,6 +180,7 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserLi
             if( isLevelData )
             {
                 rle.decompress( inBuf );
+                this->convertTilesToConventional( inBuf );
                 lvl->insertTileLine( tileLine, inBuf );
                 ++tileLine;
                 break;
@@ -216,7 +220,7 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserLi
         }
     }
 
-    // register still open level
+    // give the still open level its name
     listener->_generateLevelName( levelName );
     lvl->setLevelName( levelName );
 
