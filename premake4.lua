@@ -132,7 +132,11 @@ solution "Chocobun"
 		includedirs (headerSearchDirs)
 		
 		configuration "Debug"
-			targetdir "bin/debug"
+			if os.get() == "macosx" then -- very ugly hotfix to make shit work with OS X. If you know any better, please fix!
+				targetdir "bin/bin/debug"
+			else
+				targetdir "bin/debug"
+			end
 			targetsuffix "_d"
 			if os.get() == "windows" then
 				implibdir "bin/lib"
