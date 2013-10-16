@@ -80,6 +80,18 @@ public:
     void resize( const std::size_t& x, const std::size_t& y );
 
     /*!
+     * @brief Gets the size of the array in the x dimension
+     * @return std::size_t of the array's x dimension
+     */
+    const std::size_t& sizeX( void ) const;
+
+    /*!
+     * @brief Gets the size of the array in the y dimension
+     * @return std::size_t of the array's y dimension
+     */
+    const std::size_t& sizeY( void ) const;
+
+    /*!
      * @brief Subscript operator overload
      * Enables the use of writing to the Array2D using [][]
      */

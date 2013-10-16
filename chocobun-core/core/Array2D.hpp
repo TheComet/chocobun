@@ -110,6 +110,20 @@ void Array2D<T>::resize( const std::size_t& x, const std::size_t& y )
 
 // --------------------------------------------------------------
 template <class T>
+const std::size_t& Array2D<T>::sizeX( void ) const
+{
+    return m_SizeX;
+}
+
+// --------------------------------------------------------------
+template <class T>
+const std::size_t& Array2D<T>::sizeY( void ) const
+{
+    return m_SizeY;
+}
+
+// --------------------------------------------------------------
+template <class T>
 std::vector<T>& Array2D<T>::operator[]( const std::size_t& index )
 {
     return m_Array[index];
