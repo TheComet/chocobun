@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Universal .SOK parser
+// CollectionParserSOK.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -47,6 +47,8 @@ CollectionParserSOK::~CollectionParserSOK( void )
 bool CollectionParserSOK::isLevelData( const std::string& str )
 {
     std::string levelChars( Level::validTiles + "()0123456789|" ); // RLE compression contains these characters
+
+    // fuzzy evaluation
     Int32 threshold = 0;
     for( size_t i = 0; i != str.size(); ++i )
         if( levelChars.find(str[i]) == std::string::npos )
@@ -86,13 +88,13 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
-// TODO Very unclean, the way pointers are handled here in conjunction with new
-// Not exception safe at all. Implement RAII.
-std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*>& levels )
+// TODO Remove return string. It's cleaner to pass the collection name through the listener
+std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserListener* listener )
 {
 
     // the first level is a requirement
-    Level* lvl = new Level();
+    // request construction of a new level object
+    Level* lvl = listener->_constructNewLevel();
     RLE rle;
 
     Uint32 tileLine = 0;
@@ -161,8 +163,13 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*
                 lvl->removeHeaderData( tempLevelName );
                 lvl->removeLevelNote( tempLevelName );
             }
-            this->_registerLevel( lvl, levelName, levels );
-            lvl = new Level();
+
+            // finalise the level name
+            listener->_generateLevelName( levelName );
+            lvl->setLevelName( levelName );
+
+            // generate new level
+            lvl = listener->_constructNewLevel();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
             tileLine = 0;
@@ -177,6 +184,7 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*
             if( isLevelData )
             {
                 rle.decompress( inBuf );
+                this->convertTilesToConventional( inBuf );
                 lvl->insertTileLine( tileLine, inBuf );
                 ++tileLine;
                 break;
@@ -216,8 +224,9 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, std::vector<Level*
         }
     }
 
-    // register still open level
-    this->_registerLevel( lvl, levelName, levels );
+    // give the still open level its name
+    listener->_generateLevelName( levelName );
+    lvl->setLevelName( levelName );
 
     return collectionName;
 }

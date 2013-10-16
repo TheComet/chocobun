@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Universal SOK parser
+// CollectionParserSOK.hpp
 // --------------------------------------------------------------
 
 #ifndef __CHOCOBUN_CORE_COLLECTION_PARSER_SOK_HPP__
@@ -73,7 +73,7 @@ private:
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    std::string _parse( std::ifstream& file, std::vector<Level*>& levelMap );
+    std::string _parse( std::ifstream& file, CollectionParserListener* listener );
 
     /*!
      * @brief Universal .SOK format exporter

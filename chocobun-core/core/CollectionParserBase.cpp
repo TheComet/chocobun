@@ -16,6 +16,10 @@
  */
 
 // --------------------------------------------------------------
+// CollectionParserBase.cpp
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
 // include files
 
 #include <core/Config.hpp>
@@ -37,6 +41,9 @@ CollectionParserBase::~CollectionParserBase( void )
 }
 
 // --------------------------------------------------------------
+// This has been changed to 'generateLevelName' and is provided as an interface
+// in CollectionParserInterface.
+/*
 void CollectionParserBase::_registerLevel( Level* level, std::string& levelName, std::vector<Level*>& levels )
 {
     std::stringstream ss;
@@ -58,12 +65,12 @@ void CollectionParserBase::_registerLevel( Level* level, std::string& levelName,
     }
     level->setLevelName( levelName );
     levels.push_back( level );
-}
+}*/
 
 // --------------------------------------------------------------
-std::string CollectionParserBase::parse( std::ifstream& file, std::vector<Level*>& levels )
+std::string CollectionParserBase::parse( std::ifstream& file, CollectionParserListener* listener )
 {
-    return this->_parse( file, levels );
+    return this->_parse( file, listener );
 }
 
 // --------------------------------------------------------------
@@ -107,6 +114,24 @@ Uint32 CollectionParserBase::getMaxLevelWidth( void )
 Uint32 CollectionParserBase::getMaxLevelHeight( void )
 {
     return m_MaxLevelHeight;
+}
+
+// --------------------------------------------------------------
+void CollectionParserBase::convertTilesToConventional( std::string& tiles )
+{
+    for( std::string::iterator it = tiles.begin(); it != tiles.end(); ++it )
+    {
+        switch( *it )
+        {
+            case 'p' : *it = '@'; break;
+            case 'P' : *it = '+'; break;
+            case 'b' : *it = '$'; break;
+            case 'B' : *it = '*'; break;
+            case '-' : *it = ' '; break;
+            case '_' : *it = ' '; break;
+            default: break; // could potentionally throw an exception here
+        }                   // because the string wouldn't be valid
+    }
 }
 
 } // namespace Chocobun

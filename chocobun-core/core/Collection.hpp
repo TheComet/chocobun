@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Collection
+// Collection.hpp
 // --------------------------------------------------------------
 
 #ifndef __CHOCOBUN_CORE_COLLECTION_HPP__
@@ -27,7 +27,7 @@
 
 #include <core/Export.hpp>
 #include <core/CollectionParser.hpp>
-
+#include <core/CollectionParserListener.hpp>
 #include <vector>
 #include <string>
 
@@ -42,7 +42,8 @@ class LevelListener;
 /*!
  * @brief Holds a collection of levels which can be read from a file
  */
-class CHOCOBUN_CORE_API Collection
+class CHOCOBUN_CORE_API Collection :
+    public CollectionParserListener
 {
 public:
 
@@ -349,6 +350,16 @@ public:
     void reset( void );
 
 private:
+
+    /*!
+     * @brief Implement listener for new level object requests
+     */
+    Level* _constructNewLevel( void );
+
+    /*!
+     * @brief Implement listener for auto-generating level names
+     */
+    void _generateLevelName( std::string& name );
 
     std::string m_FileName;
     std::string m_CollectionName;

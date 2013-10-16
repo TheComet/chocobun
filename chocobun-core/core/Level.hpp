@@ -45,6 +45,7 @@ class Level
 public:
 
     static const std::string validTiles;
+    static const std::string validUndoData;
 
     typedef std::map<std::string, Level*>::iterator metaDataIterator;
 
@@ -256,10 +257,24 @@ public:
 
     /*!
      * @brief Imports an undo/redo data string previously exported
+     * Unfortunately, some sokoban level formats allow undo data to be imported
+     * before the tiles actually exist, so the undo data cannot immediately be
+     * applied to the level. (see issue #15)
+     * Therefore, the undo data is only evaluated and saved here, but still
+     * needs to be applied with @a applyUndoData.
      * @exception Chocobun::Exception if the input string is invalid.
      * @param undoData The undo/redo data string
      */
     void importUndoData( const std::string& undoData );
+
+    /*!
+     * @brief Applies any imported undo data to the level
+     * In the case of there being no undo data, this method will simply
+     * do nothing.
+     * @note This will reset the level, even if no undo data exists
+     * @exception If the level is not valid, a Chocobun::Exception is thrown
+     */
+    void applyUndoData( void );
 
     /*!
      * @brief Validates the level
@@ -273,7 +288,9 @@ public:
      *
      * @note It is essential to call this method before using the level for game play.
      * This method also 'finalises' the level by performing some internal setup on the
-     * provided tile data.
+     * provided tile data. This includes:
+     * - Player x,y coordinates are set
+     * - Level is reset and undo data is applied
      * @exception If the level is invalid, a Chocobun::Exception is thrown with
      * a detailed description of what went wrong.
      */
@@ -397,7 +414,7 @@ private:
 
     std::size_t m_PlayerX;
     std::size_t m_PlayerY;
-    std::size_t m_UndoDataIndex;
+    std::size_t m_UndoDataPos;
 
     bool m_IsLevelValid;
     bool m_DoDispatch;

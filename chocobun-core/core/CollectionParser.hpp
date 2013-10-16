@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Collection Parser
+// CollectionParser.hpp
 // --------------------------------------------------------------
 
 #ifndef __CHOCOBUN_CORE_COLLECTION_PARSER_HPP__
@@ -34,6 +34,7 @@ namespace Chocobun {
 // forward declarations
 
 class Level;
+class CollectionParserListener;
 
 /*!
  * @brief Parses a collection and loads all levels into an internal format
@@ -69,7 +70,7 @@ public:
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    std::string parse( const std::string& fileName, std::vector<Level*>& levels );
+    std::string parse( const std::string& fileName, CollectionParserListener* listener );
 
     /*!
      * @brief Saves a collection to a file

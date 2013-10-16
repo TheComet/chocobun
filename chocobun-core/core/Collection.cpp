@@ -15,11 +15,8 @@
  * along with Chocobun.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// TODO Issue #5 - Level objects need to be allocated by the same class
-// that destroys them, not by the respective parsers.
-
 // --------------------------------------------------------------
-// Collection
+// Collection.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -28,9 +25,10 @@
 #include <core/Collection.hpp>
 #include <core/CollectionParser.hpp>
 #include <core/Exception.hpp>
+#include <core/Level.hpp>
 
 #include <iostream>
-#include <core/Level.hpp>
+#include <sstream>
 
 namespace Chocobun {
 
@@ -67,7 +65,7 @@ void Collection::initialise( void )
 
     // load and parse levels
     CollectionParser cp;
-    m_CollectionName = cp.parse( m_FileName, m_Levels );
+    m_CollectionName = cp.parse( m_FileName, this );
 
     m_IsInitialised = true;
 }
@@ -382,6 +380,36 @@ void Collection::reset( void )
         return;
     }
     m_ActiveLevel->reset();
+}
+
+// --------------------------------------------------------------
+Level* Collection::_constructNewLevel( void )
+{
+    m_Levels.push_back( new Level() );
+    return m_Levels.back();
+}
+
+// --------------------------------------------------------------
+void Collection::_generateLevelName( std::string& name )
+{
+    std::stringstream ss;
+    std::vector<Level*>::iterator it;
+    if( name.size() == 0 )
+    {
+        Uint32 i = 1;
+        do{
+            ss.clear();
+            ss.str("");
+            ss << "Level #";
+            ss << i;
+            ++i;
+            for( it = m_Levels.begin(); it != m_Levels.end(); ++it )
+                if( (*it)->getLevelName().compare(ss.str()) == 0 )
+                    break;
+        }while( it != m_Levels.end() );
+        name = ss.str();
+	std::cout << "generated level name " << name << std::endl;
+    }
 }
 
 } // namespace Chocobun

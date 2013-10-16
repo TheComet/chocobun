@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Level
+// Level.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -27,16 +27,14 @@
 #include <core/Exception.hpp>
 #include <sstream>
 
-// TODO Issue #6 - add import support for alternate tiles (as seen in the following validTiles definition)
-// TODO Issue #7 - convert alternate tiles to conventional tiles for internal use
 const std::string Chocobun::Level::validTiles = "#@+$*. _pPbB";
-
+const std::string Chocobun::Level::validUndoData = "udlrUDLR";
 namespace Chocobun {
 
 // --------------------------------------------------------------
 Level::Level( void ) :
     m_IsLevelValid( false ),
-    m_UndoDataIndex( -1 ), // type is unsigned, but the wrap around is intended
+    m_UndoDataPos( 0 ),
     m_DoDispatch( true )
 {
     m_LevelArray.push_back( std::vector<char>(0) );
@@ -155,7 +153,7 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
     this->doDispatch( false );
 
     // save progress temporarily and reset to initial state
-    std::size_t undoDataIndex = m_UndoDataIndex;
+    std::size_t undoDataPos = m_UndoDataPos;
     if( m_IsLevelValid )
     {
         while( this->undo() );
@@ -174,12 +172,12 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
     if( !newLine ) stream << std::endl;
 
     // fast forward again to restore last state
-    m_UndoDataIndex = undoDataIndex;
+    m_UndoDataPos = undoDataPos;
     if( m_IsLevelValid )
-        if( undoDataIndex != -1 )
-            for( std::size_t pos = 0; pos != m_UndoDataIndex; ++pos )
+        if( undoDataPos != 0 )
+            for( std::size_t pos = 0; pos != m_UndoDataPos; ++pos )
                 this->movePlayer( m_UndoData.at(pos), false );
-
+;
     // restore dispatch settings
     this->doDispatch( tempDoDispatch );
 }
@@ -266,17 +264,29 @@ const std::string& Level::getLevelName( void ) const
 // --------------------------------------------------------------
 std::string Level::exportUndoData( void )
 {
+#ifdef _DEBUG
+    std::cout << "exporting undo data" << std::endl;
+#endif
     std::string undoData( m_UndoData.begin(), m_UndoData.end() );
-    if( this->undoDataExists() || this->redoDataExists() ) undoData.insert( m_UndoDataIndex+1, "*" );
+    std::cout << "size: " << undoData.size() << ", undoDataPos: " << m_UndoDataPos << std::endl;
+    std::cout << "(bool) will export undo data: " << (this->undoDataExists() || this->redoDataExists() ) << std::endl;
+    if( this->undoDataExists() || this->redoDataExists() ) undoData.insert( m_UndoDataPos, "*" );
+    std::cout << "success" << std::endl;
     return undoData;
 }
 
 // --------------------------------------------------------------
 void Level::importUndoData( const std::string& undoData )
 {
+#ifdef _DEBUG
+    std::cout << "importing undo data" << std::endl;
+#endif
+
     if( undoData.size() == 0 )
         throw Exception( std::string("[Level::importUndoData] Undo data string is empty") );
 
+    // prepare undo data by extracting the current position (marked by a '*'),
+    // and validating the characters
     std::vector<char> tmp( undoData.begin(), undoData.end() );
     std::size_t pos = 0;
     for( std::vector<char>::iterator it = tmp.begin(); it != tmp.end(); ++it )
@@ -289,31 +299,29 @@ void Level::importUndoData( const std::string& undoData )
         ++pos;
 
         // validate characters
-        // TODO Issue #10 - Use static const std::string for validation
-        switch( *it )
-        {
-            case 'u':break;
-            case 'd':break;
-            case 'l':break;
-            case 'r':break;
-            case 'U':break;
-            case 'D':break;
-            case 'L':break;
-            case 'R':break;
-            default:
-                throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + undoData + "\". Import failed." );
-                break;
-        }
+        if( validUndoData.find_first_of( *it ) == std::string::npos )
+            throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + undoData + "\". Import failed." );
     }
 
-    // set level state
-    this->reset();
+    // save undo data and current position
     m_UndoData = tmp;
-    m_UndoDataIndex = pos-1;
-    if( m_IsLevelValid )
-        if( this->undoDataExists() )
-            for( pos = 0; pos != m_UndoDataIndex; ++pos )
-                this->movePlayer( m_UndoData.at(pos), false );
+    m_UndoDataPos = pos; // results in 0 if there is no undo data
+}
+
+// --------------------------------------------------------------
+void Level::applyUndoData( void )
+{
+#ifdef _DEBUG
+    std::cout << "applying undo data" << std::endl;
+#endif
+
+    if( !m_IsLevelValid )
+        throw Exception( "[Collection::applyUndoData] Error: cannot apply undo data to invalid levels" );
+
+    // fast forward
+    if( this->undoDataExists() )
+        for( std::size_t pos = 0; pos != m_UndoDataPos; ++pos )
+            this->movePlayer( m_UndoData.at(pos), false ); // don't update undo data
 
 }
 
@@ -321,14 +329,21 @@ void Level::importUndoData( const std::string& undoData )
 // TODO Issue #8 - Cleaner to copy initial tile data into array, and dispatch all tiles
 void Level::reset( void )
 {
+#ifdef _DEBUG
+    std::cout << "resetting level" << std::endl;
+#endif
     while( this->undo() );
     m_UndoData.clear();
-    m_UndoDataIndex = -1;
+    m_UndoDataPos = 0;
 }
 
 // --------------------------------------------------------------
+// TODO issue #14 - Validation needs to be done on initial tile data
 void Level::validateLevel( void )
 {
+#ifdef _DEBUG
+    std::cout << "validating level" << std::endl;
+#endif
 
     // does another check need to be done?
     if( m_IsLevelValid ) return;
@@ -357,13 +372,12 @@ void Level::validateLevel( void )
     }
     if( !playerFound ) throw Exception( "[Level::validateLevel] Error: No player was found on this level." );
 
-    // fast-forward player according to undo/redo data
-    if( this->undoDataExists() )
-        for( std::size_t pos = 0; pos != m_UndoDataIndex+1; ++pos )
-            this->movePlayer( m_UndoData.at(pos), false );
-
     // arriving here means the level is valid
     m_IsLevelValid = true;
+
+    // apply any undo data
+    // this also resets the level
+    this->applyUndoData();
 }
 
 // --------------------------------------------------------------
@@ -455,30 +469,37 @@ void Level::movePlayer( char direction, bool updateUndoData )
     else
         this->setTile( m_PlayerX, m_PlayerY, '.' );
     this->dispatchMoveTile( m_PlayerX, m_PlayerY, newX, newY );
-	m_PlayerX = newX;
-	m_PlayerY = newY;
+    m_PlayerX = newX;
+    m_PlayerY = newY;
 
     // generate undo data
     if( updateUndoData )
     {
         if( isPushingBox ) direction -= 32; // convert to upper case for pushing boxes
         if( this->undoDataExists() )
-            while( m_UndoData.size()-1 != m_UndoDataIndex )
+            while( m_UndoData.size() != m_UndoDataPos )
                 m_UndoData.pop_back();
-            m_UndoData.push_back( direction );
-            ++m_UndoDataIndex;
+        m_UndoData.push_back( direction );
+        ++m_UndoDataPos;
     }
 }
 
 // --------------------------------------------------------------
 bool Level::undo( void )
 {
-    if( !m_IsLevelValid ) return false;
-	if( !this->undoDataExists() ) return false;
+    if( !m_IsLevelValid )
+    {
+#ifdef _DEBUG
+        std::cout << "[Level::undo] Warning: attempt to undo on an invalid level" << std::endl;
+#endif
+        return false;
+    }
+
+    if( !this->undoDataExists() ) return false;
 
     // get undo move
-    char move = m_UndoData.at( m_UndoDataIndex );
-    --m_UndoDataIndex;
+    char move = m_UndoData.at( m_UndoDataPos-1 );
+    --m_UndoDataPos;
 
     // determine if a box was pushed and convert to lower case
     bool boxPushed = false;
@@ -523,33 +544,32 @@ bool Level::undo( void )
             this->setTile( m_PlayerX, m_PlayerY, '*' );
         this->dispatchMoveTile( previousX, previousY, m_PlayerX, m_PlayerY );
     }
-	m_PlayerX = oldX;
-	m_PlayerY = oldY;
+    m_PlayerX = oldX;
+    m_PlayerY = oldY;
 
-	return true;
+    return true;
 }
 
 // --------------------------------------------------------------
 bool Level::redo( void )
 {
-    if( !m_IsLevelValid ) return false;
     if( !this->redoDataExists() ) return false;
-	char move = m_UndoData.at(m_UndoDataIndex+1);
+    char move = m_UndoData.at( m_UndoDataPos );
     this->movePlayer( move, false );
-	++m_UndoDataIndex;
-	return true;
+    ++m_UndoDataPos;
+    return true;
 }
 
 // --------------------------------------------------------------
 bool Level::undoDataExists( void )
 {
-	return ( m_UndoDataIndex!=-1 );
+    return ( m_UndoDataPos != 0 );
 }
 
 // --------------------------------------------------------------
 bool Level::redoDataExists( void )
 {
-    return ( m_UndoDataIndex+1 < m_UndoData.size() );
+    return ( m_UndoDataPos < m_UndoData.size() );
 }
 
 // --------------------------------------------------------------
@@ -597,7 +617,6 @@ void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, 
     if( !m_DoDispatch ) return;
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onMoveTile( oldX, oldY, newX, newY );
-    std::cout << "move tile dispatched" << std::endl;
 }
 
 } // namespace Chocobun
