@@ -16,6 +16,10 @@
 */
 
 // --------------------------------------------------------------
+// Array2D.hpp
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
 // include files
 
 #include <iostream>
@@ -47,12 +51,12 @@ public:
      * @brief Copy Constructor
      * @param cp The other 2D array to copy
      */
-    Array2D( const Array2D& cp );
+    Array2D( const Array2D& that );
 
     /*!
      * @brief Copy Constructor with setting the default content of the array
      */
-    Array2D( const Array2D& cp, const T& content );
+    Array2D( const Array2D& that, const T& content );
 
     /*!
      * @brief Default destructor
@@ -90,6 +94,29 @@ public:
      * @return std::size_t of the array's y dimension
      */
     const std::size_t& sizeY( void ) const;
+
+    /*!
+     * @brief Gets a character from the array at the specified coordinates
+     * Enables the use of reading from the Array2D with boundary checking
+     * @exception Throws a Chocobun::Exception if the coordinates are
+     * out of bounds
+     * @return The data stored at the specified coordinates
+     */
+    const T& at( const std::size_t& x, const std::size_t& y ) const;
+
+    /*!
+     * @brief Gets a character from the array at the specified coordinates
+     * Enables the use of writing to the array with boundary checking
+     * @exception Throws a Chocobun::Exception if the coordinates are
+     * out of bounds
+     * @return The data stored at the specified coordinates
+     */
+    T& at( const std::size_t& x, const std::size_t& y );
+
+    /*!
+     * @brief Overload assignment operator
+     */
+    Array2D<T>& operator=( const Array2D<T>& that );
 
     /*!
      * @brief Subscript operator overload

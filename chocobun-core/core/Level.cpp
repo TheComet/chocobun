@@ -24,25 +24,35 @@
 
 #include <core/Level.hpp>
 #include <core/LevelListener.hpp>
+#include <core/Array2D.hpp>
 #include <core/Exception.hpp>
+
 #include <sstream>
 
 const std::string Chocobun::Level::validTiles = "#@+$*. _pPbB";
 const std::string Chocobun::Level::validUndoData = "udlrUDLR";
 namespace Chocobun {
 
+// TODO issue #17 - implement rule of 3
 // --------------------------------------------------------------
 Level::Level( void ) :
-    m_IsLevelValid( false ),
+    m_LevelArray( 0 ),
+    m_InitialLevelArray( 0 ),
+    m_PlayerX( 0 ),
+    m_PlayerY( 0 ),
     m_UndoDataPos( 0 ),
+    m_IsLevelValid( false ),
     m_DoDispatch( true )
 {
-    m_LevelArray.push_back( std::vector<char>(0) );
+    m_LevelArray = new Array2D<char>(' ');
+    m_InitialLevelArray = new Array2D<char>(' ');
 }
 
 // --------------------------------------------------------------
 Level::~Level( void )
 {
+    delete m_InitialLevelArray;
+    delete m_LevelArray;
 }
 
 // --------------------------------------------------------------
@@ -107,14 +117,10 @@ void Level::insertTile( const std::size_t& x, const std::size_t& y, const char& 
         throw Exception( std::string("[Level::insertTile] Error: attempt to insert invalid character \"") + tile + "\" into level array" );
 
     // resize array if necessary
-    while( x+1 > m_LevelArray.size() )
-    {
-        m_LevelArray.push_back( std::vector<char>(0) );
-        m_LevelArray[m_LevelArray.size()-1].resize( m_LevelArray[0].size(), 32 );
-    }
-    if( y+1 > m_LevelArray[0].size() )
-        for( std::size_t i = 0; i != m_LevelArray.size(); ++i )
-            m_LevelArray[i].resize( y+1, 32 );
+    if( x+1 > m_InitialLevelArray->sizeX() )
+        m_InitialLevelArray->resize( x+1, m_InitialLevelArray->sizeY() );
+    if( y+1 > m_InitialLevelArray->sizeY() )
+        m_InitialLevelArray->resize( m_InitialLevelArray->sizeX(), y+1 );
 
     // write tile
     this->setTile( x, y, tile );
@@ -131,10 +137,10 @@ void Level::insertTileLine( const std::size_t& y, const std::string& tiles )
 // --------------------------------------------------------------
 void Level::streamAllTileData( std::ostream& stream, bool newLine )
 {
-    for( std::size_t y = 0; y != m_LevelArray[0].size(); ++y )
+    for( std::size_t y = 0; y != m_InitialLevelArray->sizeY(); ++y )
     {
-        for( std::size_t x = 0; x != m_LevelArray.size(); ++x )
-            stream << m_LevelArray[x][y];
+        for( std::size_t x = 0; x != m_InitialLevelArray->sizeX(); ++x )
+            stream << m_InitialLevelArray->at(x,y);
         if( newLine )
             stream << std::endl;
         else
@@ -160,10 +166,10 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
     }
 
     // stream data
-    for( std::size_t y = 0; y != m_LevelArray[0].size(); ++y )
+    for( std::size_t y = 0; y != m_InitialLevelArray->sizeY(); ++y )
     {
-        for( std::size_t x = 0; x != m_LevelArray.size(); ++x )
-            stream << m_LevelArray[x][y];
+        for( std::size_t x = 0; x != m_InitialLevelArray->sizeX(); ++x )
+            stream << m_InitialLevelArray->at(x,y);
         if( newLine )
             stream << std::endl;
         else
@@ -177,33 +183,31 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
         if( undoDataPos != 0 )
             for( std::size_t pos = 0; pos != m_UndoDataPos; ++pos )
                 this->movePlayer( m_UndoData.at(pos), false );
-;
+
     // restore dispatch settings
     this->doDispatch( tempDoDispatch );
 }
 
 // --------------------------------------------------------------
 // TODO Issue #9 - consider returning this as a reference again (instead of copying)
-void Level::getTileData( std::vector< std::vector<char> >& vvs ) const
+void Level::getTileData( Array2D<char>& tiles ) const
 {
-    vvs = m_LevelArray;
+    tiles = *m_InitialLevelArray;
 }
 
 // --------------------------------------------------------------
 char Level::getTile( std::size_t x, std::size_t y ) const
 {
-    if( x >= m_LevelArray.size() ){ std::stringstream ss;  ss << "[Level::getTile] X-coordinate out of bounds: " << x; throw Exception( ss.str() ); }
-    if( y >= m_LevelArray[0].size() ){ std::stringstream ss; ss << "[Level::getTile] Y-coordinate out of bounds: " << y; throw Exception( ss.str() ); }
-    return m_LevelArray[x][y];
+    if( x >= m_InitialLevelArray->sizeX() ){ std::stringstream ss; ss << "[Level::getTile] X-coordinate out of bounds: " << x; throw Exception( ss.str() ); }
+    if( y >= m_InitialLevelArray->sizeY() ){ std::stringstream ss; ss << "[Level::getTile] Y-coordinate out of bounds: " << y; throw Exception( ss.str() ); }
+    return m_InitialLevelArray->at(x,y);
 }
 
 // --------------------------------------------------------------
 void Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    if( x >= m_LevelArray.size() ) { std::stringstream ss; ss << "[Level::setTile] X-coordinate out of bounds: " << x; throw Exception( ss.str() ); }
-    if( y >= m_LevelArray[0].size() ) { std::stringstream ss; ss << "[Level::setTile] Y-coordinate out of bounds: " << y; throw Exception( ss.str() ); }
     if( validTiles.find( tile ) == std::string::npos ) throw Exception( std::string("[Level::setTile] attempt to set tile to invalid character: \"") + tile + "\"" );
-    m_LevelArray[x][y] = tile;
+    m_InitialLevelArray->at(x,y) = tile;
     this->dispatchSetTile( x, y, tile );
 }
 
@@ -211,13 +215,13 @@ void Level::setTile( const std::size_t& x, const std::size_t& y, const char& til
 // TODO Does this actually return 0 if the tile array is empty?
 std::size_t Level::getSizeX( void ) const
 {
-    return m_LevelArray.size();
+    return m_InitialLevelArray->sizeX();
 }
 
 // --------------------------------------------------------------
 std::size_t Level::getSizeY( void ) const
 {
-    return m_LevelArray[0].size();
+    return m_InitialLevelArray->sizeY();
 }
 
 // --------------------------------------------------------------
@@ -351,11 +355,11 @@ void Level::validateLevel( void )
     // make sure there's only one player
     // this also sets the internal positions of the player
     bool playerFound = false;
-    for( std::size_t x = 0; x != m_LevelArray.size(); ++x )
+    for( std::size_t x = 0; x != m_InitialLevelArray->sizeX(); ++x )
     {
-        for( std::size_t y = 0; y != m_LevelArray[0].size(); ++y )
+        for( std::size_t y = 0; y != m_InitialLevelArray->sizeY(); ++y )
         {
-            if( m_LevelArray[x][y] == '@' || m_LevelArray[x][y] == '+' )
+            if( m_InitialLevelArray->at(x,y) == '@' || m_InitialLevelArray->at(x,y) == '+' )
             {
                 if( playerFound )
                 {
@@ -433,14 +437,14 @@ void Level::movePlayer( char direction, bool updateUndoData )
     std::size_t nextY = newY + (newY-m_PlayerY);
 
     // can't move if there is a wall
-    if( m_LevelArray[newX][newY] == '#' ) return;
+    if( m_LevelArray->at(newX,newY) == '#' ) return;
 
     // can't move if box is against a wall or another box
-    if( m_LevelArray[newX][newY] == '$' || m_LevelArray[newX][newY] == '*' )
+    if( m_LevelArray->at(newX,newY) == '$' || m_LevelArray->at(newX,newY) == '*' )
     {
-        if( m_LevelArray[nextX][nextY] == '#' ||
-            m_LevelArray[nextX][nextY] == '$' ||
-            m_LevelArray[nextX][nextY] == '*' )
+        if( m_LevelArray->at(nextX,nextY) == '#' ||
+            m_LevelArray->at(nextX,nextY) == '$' ||
+            m_LevelArray->at(nextX,nextY) == '*' )
             return;
         isPushingBox = true;
     }
@@ -448,11 +452,11 @@ void Level::movePlayer( char direction, bool updateUndoData )
     // move box (if any)
     if( isPushingBox )
     {
-        if( m_LevelArray[newX][newY] == '$' )
-            m_LevelArray[newX][newY] = ' ';   // box is on floor, expose floor
+        if( m_LevelArray->at(newX,newY) == '$' )
+            m_LevelArray->at(newX,newY) = ' ';   // box is on floor, expose floor
         else
-            m_LevelArray[newX][newY] = '.';   // box is on goal, expose goal
-        if( m_LevelArray[nextX][nextY] == '.' )
+            m_LevelArray->at(newX,newY) = '.';   // box is on goal, expose goal
+        if( m_LevelArray->at(nextX,nextY) == '.' )
             this->setTile( nextX, nextY, '*' );   // target is goal, place box on goal
         else
             this->setTile( nextX, nextY, '$' );     // target is floor, place box on floor
@@ -460,11 +464,11 @@ void Level::movePlayer( char direction, bool updateUndoData )
     }
 
     // move player
-    if( m_LevelArray[newX][newY] == ' ' )
+    if( m_LevelArray->at(newX,newY) == ' ' )
         this->setTile( newX, newY, '@' );     // target is floor, place player on floor
     else
         this->setTile( newX, newY, '+' );     // target is goal, place player on goal
-    if( m_LevelArray[m_PlayerX][m_PlayerY] == '@')
+    if( m_LevelArray->at(m_PlayerX,m_PlayerY) == '@')
         this->setTile( m_PlayerX, m_PlayerY, ' ' );
     else
         this->setTile( m_PlayerX, m_PlayerY, '.' );
@@ -521,11 +525,11 @@ bool Level::undo( void )
     std::size_t previousY = m_PlayerY + (m_PlayerY-oldY);
 
     // revert back player position
-    if( m_LevelArray[m_PlayerX][m_PlayerY] == '@' )
+    if( m_LevelArray->at(m_PlayerX,m_PlayerY) == '@' )
         this->setTile( m_PlayerX, m_PlayerY, ' ' );
     else
         this->setTile( m_PlayerX, m_PlayerY, '.' );
-    if( m_LevelArray[oldX][oldY] == ' ' )
+    if( m_LevelArray->at(oldX,oldY) == ' ' )
         this->setTile( oldX, oldY, '@' );
     else
         this->setTile( oldX, oldY, '+' );
@@ -534,11 +538,11 @@ bool Level::undo( void )
     // player was pushing a box
     if( boxPushed )
     {
-        if( m_LevelArray[previousX][previousY] == '$' )
+        if( m_LevelArray->at(previousX,previousY) == '$' )
             this->setTile( previousX, previousY, ' ' );
         else
             this->setTile( previousX, previousY, '.' );
-        if( m_LevelArray[m_PlayerX][m_PlayerY] == ' ')
+        if( m_LevelArray->at(m_PlayerX,m_PlayerY) == ' ')
             this->setTile( m_PlayerX, m_PlayerY, '$' );
         else
             this->setTile( m_PlayerX, m_PlayerY, '*' );

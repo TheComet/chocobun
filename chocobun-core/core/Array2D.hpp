@@ -16,9 +16,16 @@
 */
 
 // --------------------------------------------------------------
+// Array2D.hxx
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
 // include files
 
-#include "Matrix.hxx"
+#include <core/Array2D.hxx>
+#include <core/Exception.hpp>
+
+#include <sstream>
 
 namespace Chocobun {
 
@@ -42,22 +49,19 @@ Array2D<T>::Array2D( const T& content ) :
 
 // --------------------------------------------------------------
 template <class T>
-Array2D<T>::Array2D( const Array2D& cp ) :
-    m_DefaultContent( cp.m_DefaultContent ),
-    m_SizeX( cp.m_SizeX ),
-    m_SizeY( cp.m_SizeY ),
-    m_Array( cp.m_Array )
+Array2D<T>::Array2D( const Array2D& that ) :
+    m_DefaultContent( T() )
+    
 {
+    *this = that;
 }
 
 // --------------------------------------------------------------
 template <class T>
-Array2D<T>::Array2D( const Array2D& cp, const T& content ) :
-    m_DefaultContent( content ),
-    m_SizeX( cp.m_SizeX ),
-    m_SizeY( cp.m_SizeY ),
-    m_Array( cp.m_Array )
+Array2D<T>::Array2D( const Array2D& that, const T& content ) :
+    m_DefaultContent( content )
 {
+    *this = that;
 }
 
 // --------------------------------------------------------------
@@ -124,6 +128,15 @@ const std::size_t& Array2D<T>::sizeY( void ) const
 
 // --------------------------------------------------------------
 template <class T>
+Array2D<T>& Array2D<T>::operator=( const Array2D<T>& that )
+{
+    m_Array = that.m_Array;
+    m_SizeX = that.m_SizeX;
+    m_SizeY = that.m_SizeY;
+}
+
+// --------------------------------------------------------------
+template <class T>
 std::vector<T>& Array2D<T>::operator[]( const std::size_t& index )
 {
     return m_Array[index];
@@ -134,6 +147,25 @@ template <class T>
 const std::vector<T>& Array2D<T>::operator[]( const std::size_t& index ) const
 {
     return m_Array[index];
+}
+
+// --------------------------------------------------------------
+template <class T>
+const T& Array2D<T>::at( const std::size_t& x, const std::size_t& y ) const
+{
+    return m_Array[x][y];
+}
+
+// --------------------------------------------------------------
+template <class T>
+T& Array2D<T>::at( const std::size_t& x, const std::size_t& y )
+{
+    if( x >= m_SizeX || y >= m_SizeY )
+    {
+        std::stringstream ss; ss << "[Array2D::at] Error: coordinates out of bounds: " << x << "," << y;
+        throw Exception( ss.str() );
+    }
+    return m_Array[x][y];
 }
 
 } // namespace Chocobun

@@ -38,7 +38,7 @@ Collection::Collection( const std::string& fileName ) :
     m_EnableCompression( false ),
     m_IsInitialised( false ),
     m_ActiveLevel( 0 ),
-	m_FileFormat( CollectionParser::FORMAT_SOK )
+    m_FileFormat( CollectionParser::FORMAT_SOK )
 {
 }
 
@@ -195,7 +195,7 @@ bool Collection::hasActiveLevel( void )
 }
 
 // --------------------------------------------------------------
-void Collection::getTileData( std::vector< std::vector<char> >& vvs ) const
+void Collection::getTileData( Array2D<char>& tiles ) const
 {
     if( !m_ActiveLevel)
     {
@@ -204,7 +204,7 @@ void Collection::getTileData( std::vector< std::vector<char> >& vvs ) const
 #endif
         return;
     }
-    m_ActiveLevel->getTileData( vvs );
+    m_ActiveLevel->getTileData( tiles );
 }
 
 // --------------------------------------------------------------

@@ -36,6 +36,7 @@
 namespace Chocobun {
 
 class LevelListener;
+template <class T> class Array2D;
 
 /*!
  * @brief Holds information of a loaded level
@@ -170,7 +171,7 @@ public:
      * @brief Gets the array of current tile data
      * @return Returns a 2-dimensional array of chars containing tile data
      */
-    void getTileData( std::vector< std::vector<char> >& vvs ) const;
+    void getTileData( Array2D<char>& tiles ) const;
 
     /*!
      * @brief Streams the tile data of this level in its initial state
@@ -404,20 +405,21 @@ private:
      */
     void dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY );
 
-    std::map<std::string, std::string> m_MetaData;
-    std::vector< std::vector<char> > m_LevelArray;
-    std::vector<std::string> m_HeaderData;
-    std::vector<std::string> m_Notes;
-    std::vector<char> m_UndoData;
-    std::string m_LevelName;
-    std::vector<LevelListener*> m_LevelListeners;
+    std::map<std::string, std::string>  m_MetaData;
+    Array2D<char>*                      m_LevelArray;
+    Array2D<char>*                      m_InitialLevelArray;
+    std::vector<std::string>            m_HeaderData;
+    std::vector<std::string>            m_Notes;
+    std::vector<char>                   m_UndoData;
+    std::string                         m_LevelName;
+    std::vector<LevelListener*>         m_LevelListeners;
 
-    std::size_t m_PlayerX;
-    std::size_t m_PlayerY;
-    std::size_t m_UndoDataPos;
+    std::size_t                         m_PlayerX;
+    std::size_t                         m_PlayerY;
+    std::size_t                         m_UndoDataPos;
 
-    bool m_IsLevelValid;
-    bool m_DoDispatch;
+    bool                                m_IsLevelValid;
+    bool                                m_DoDispatch;
 };
 
 } // namespace Chocobun

@@ -38,6 +38,7 @@ namespace Chocobun {
 
 class Level;
 class LevelListener;
+template <class T> class Array2D;
 
 /*!
  * @brief Holds a collection of levels which can be read from a file
@@ -209,7 +210,7 @@ public:
      *
      * @param vvs A 2-dimensional array of chars to write the level data of the active level to
      */
-    void getTileData( std::vector< std::vector<char> >& vvs ) const;
+    void getTileData( Array2D<char>& tiles ) const;
 
     /*!
      * @brief Streams all tiles of the active level to an output stream object
