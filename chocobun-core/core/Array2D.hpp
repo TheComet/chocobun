@@ -26,6 +26,7 @@
 #include <core/Exception.hpp>
 
 #include <sstream>
+#include <algorithm> // std::reverse
 
 namespace Chocobun {
 
@@ -50,8 +51,7 @@ Array2D<T>::Array2D( const T& content ) :
 // --------------------------------------------------------------
 template <class T>
 Array2D<T>::Array2D( const Array2D& that ) :
-    m_DefaultContent( T() )
-    
+    m_DefaultContent( T() )   
 {
     *this = that;
 }
@@ -110,6 +110,22 @@ void Array2D<T>::resize( const std::size_t& x, const std::size_t& y )
         }
         m_SizeY = y;
     }
+}
+
+// --------------------------------------------------------------
+template <class T>
+void Array2D<T>::mirrorX( void )
+{
+    if( m_SizeX <= 1 ) return;
+    std::reverse( m_Array.begin(), m_Array.end() );
+}
+
+// --------------------------------------------------------------
+template <class T>
+void Array2D<T>::mirrorY( void )
+{
+    if( !m_SizeX || m_SizeY <= 1 ) return;
+    std::reverse( m_Array[0].begin(), m_Array[0].end() );
 }
 
 // --------------------------------------------------------------

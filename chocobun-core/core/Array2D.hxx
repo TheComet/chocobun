@@ -84,6 +84,16 @@ public:
     void resize( const std::size_t& x, const std::size_t& y );
 
     /*!
+     * @brief Mirrors the array along its X axis
+     */
+    void mirrorX( void );
+
+    /*!
+     * @brief Mirrors the array along its Y axis
+     */
+    void mirrorY( void );
+
+    /*!
      * @brief Gets the size of the array in the x dimension
      * @return std::size_t of the array's x dimension
      */

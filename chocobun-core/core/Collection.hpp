@@ -107,7 +107,7 @@ public:
      *
      * @return The name of the collection
      */
-    std::string getName( void ) const;
+    const std::string& getName( void ) const;
 
     /*!
      * @brief Enables compression of exported files

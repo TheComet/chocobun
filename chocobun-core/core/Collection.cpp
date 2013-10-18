@@ -106,7 +106,7 @@ void Collection::setName( const std::string& name )
 }
 
 // --------------------------------------------------------------
-std::string Collection::getName( void ) const
+const std::string& Collection::getName( void ) const
 {
 	return m_CollectionName;
 }

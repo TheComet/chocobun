@@ -169,6 +169,8 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserLi
             listener->_generateLevelName( levelName );
             lvl->setLevelName( levelName );
 
+            // TODO reverse Y order of level array (see issue #16)
+
             // generate new level
             lvl = listener->_constructNewLevel();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
