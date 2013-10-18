@@ -26,6 +26,7 @@
 // include files
 
 #include <core/Config.hpp>
+#include <core/Globals.hpp>
 
 #include <string>
 #include <vector>
@@ -45,15 +46,15 @@ class Level
 {
 public:
 
-    static const std::string validTiles;
-    static const std::string validUndoData;
-
-    typedef std::map<std::string, Level*>::iterator metaDataIterator;
-
     /*!
      * @brief Default Constructor
      */
     Level( void );
+
+    /*!
+     * @brief Copy constructor
+     */
+    Level( const Level& that );
 
     /*!
      * @brief Destructor
@@ -367,6 +368,12 @@ public:
      */
     void removeListener( LevelListener* listener );
 
+    /*!
+     * @brief Overload assignment operator
+     * Allows copying between level objects
+     */
+    Level& operator=( const Level& other );
+
 private:
 
     /*!
@@ -394,8 +401,8 @@ private:
     void dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY );
 
     std::map<std::string, std::string>  m_MetaData;
-    Array2D<char>*                      m_LevelArray;
-    Array2D<char>*                      m_InitialLevelArray;
+    LevelArray_t*                       m_LevelArray;
+    LevelArray_t*                       m_InitialLevelArray;
     std::vector<std::string>            m_HeaderData;
     std::vector<std::string>            m_Notes;
     std::vector<char>                   m_UndoData;

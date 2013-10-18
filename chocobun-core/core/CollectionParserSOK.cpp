@@ -22,6 +22,7 @@
 // --------------------------------------------------------------
 // include files
 
+#include <core/Globals.hpp>
 #include <core/CollectionParserSOK.hpp>
 #include <core/Level.hpp>
 #include <core/RLE.hpp>
@@ -46,7 +47,7 @@ CollectionParserSOK::~CollectionParserSOK( void )
 // --------------------------------------------------------------
 bool CollectionParserSOK::isLevelData( const std::string& str )
 {
-    std::string levelChars( Level::validTiles + "()0123456789|" ); // RLE compression contains these characters
+    std::string levelChars( validTiles + "()0123456789|" ); // RLE compression contains these characters
 
     // fuzzy evaluation
     Int32 threshold = 0;

@@ -22,6 +22,7 @@
 // --------------------------------------------------------------
 // include files
 
+#include <core/Globals.hpp>
 #include <core/Level.hpp>
 #include <core/LevelListener.hpp>
 #include <core/Array2D.hpp>
@@ -29,11 +30,8 @@
 
 #include <sstream>
 
-const std::string Chocobun::Level::validTiles = "#@+$*. _pPbB";
-const std::string Chocobun::Level::validUndoData = "udlrUDLR";
 namespace Chocobun {
 
-// TODO issue #17 - implement rule of 3
 // --------------------------------------------------------------
 Level::Level( void ) :
     m_LevelArray( 0 ),
@@ -43,15 +41,27 @@ Level::Level( void ) :
     m_UndoDataPos( 0 ),
     m_IsLevelValid( false )
 {
-    m_LevelArray = new Array2D<char>(' ');
-    m_InitialLevelArray = new Array2D<char>(' ');
+    m_LevelArray = new LevelArray_t(' ');
+    m_InitialLevelArray = new LevelArray_t(' ');
+}
+
+// --------------------------------------------------------------
+Level::Level( const Level& that ) :
+    m_LevelArray( 0 ),
+    m_InitialLevelArray( 0 ),
+    m_PlayerX( 0 ),
+    m_PlayerY( 0 ),
+    m_UndoDataPos( 0 ),
+    m_IsLevelValid( false )
+{
+    *this = that;
 }
 
 // --------------------------------------------------------------
 Level::~Level( void )
 {
-    delete m_InitialLevelArray;
-    delete m_LevelArray;
+    if( m_InitialLevelArray ) delete m_InitialLevelArray;
+    if( m_LevelArray ) delete m_LevelArray;
 }
 
 // --------------------------------------------------------------
@@ -167,7 +177,7 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 
 // --------------------------------------------------------------
 // TODO Issue #9 - consider returning this as a reference again (instead of copying)
-void Level::getTileData( Array2D<char>& tiles ) const
+void Level::getTileData( LevelArray_t& tiles ) const
 {
     tiles = *m_InitialLevelArray;
 }
@@ -587,6 +597,15 @@ void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, 
 {
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onMoveTile( oldX, oldY, newX, newY );
+}
+
+// --------------------------------------------------------------
+Level& Level::operator=( const Level& that )
+{
+    if( &that == this ) return *this;
+    *m_InitialLevelArray = *that.m_InitialLevelArray;
+    *m_LevelArray = *that.m_LevelArray;
+    return *this;
 }
 
 } // namespace Chocobun
