@@ -367,18 +367,6 @@ public:
      */
     void removeListener( LevelListener* listener );
 
-    /*!
-     * @brief Sets whether messages should be dispatched to listeners or not
-     * In the case of getting the initial tile data of a level, you have to
-     * fast-backwards (undo) to the beginning, return the tile data, then
-     * fast-forwards again. During this, dispatching changing tile data to
-     * listeners is bad.
-     *
-     * This method allows you to disable dispatches.
-     * @param flag If set to true, tile changes are dispatched, otherwise they aren't.
-     */
-    void doDispatch( bool flag );
-
 private:
 
     /*!
@@ -419,7 +407,6 @@ private:
     std::size_t                         m_UndoDataPos;
 
     bool                                m_IsLevelValid;
-    bool                                m_DoDispatch;
 };
 
 } // namespace Chocobun

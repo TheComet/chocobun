@@ -41,8 +41,7 @@ Level::Level( void ) :
     m_PlayerX( 0 ),
     m_PlayerY( 0 ),
     m_UndoDataPos( 0 ),
-    m_IsLevelValid( false ),
-    m_DoDispatch( true )
+    m_IsLevelValid( false )
 {
     m_LevelArray = new Array2D<char>(' ');
     m_InitialLevelArray = new Array2D<char>(' ');
@@ -150,20 +149,8 @@ void Level::streamAllTileData( std::ostream& stream, bool newLine )
 }
 
 // --------------------------------------------------------------
-// TODO Issue #8 - It's cleaner to keep a copy of the initial tile data. Implement that instead of fast-forwarding and fast-backing
 void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 {
-
-    // disable listeners, as these tile updates are for internal purposes only
-    bool tempDoDispatch = m_DoDispatch;
-    this->doDispatch( false );
-
-    // save progress temporarily and reset to initial state
-    std::size_t undoDataPos = m_UndoDataPos;
-    if( m_IsLevelValid )
-    {
-        while( this->undo() );
-    }
 
     // stream data
     for( std::size_t y = 0; y != m_InitialLevelArray->sizeY(); ++y )
@@ -176,16 +163,6 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
             stream << "|";
     }
     if( !newLine ) stream << std::endl;
-
-    // fast forward again to restore last state
-    m_UndoDataPos = undoDataPos;
-    if( m_IsLevelValid )
-        if( undoDataPos != 0 )
-            for( std::size_t pos = 0; pos != m_UndoDataPos; ++pos )
-                this->movePlayer( m_UndoData.at(pos), false );
-
-    // restore dispatch settings
-    this->doDispatch( tempDoDispatch );
 }
 
 // --------------------------------------------------------------
@@ -330,13 +307,12 @@ void Level::applyUndoData( void )
 }
 
 // --------------------------------------------------------------
-// TODO Issue #8 - Cleaner to copy initial tile data into array, and dispatch all tiles
 void Level::reset( void )
 {
 #ifdef _DEBUG
     std::cout << "resetting level" << std::endl;
 #endif
-    while( this->undo() );
+    *m_LevelArray = *m_InitialLevelArray;
     m_UndoData.clear();
     m_UndoDataPos = 0;
 }
@@ -600,17 +576,8 @@ void Level::removeListener( LevelListener* listener )
 }
 
 // --------------------------------------------------------------
-// TODO Issue #8 - remove this as soon as a copy of the initial tile data has been implemented,
-// as it won't be required anymore after that
-void Level::doDispatch( bool flag )
-{
-    m_DoDispatch = flag;
-}
-
-// --------------------------------------------------------------
 void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    if( !m_DoDispatch ) return;
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onSetTile( x, y, tile );
 }
@@ -618,7 +585,6 @@ void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const c
 // --------------------------------------------------------------
 void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY )
 {
-    if( !m_DoDispatch ) return;
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onMoveTile( oldX, oldY, newX, newY );
 }
