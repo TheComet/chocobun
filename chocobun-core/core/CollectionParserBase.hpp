@@ -34,6 +34,8 @@ namespace Chocobun {
 
 // --------------------------------------------------------------
 // forward declarations
+
+class Collection;
 class Level;
 
 /*!
@@ -64,7 +66,7 @@ public:
      * @param file An output file stream object to save to
      * @param levels A vector of level pointers to save
      */
-    void save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
+    void save( std::ofstream& file, const Collection& collection );
 
     /*!
      * @brief Parses and loads all levels into a vector of Level objects
@@ -78,7 +80,7 @@ public:
      * to display it. If no collection name is available, it is recommended to return
      * "collection".
      */
-    std::string parse( std::ifstream& file, CollectionParserListener* listener );
+    Collection parse( std::ifstream& file );
 
     /*!
      * @brief Enables compression of exported files
@@ -111,7 +113,7 @@ protected:
      * to display it. If no collection name is available, it is recommended to return
      * "collection".
      */
-    virtual std::string _parse( std::ifstream& file, CollectionParserListener* listener ) = 0;
+    virtual Collection _parse( std::ifstream& file ) = 0;
 
     /*!
      * @brief Saves a vector of level objects to a file
@@ -122,7 +124,7 @@ protected:
      * @param file An output file stream object to save to
      * @param levels A vector of level pointers to save
      */
-    virtual void _save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels ) = 0;
+    virtual void _save( std::ofstream& file, const Collection& collection ) = 0;
 
     /*!
      * @brief Returns the maximum width of the level with the largest width.

@@ -23,6 +23,7 @@
 // include files
 
 #include <core/Globals.hpp>
+#include <core/Collection.hpp>
 #include <core/CollectionParserSOK.hpp>
 #include <core/Level.hpp>
 #include <core/RLE.hpp>
@@ -90,12 +91,12 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 
 // --------------------------------------------------------------
 // TODO Remove return string. It's cleaner to pass the collection name through the listener
-std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserListener* listener )
+Collection CollectionParserSOK::_parse( std::ifstream& file )
 {
 
     // the first level is a requirement
     // request construction of a new level object
-    Level* lvl = listener->_constructNewLevel();
+    Level* lvl; // = listener->_constructNewLevel();
     RLE rle;
 
     Uint32 tileLine = 0;
@@ -166,13 +167,13 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserLi
             }
 
             // finalise the level name
-            listener->_generateLevelName( levelName );
+            //listener->_generateLevelName( levelName );
             lvl->setLevelName( levelName );
 
             // TODO reverse Y order of level array (see issue #16)
 
             // generate new level
-            lvl = listener->_constructNewLevel();
+            //lvl = listener->_constructNewLevel();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
             tileLine = 0;
@@ -228,7 +229,7 @@ std::string CollectionParserSOK::_parse( std::ifstream& file, CollectionParserLi
     }
 
     // give the still open level its name
-    listener->_generateLevelName( levelName );
+    //listener->_generateLevelName( levelName );
     lvl->setLevelName( levelName );
 
     return collectionName;
@@ -247,13 +248,13 @@ void CollectionParserSOK::disableCompression( void )
 }
 
 // --------------------------------------------------------------
-void CollectionParserSOK::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
+void CollectionParserSOK::_save( std::ofstream& file, const Collection& collection )
 {
 
     // write all levels to file stream
-    file << "Collection: " << collectionName << std::endl;
+    file << "Collection: " << collection.getName() << std::endl;
     RLE rle;
-    for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
+    /*for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
     {
 
         // header data contains all unformatted text read in from the file (including comments)
@@ -276,7 +277,7 @@ void CollectionParserSOK::_save( const std::string& collectionName, std::ofstrea
         if( (*it)->undoDataExists() || (*it)->redoDataExists() )
             file << "Snapshot: " << (*it)->exportUndoData() << std::endl;
 
-    }
+    }*/
 }
 
 } // namespace Chocobun

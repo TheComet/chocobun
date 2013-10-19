@@ -65,7 +65,7 @@ void Collection::initialise( void )
 
     // load and parse levels
     CollectionParser cp;
-    m_CollectionName = cp.parse( m_FileName, this );
+    cp.parse( m_FileName );
 
     m_IsInitialised = true;
 }
@@ -88,7 +88,7 @@ void Collection::deinitialise( void )
     // export levels
     CollectionParser cp;
     cp.setFileFormat( m_FileFormat );
-    cp.save( m_CollectionName, m_FileName, m_Levels, m_EnableCompression );
+    cp.save( m_CollectionName, *this, m_EnableCompression );
 
     // unload levels
     for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )

@@ -65,7 +65,7 @@ private:
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    std::string _parse( std::ifstream& file, CollectionParserListener* listener );
+    Collection _parse( std::ifstream& file );
 
     /* !
      * @brief .SLC format exporter
@@ -73,7 +73,7 @@ private:
      * @param file An open file object to write data to
      * @param levelMap An std::vector of levels to read from
      */
-    void _save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels );
+    void _save( std::ofstream& file, const Collection& collection );
 
     /* !
      * @brief Exception checking wrapper for rapidxml::xml_node#first_node

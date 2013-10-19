@@ -5,7 +5,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- 
+
  * Chocobun is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,6 +22,7 @@
 // --------------------------------------------------------------
 // include files
 
+#include <core/Collection.hpp>
 #include <core/CollectionParser.hpp>
 #include <core/CollectionParserSOK.hpp>
 #include <core/CollectionParserSLC.hpp>
@@ -31,6 +32,7 @@
 #include <core/Config.hpp>
 #include <fstream>
 #include <sstream>
+#include <memory>
 
 namespace Chocobun {
 
@@ -46,8 +48,7 @@ CollectionParser::~CollectionParser( void )
 }
 
 // --------------------------------------------------------------
-// TODO Raw pointers not exception safe
-std::string CollectionParser::parse( const std::string& fileName, CollectionParserListener* listener )
+Collection CollectionParser::parse( const std::string& fileName )
 {
 
     // open the file
@@ -59,26 +60,26 @@ std::string CollectionParser::parse( const std::string& fileName, CollectionPars
     std::getline( file, inBuf );
     file.seekg( 0 ); // reset file pointer
 
-    CollectionParserBase* parser;
+    // wrap pointer into smart pointer so exceptions can be thrown
+    // without memory leaks
+    std::auto_ptr<CollectionParserBase> parser;
 
     if( "<?xml" == inBuf.substr(0,5) ) // if the file starts with the xml magic bytes, we assume the format is SLC...
-    {   
-        parser = new CollectionParserSLC();
+    {
+        parser = std::auto_ptr<CollectionParserBase>( new CollectionParserSLC() );
     }
     else // ... else we assume the file format is SOK
     {
-        parser = new CollectionParserSOK();
+        parser = std::auto_ptr<CollectionParserBase>( new CollectionParserSOK() );
     }
 
     // parse
-    std::string result = parser->parse( file, listener );
-    delete parser;
-    return result;
+    parser->parse( file );
+    return Collection("gay");
 }
 
 // --------------------------------------------------------------
-// TODO raw pointers not exceptoin safe
-void CollectionParser::save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels, bool enableCompression )
+void CollectionParser::save( const std::string& fileName, const Collection& collection, bool enableCompression )
 {
 
     std::string tempFileName = fileName; tempFileName.append( "~" );
@@ -86,21 +87,22 @@ void CollectionParser::save( const std::string& collectionName, const std::strin
     if( !file.is_open() )
         throw Exception( "[CollectionParser::save] unable to open file for saving" );
 
-    CollectionParserBase* parser;
+    // wrap pointer into smart pointer so exceptions can be thrown
+    // without memory leaks
+    std::auto_ptr<CollectionParserBase> parser;
 
     switch( this->getFileFormat() ) {
         case FORMAT_SLC:
-            parser = new CollectionParserSLC();
+            parser = std::auto_ptr<CollectionParserBase>( new CollectionParserSLC() );
             break;
 
         case FORMAT_SOK:
-            parser = new CollectionParserSOK();
+            parser = std::auto_ptr<CollectionParserBase>( new CollectionParserSOK() );
             break;
     }
 
     if( enableCompression ) parser->enableCompression();
-    parser->save( collectionName, file, levels );
-    delete parser;
+    parser->save( file, collection );
 
     // replace original with saved file
     /*
@@ -115,7 +117,7 @@ void CollectionParser::save( const std::string& collectionName, const std::strin
 */
 }
 
-void CollectionParser::setFileFormat( CollectionParser::FILE_FORMAT fileFormat ) 
+void CollectionParser::setFileFormat( CollectionParser::FILE_FORMAT fileFormat )
 {
     this->m_fileFormat = fileFormat;
 }

@@ -26,6 +26,7 @@
 // --------------------------------------------------------------
 // include files
 
+#include <core/Collection.hpp>
 #include <core/CollectionParserSLC.hpp>
 #include <core/Level.hpp>
 #include <core/Exception.hpp>
@@ -54,7 +55,7 @@ CollectionParserSLC::~CollectionParserSLC( void )
 }
 
 // --------------------------------------------------------------
-std::string CollectionParserSLC::_parse( std::ifstream& file, CollectionParserListener* listener )
+Collection CollectionParserSLC::_parse( std::ifstream& file )
 {
     rapidxml::xml_document<> doc;
 
@@ -93,7 +94,7 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, CollectionParserLi
     {
         std::string levelName = getFirstAttribute(levelNode, "Id");
 
-        Level* lvl = listener->_constructNewLevel();
+        Level* lvl; // = listener->_constructNewLevel();
 
         lvl->addMetaData("Author", levelCollectionCopyright);
 
@@ -103,7 +104,7 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, CollectionParserLi
             lvl->addMetaData(META_TAG_NAMES[i], metaTagValues[i]);
         }
 
-        listener->_generateLevelName( levelName );
+        //listener->_generateLevelName( levelName );
         lvl->setLevelName( levelName );
 
         int y = 0;
@@ -114,11 +115,12 @@ std::string CollectionParserSLC::_parse( std::ifstream& file, CollectionParserLi
         }
     }
 
-    return metaTagValues[0];
+    //return metaTagValues[0];
+    return Collection("gay");
 }
 
 // --------------------------------------------------------------
-void CollectionParserSLC::_save( const std::string& collectionName, std::ofstream& file, std::vector<Level*>& levels )
+void CollectionParserSLC::_save( std::ofstream& file, const Collection& collection )
 {
     rapidxml::xml_document<> doc;
     rapidxml::xml_node<>* declaration = doc.allocate_node( rapidxml::node_declaration );
@@ -131,7 +133,7 @@ void CollectionParserSLC::_save( const std::string& collectionName, std::ofstrea
     root->append_attribute( doc.allocate_attribute( "xsi:schemaLocation", "SokobanLev.xsd" ) );
     doc.append_node( root );
 
-    Level* lvl = levels[0];
+    Level* lvl; // = levels[0];
     for( int i = 0; i < NUM_META_TAG_NAMES; ++i )
     {
         std::string tagName = META_TAG_NAMES[i];
@@ -161,7 +163,7 @@ void CollectionParserSLC::_save( const std::string& collectionName, std::ofstrea
     std::stringstream ss3;
     std::stringstream ss4;
 
-    for ( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
+    /*for ( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
     {
         rapidxml::xml_node<>* levelNode = doc.allocate_node( rapidxml::node_element, doc.allocate_string("Level") );
 
@@ -191,10 +193,10 @@ void CollectionParserSLC::_save( const std::string& collectionName, std::ofstrea
         }
 
         levelCollectionNode->append_node(levelNode);
-        
+
         // TODO issue #12 - Implement the methods Level::exportUndoData() and Level::importUndoData()
 
-    }
+    }*/
 
     root->append_node( levelCollectionNode );
 

@@ -25,6 +25,7 @@
 // --------------------------------------------------------------
 // include files
 
+#include <core/Globals.hpp>
 #include <core/Export.hpp>
 #include <core/CollectionParser.hpp>
 #include <core/CollectionParserListener.hpp>
@@ -38,15 +39,17 @@ namespace Chocobun {
 
 class Level;
 class LevelListener;
-template <class T> class Array2D;
 
 /*!
  * @brief Holds a collection of levels which can be read from a file
  */
-class CHOCOBUN_CORE_API Collection :
-    public CollectionParserListener
+class CHOCOBUN_CORE_API Collection
 {
 public:
+
+    typedef std::vector<Level*>::iterator Iterator;
+    Iterator begin( void ) { return m_Levels.begin(); }
+    Iterator end  ( void ) { return  m_Levels.end();  }
 
     /*!
      * @brief Constructs a collection from a given file

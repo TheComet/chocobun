@@ -34,7 +34,7 @@ namespace Chocobun {
 // forward declarations
 
 class Level;
-class CollectionParserListener;
+class Collection;
 
 /*!
  * @brief Parses a collection and loads all levels into an internal format
@@ -70,7 +70,7 @@ public:
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    std::string parse( const std::string& fileName, CollectionParserListener* listener );
+    Collection parse( const std::string& fileName );
 
     /*!
      * @brief Saves a collection to a file
@@ -81,7 +81,7 @@ public:
      * @param levels An std::vector of levels to save
      * @param enableCompression
      */
-    void save( const std::string& collectionName, const std::string& fileName, std::vector<Level*>& levels, bool enableCompression = false );
+    void save( const std::string& fileName, const Collection& collection, bool enableCompression = false );
 
 	/*!
 	 * @brief Sets the export file format to be used for every future save
