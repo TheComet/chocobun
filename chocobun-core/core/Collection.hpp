@@ -25,7 +25,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Globals.hpp>
+#include <core/Typedefs.hpp>
 #include <core/Export.hpp>
 #include <core/CollectionParser.hpp>
 #include <core/CollectionParserListener.hpp>
@@ -209,7 +209,7 @@ public:
      *
      * @param vvs A 2-dimensional array of chars to write the level data of the active level to
      */
-    void getTileData( Array2D<char>& tiles ) const;
+    void getTileData( LevelArray_t& tiles ) const;
 
     /*!
      * @brief Streams all tiles of the active level to an output stream object

@@ -82,8 +82,6 @@ void CollectionParserBase::save( std::ofstream& file, const Collection& collecti
     // this is required by some parsers
     m_MaxLevelWidth = 0;
     m_MaxLevelHeight = 0;
-    Collection test(collection);
-    Collection;;Iterator it = test.begin();
     /*for( Collection::Iterator it = collection.begin(); it != collection.end(); ++it )
     {
         std::size_t tmp = (*it)->getSizeX();

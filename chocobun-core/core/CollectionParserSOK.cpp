@@ -22,7 +22,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Globals.hpp>
+#include <core/Utils.hpp>
 #include <core/Collection.hpp>
 #include <core/CollectionParserSOK.hpp>
 #include <core/Level.hpp>
@@ -43,21 +43,6 @@ CollectionParserSOK::CollectionParserSOK( void ) :
 // --------------------------------------------------------------
 CollectionParserSOK::~CollectionParserSOK( void )
 {
-}
-
-// --------------------------------------------------------------
-bool CollectionParserSOK::isLevelData( const std::string& str )
-{
-    std::string levelChars( validTiles + "()0123456789|" ); // RLE compression contains these characters
-
-    // fuzzy evaluation
-    Int32 threshold = 0;
-    for( size_t i = 0; i != str.size(); ++i )
-        if( levelChars.find(str[i]) == std::string::npos )
-            threshold-=2;
-        else
-            ++threshold;
-    return (threshold>0);
 }
 
 // --------------------------------------------------------------
@@ -130,7 +115,7 @@ Collection CollectionParserSOK::_parse( std::ifstream& file )
 
         // so checks are only performed once
         lastLineWasLevelData = isLevelData;
-        isLevelData = this->isLevelData( inBuf );
+        isLevelData = Utils::isTileData( inBuf );
 
         // requirements for a level title are:
         // - the last non-blank line before a puzzle, saved game, or solution
@@ -139,7 +124,7 @@ Collection CollectionParserSOK::_parse( std::ifstream& file )
         // copying the last line as the level title before getting a new line
         // from the file to meet these requirements
 
-        if( lastLineWasBlank && oldInBuf.find("::") == std::string::npos && isLevelData && !this->isLevelData( oldInBuf ) )
+        if( lastLineWasBlank && oldInBuf.find("::") == std::string::npos && isLevelData && !Utils::isTileData( oldInBuf ) )
         {
             std::string key("");
             std::string value("");

@@ -22,7 +22,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Globals.hpp>
+#include <core/Utils.hpp>
 #include <core/Level.hpp>
 #include <core/LevelListener.hpp>
 #include <core/Array2D.hpp>
@@ -122,7 +122,7 @@ void Level::insertTile( const std::size_t& x, const std::size_t& y, const char& 
 {
 
     // check if character is valid
-    if( validTiles.find_first_of(tile) == std::string::npos )
+    if( !Utils::isTileData( tile ) )
         throw Exception( std::string("[Level::insertTile] Error: attempt to insert invalid character \"") + tile + "\" into level array" );
 
     // resize array if necessary
@@ -193,7 +193,7 @@ char Level::getTile( std::size_t x, std::size_t y ) const
 // --------------------------------------------------------------
 void Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
-    if( validTiles.find( tile ) == std::string::npos ) throw Exception( std::string("[Level::setTile] attempt to set tile to invalid character: \"") + tile + "\"" );
+    if( !Utils::isTileData(tile) ) throw Exception( std::string("[Level::setTile] attempt to set tile to invalid character: \"") + tile + "\"" );
     m_InitialLevelArray->at(x,y) = tile;
     this->dispatchSetTile( x, y, tile );
 }
@@ -290,7 +290,7 @@ void Level::importUndoData( const std::string& undoData )
         ++pos;
 
         // validate characters
-        if( validUndoData.find_first_of( *it ) == std::string::npos )
+        if( !Utils::isUndoData(*it) )
             throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + undoData + "\". Import failed." );
     }
 

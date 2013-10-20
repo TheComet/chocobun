@@ -86,11 +86,6 @@ private:
     void _save( std::ofstream& file, const Collection& collection );
 
     /*!
-     * @brief Returns true if the string is level data
-     */
-    bool isLevelData( const std::string& str );
-
-    /*!
      * @brief Extracts key value pairs and returns true or false if successful
      *
      * @param str The string to search for key-value pairs

@@ -26,7 +26,7 @@
 // include files
 
 #include <core/Config.hpp>
-#include <core/Globals.hpp>
+#include <core/Typedefs.hpp>
 
 #include <string>
 #include <vector>

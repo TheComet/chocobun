@@ -16,14 +16,56 @@
  */
 
 // --------------------------------------------------------------
-// TileUtils.cpp
+// TileUtils.hpp
 // --------------------------------------------------------------
 
-#include <core/TileUtils.hpp>
+#ifndef __CHOCOBUN_CORE_UTILS_HPP__
+#define __CHOCOBUN_CORE_UTILS_HPP__
+
+#include <string>
 
 namespace Chocobun {
 
-const std::string validTiles = "#@+$*. _pPbB";
-const std::string validUndoData = "udlrUDLR";
+class Utils
+{
+public:
+
+    /*!
+     * @brief
+     */
+    static bool isTileData( const std::string& str );
+
+    /*!
+     * @brief
+     */
+    static bool isTileData( const char& chr );
+
+    /*!
+     * @brief
+     */
+    static bool isTileDataRLE( const std::string& str );
+
+    /*!
+     * @brief
+     */
+    static bool isTileDataRLE( const char& chr );
+
+    /*!
+     * @brief
+     */
+    static bool isUndoData( const std::string& str );
+
+    /*!
+     * @brief
+     */
+    static bool isUndoData( const char& chr );
+
+private:
+    static const std::string validTiles;
+    static const std::string validTilesRLE;
+    static const std::string validUndoData;
+};
 
 } // namespace Chocobun
+
+#endif // __CHOCOBUN_CORE_TILE_UTILS_HPP__
