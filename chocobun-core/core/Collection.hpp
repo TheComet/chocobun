@@ -27,8 +27,8 @@
 
 #include <core/Typedefs.hpp>
 #include <core/Export.hpp>
+#include <core/LevelListener.hpp>
 #include <core/CollectionParser.hpp>
-#include <core/CollectionParserListener.hpp>
 #include <vector>
 #include <string>
 
@@ -38,24 +38,26 @@ namespace Chocobun {
 // forward declarations
 
 class Level;
-class LevelListener;
 
 /*!
  * @brief Holds a collection of levels which can be read from a file
  */
-class CHOCOBUN_CORE_API Collection
+class CHOCOBUN_CORE_API Collection :
+    public LevelListener
 {
 public:
 
+    std::vector<Level*>& getLevels( void ) { return m_Levels; }
+
     /*!
-     * @brief Constructs a collection from a given file
-     *
-     * @param fileName The file to read the collections from
-     *
-     * @remarks This does not actually load the file, it only stores
-     * the file name internally until the initialise method is called
+     * @brief Default constructor
      */
-    Collection( const std::string& fileName );
+    Collection( void );
+
+    /*!
+     * @brief Copy Constructor
+     */
+    Collection( const Collection& that );
 
     /*!
      * @brief Destructor
@@ -70,10 +72,10 @@ public:
      * Will parse the file specified in the constructor and load all
      * levels into memory
      */
-    void initialise( void );
+    void load( const std::string& fileName );
 
     /*!
-     * @brief De-initialises the collection, saving it to disk and freeing up all memory
+     * @brief Unloads the collection, saving it to disk and freeing up all memory
      *
      * This can be called when switching collections to save memory.
      * While it is not necessary to do so, it is recommended, because progress
@@ -81,20 +83,20 @@ public:
      * the levels loaded for later usage, but you run the risk of something
      * going wrong and losing all progress.
      *
-     * @note You may initialise and deinitialise as many times as you like.
-     * The file is parsed again whenever initialise is called, and saved whenever
-     * deinitialise is called.
+     * @note You may @a load and @a unload as many times as you like.
+     * The file is parsed again whenever @a load is called, and saved whenever
+     * @a unload is called.
      */
-    void deinitialise( void );
+    void unload( void );
 
     /*!
      * @brief Sets the name of this collection
      *
      * The name is read from the file when initialise is called, but
      * can be changed afterwards with this method. If you change the name,
-     * the new name will be written to the file when deinitialise is called.
+     * the new name will be written to the file when @a unload is called.
      *
-     * @param name The name to set
+     * @param name The name to give to this collection
      */
     void setName( const std::string& name );
 
@@ -144,6 +146,36 @@ public:
      * @return The export format
      */
     CollectionParser::FILE_FORMAT getFileFormat( void );
+
+    /*!
+     * @brief Adds a new, empty level to the collection
+     */
+    Level* addLevel( void );
+
+    /*!
+     * @brief Removes and destroys a level from the collection
+     */
+    void removeLevel( Level* lvl );
+
+    /*!
+     * @brief Removes and destroys a level from the collection
+     */
+    void removeLevel( const std::string& levelName );
+
+    /*!
+     * @brief Generates name for the level if the passed string is empty
+     */
+    void generateLevelName( std::string& name );
+
+    /*!
+     * @brief Returns the pointer to the specified level object
+     */
+    Level* getLevelPtr( const std::string& levelName );
+
+    /*!
+     * @brief Returns a reference to the specified level object
+     */
+    Level& getLevel( const std::string& levelName );
 
     /*!
      * @brief Writes a list of level names into an std::vector<std::string> object
@@ -275,24 +307,14 @@ public:
     Uint32 getSizeY( void ) const;
 
     /*!
-     * @brief Validates the active level
-     *
-     * Will perform various checks to see if the level is valid. This includes:
-     * - Only one player can exist on a level
-     * - All boxes can be reached by the player
-     * - All boxes which can't be reached by the player are placed on goal squares
-     * - The level is closed off entirely by walls
-     *
-     * @note It is essential to call this method before using the level for game play.
-     * This method also 'finalises' the level by performing some internal setup on the
-     * provided tile data
-     *
-     * @exception If there is no active level selected, an exception is thrown.
-     *
-     * @exception If the level is invalid, a Chocobun::Exception is thrown with
-     * a detailed description of what went wrong.
+     * @brief Returns the maximum X-size of the largest level in the collection
      */
-    void validateLevel( void ) const;
+    Uint32 getMaxSizeX( void );
+
+    /*!
+     * @brief Returns the maximum Y-size of the largest level in the collection
+     */
+    Uint32 getMaxSizeY( void );
 
     /*!
      * @brief Adds a level listener
@@ -349,17 +371,12 @@ public:
      */
     void reset( void );
 
+    /*!
+     * @brief Overload assignment operator
+     */
+    Collection& operator=( const Collection& that );
+
 private:
-
-    /*!
-     * @brief Implement listener for new level object requests
-     */
-    Level* _constructNewLevel( void );
-
-    /*!
-     * @brief Implement listener for auto-generating level names
-     */
-    void _generateLevelName( std::string& name );
 
     std::string m_FileName;
     std::string m_CollectionName;
@@ -367,7 +384,7 @@ private:
     std::vector<LevelListener*> m_LevelListeners;
     Level* m_ActiveLevel;
     bool m_EnableCompression;
-    bool m_IsInitialised;
+    bool m_IsLoaded;
 
     CollectionParser::FILE_FORMAT m_FileFormat;
 };

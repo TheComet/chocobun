@@ -69,26 +69,24 @@ void CollectionParserBase::_registerLevel( Level* level, std::string& levelName,
 }*/
 
 // --------------------------------------------------------------
-Collection CollectionParserBase::parse( std::ifstream& file )
+void CollectionParserBase::parse( std::ifstream& file, Collection& collection )
 {
-    return this->_parse( file );
+
+    // left empty for future use
+    // anything that needs to be done before or after parsing
+    // should be implemented here
+
+    // call overridden parse method
+    return this->_parse( file, collection );
 }
 
 // --------------------------------------------------------------
 void CollectionParserBase::save( std::ofstream& file, const Collection& collection )
 {
 
-    // calculate maximum level width and height
-    // this is required by some parsers
-    m_MaxLevelWidth = 0;
-    m_MaxLevelHeight = 0;
-    /*for( Collection::Iterator it = collection.begin(); it != collection.end(); ++it )
-    {
-        std::size_t tmp = (*it)->getSizeX();
-        if( tmp > m_MaxLevelWidth ) m_MaxLevelWidth = tmp;
-        tmp = (*it)->getSizeY();
-        if( tmp > m_MaxLevelHeight ) m_MaxLevelHeight = tmp;
-    }*/
+    // left empty for future use
+    // anything that needs to be done before or after saving
+    // should be implemented here
 
     // call overridden save method
     this->_save( file, collection );

@@ -65,7 +65,7 @@ private:
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    Collection _parse( std::ifstream& file );
+    void _parse( std::ifstream& file, Collection& collection );
 
     /* !
      * @brief .SLC format exporter

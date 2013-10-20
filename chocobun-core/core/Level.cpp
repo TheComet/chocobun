@@ -23,6 +23,7 @@
 // include files
 
 #include <core/Utils.hpp>
+#include <core/Collection.hpp>
 #include <core/Level.hpp>
 #include <core/LevelListener.hpp>
 #include <core/Array2D.hpp>
@@ -132,7 +133,7 @@ void Level::insertTile( const std::size_t& x, const std::size_t& y, const char& 
         m_InitialLevelArray->resize( m_InitialLevelArray->sizeX(), y+1 );
 
     // write tile
-    this->setTile( x, y, tile );
+    this->setInitialTile( x, y, tile );
 
 }
 
@@ -144,18 +145,14 @@ void Level::insertTileLine( const std::size_t& y, const std::string& tiles )
 }
 
 // --------------------------------------------------------------
-void Level::streamAllTileData( std::ostream& stream, bool newLine )
+void Level::streamAllTileData( std::ostream& stream )
 {
-    for( std::size_t y = 0; y != m_InitialLevelArray->sizeY(); ++y )
+    for( std::size_t y = 0; y != m_LevelArray->sizeY(); ++y )
     {
-        for( std::size_t x = 0; x != m_InitialLevelArray->sizeX(); ++x )
-            stream << m_InitialLevelArray->at(x,y);
-        if( newLine )
-            stream << std::endl;
-        else
-            stream << "|";
+        for( std::size_t x = 0; x != m_LevelArray->sizeX(); ++x )
+            stream << m_LevelArray->at(x,y);
+        stream << std::endl;
     }
-    if( !newLine ) stream << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -179,22 +176,29 @@ void Level::streamInitialTileData( std::ostream& stream, bool newLine )
 // TODO Issue #9 - consider returning this as a reference again (instead of copying)
 void Level::getTileData( LevelArray_t& tiles ) const
 {
-    tiles = *m_InitialLevelArray;
+    tiles = *m_LevelArray;
 }
 
 // --------------------------------------------------------------
 char Level::getTile( std::size_t x, std::size_t y ) const
 {
-    if( x >= m_InitialLevelArray->sizeX() ){ std::stringstream ss; ss << "[Level::getTile] X-coordinate out of bounds: " << x; throw Exception( ss.str() ); }
-    if( y >= m_InitialLevelArray->sizeY() ){ std::stringstream ss; ss << "[Level::getTile] Y-coordinate out of bounds: " << y; throw Exception( ss.str() ); }
-    return m_InitialLevelArray->at(x,y);
+    if( x >= m_LevelArray->sizeX() ){ std::stringstream ss; ss << "[Level::getTile] X-coordinate out of bounds: " << x; throw Exception( ss.str() ); }
+    if( y >= m_LevelArray->sizeY() ){ std::stringstream ss; ss << "[Level::getTile] Y-coordinate out of bounds: " << y; throw Exception( ss.str() ); }
+    return m_LevelArray->at(x,y);
+}
+
+// --------------------------------------------------------------
+void Level::setInitialTile( const std::size_t& x, const std::size_t& y, const char& tile )
+{
+    if( !Utils::isTileData(tile) ) throw Exception( std::string("[Level::setInitialTile] attempt to set tile to invalid character: \"") + tile + "\"" );
+    m_InitialLevelArray->at(x,y) = tile;
 }
 
 // --------------------------------------------------------------
 void Level::setTile( const std::size_t& x, const std::size_t& y, const char& tile )
 {
     if( !Utils::isTileData(tile) ) throw Exception( std::string("[Level::setTile] attempt to set tile to invalid character: \"") + tile + "\"" );
-    m_InitialLevelArray->at(x,y) = tile;
+    m_LevelArray->at(x,y) = tile;
     this->dispatchSetTile( x, y, tile );
 }
 
@@ -291,7 +295,7 @@ void Level::importUndoData( const std::string& undoData )
 
         // validate characters
         if( !Utils::isUndoData(*it) )
-            throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + undoData + "\". Import failed." );
+            throw Exception( std::string("[Level::importUndoData] Invalid character found in undo data string: \"") + (*it) + "\". Import failed." );
     }
 
     // save undo data and current position
@@ -323,6 +327,14 @@ void Level::reset( void )
     std::cout << "resetting level" << std::endl;
 #endif
     *m_LevelArray = *m_InitialLevelArray;
+}
+
+// --------------------------------------------------------------
+void Level::clearUndoData( void )
+{
+#ifdef _DEBUG
+    std::cout << "clearing undo data" << std::endl;
+#endif
     m_UndoData.clear();
     m_UndoDataPos = 0;
 }
@@ -364,10 +376,6 @@ void Level::validateLevel( void )
 
     // arriving here means the level is valid
     m_IsLevelValid = true;
-
-    // apply any undo data
-    // this also resets the level
-    this->applyUndoData();
 }
 
 // --------------------------------------------------------------
@@ -603,8 +611,22 @@ void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, 
 Level& Level::operator=( const Level& that )
 {
     if( &that == this ) return *this;
+
+    // shallow copies
+    m_MetaData          = that.m_MetaData;
+    m_HeaderData        = that.m_HeaderData;
+    m_Notes             = that.m_Notes;
+    m_UndoData          = that.m_UndoData;
+    m_LevelName         = that.m_LevelName;
+    m_LevelListeners    = that.m_LevelListeners;
+    m_PlayerX           = that.m_PlayerX;
+    m_PlayerY           = that.m_PlayerY;
+    m_IsLevelValid      = that.m_IsLevelValid;
+
+    // deep copy level arrays
     *m_InitialLevelArray = *that.m_InitialLevelArray;
     *m_LevelArray = *that.m_LevelArray;
+
     return *this;
 }
 

@@ -119,9 +119,9 @@ void App::go( void )
                         checkFile.close();
                         if( m_Collection )
                             delete m_Collection;
-                        m_Collection = new Chocobun::Collection( fileName );
-                        m_Collection->initialise();
+                        m_Collection = new Chocobun::Collection();
                         m_Collection->addLevelListener( this );
+                        m_Collection->load( fileName );
                         std::cout << "Successfully opened collection \"" << m_Collection->getName() << "\"";
 						std::cout << " from file \"" << fileName << "\"" << std::endl;
                     }
@@ -231,7 +231,6 @@ void App::go( void )
                 if( open )
                 {
                     m_Collection->setActiveLevel( argList.at( argList.size()-1 ) );
-                    m_Collection->validateLevel();
                     std::cout << "Opened level \"" << argList.at( argList.size()-1 ) << std::endl;
                     m_Collection->streamTileData( std::cout );
                }
@@ -247,7 +246,7 @@ void App::go( void )
             }
 
             // movement commands
-            if( std::string( "udlrz" ).compare( argList[0].substr(0,1) ) )
+            if( std::string( "udlrzZ" ).compare( argList[0].substr(0,1) ) )
             {
 
                 // make sure collection and levels are loaded

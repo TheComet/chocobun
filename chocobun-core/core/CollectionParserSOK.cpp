@@ -75,15 +75,19 @@ bool CollectionParserSOK::getKeyValuePair( const std::string& str, std::string& 
 }
 
 // --------------------------------------------------------------
-// TODO Remove return string. It's cleaner to pass the collection name through the listener
-Collection CollectionParserSOK::_parse( std::ifstream& file )
+void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
 {
+#ifdef _DEBUG
+    std::cout << "parsing SOK" << std::endl;
+#endif
 
     // the first level is a requirement
-    // request construction of a new level object
-    Level* lvl; // = listener->_constructNewLevel();
+    Level* lvl = collection.addLevel();
+
+    // run length encoding
     RLE rle;
 
+    // parser temporaries
     Uint32 tileLine = 0;
     bool lastLineWasBlank = true;
     bool isLevelData = false;
@@ -93,7 +97,8 @@ Collection CollectionParserSOK::_parse( std::ifstream& file )
     std::string oldInBuf("");
     std::string levelName("");
     std::string tempLevelName("");
-    std::string collectionName("");
+
+    // parse file
     while( !file.eof() )
     {
 
@@ -152,13 +157,13 @@ Collection CollectionParserSOK::_parse( std::ifstream& file )
             }
 
             // finalise the level name
-            //listener->_generateLevelName( levelName );
+            collection.generateLevelName( levelName );
             lvl->setLevelName( levelName );
 
             // TODO reverse Y order of level array (see issue #16)
 
             // generate new level
-            //lvl = listener->_constructNewLevel();
+            lvl = collection.addLevel();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
             tileLine = 0;
@@ -188,7 +193,7 @@ Collection CollectionParserSOK::_parse( std::ifstream& file )
                 // special case for collection name
                 if( key.compare("Collection") == 0 )
                 {
-                    collectionName = value;
+                    collection.setName( value );
                     break;
                 }
 
@@ -214,10 +219,13 @@ Collection CollectionParserSOK::_parse( std::ifstream& file )
     }
 
     // give the still open level its name
-    //listener->_generateLevelName( levelName );
+    collection.generateLevelName( levelName );
     lvl->setLevelName( levelName );
 
-    return collectionName;
+#ifdef _DEBUG
+    std::cout << "parsing SOK successful" << std::endl;
+    collection.streamLevelNames(std::cout);
+#endif
 }
 
 // --------------------------------------------------------------
@@ -239,7 +247,7 @@ void CollectionParserSOK::_save( std::ofstream& file, const Collection& collecti
     // write all levels to file stream
     file << "Collection: " << collection.getName() << std::endl;
     RLE rle;
-    /*for( std::vector<Level*>::iterator it = levels.begin(); it != levels.end(); ++it )
+    /*for( std::vector<Level*>::iterator it = collection.getLevels().begin(); it != collection.getLevels().end(); ++it )
     {
 
         // header data contains all unformatted text read in from the file (including comments)

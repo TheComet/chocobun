@@ -28,7 +28,6 @@
 #include <string>
 #include <vector>
 #include <core/Config.hpp>
-#include <core/CollectionParserListener.hpp>
 
 namespace Chocobun {
 
@@ -80,7 +79,7 @@ public:
      * to display it. If no collection name is available, it is recommended to return
      * "collection".
      */
-    Collection parse( std::ifstream& file );
+    void parse( std::ifstream& file, Collection& collection );
 
     /*!
      * @brief Enables compression of exported files
@@ -113,7 +112,7 @@ protected:
      * to display it. If no collection name is available, it is recommended to return
      * "collection".
      */
-    virtual Collection _parse( std::ifstream& file ) = 0;
+    virtual void _parse( std::ifstream& file, Collection& collection ) = 0;
 
     /*!
      * @brief Saves a vector of level objects to a file

@@ -51,7 +51,7 @@ Array2D<T>::Array2D( const T& content ) :
 // --------------------------------------------------------------
 template <class T>
 Array2D<T>::Array2D( const Array2D& that ) :
-    m_DefaultContent( T() )   
+    m_DefaultContent( T() )
 {
     *this = that;
 }

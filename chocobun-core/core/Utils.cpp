@@ -31,6 +31,7 @@ const std::string Utils::validUndoData = "udlrUDLR";
 // --------------------------------------------------------------
 bool Utils::isTileData( const std::string& str )
 {
+    if( str.size() == 0 ) return false;
     for( std::size_t i = 0; i != str.size(); ++i )
         if( validTiles.find(str[i]) == std::string::npos )
             return false;
@@ -40,12 +41,13 @@ bool Utils::isTileData( const std::string& str )
 // --------------------------------------------------------------
 bool Utils::isTileData( const char& chr )
 {
-    return Utils::isTileData( std::string(&chr) );
+    return (validTiles.find(chr) != std::string::npos);
 }
 
 // --------------------------------------------------------------
 bool Utils::isTileDataRLE( const std::string& str )
 {
+    if( str.size() == 0 ) return false;
     for( std::size_t i = 0; i != str.size(); ++i )
         if( validTilesRLE.find(str[i]) == std::string::npos )
             return false;
@@ -55,12 +57,13 @@ bool Utils::isTileDataRLE( const std::string& str )
 // --------------------------------------------------------------
 bool Utils::isTileDataRLE( const char& chr )
 {
-    return Utils::isTileDataRLE( std::string(&chr) );
+    return (validTilesRLE.find(chr) != std::string::npos);
 }
 
 // --------------------------------------------------------------
 bool Utils::isUndoData( const std::string& str )
 {
+    if( str.size() == 0 ) return false;
     for( std::size_t i = 0; i != str.size(); ++i )
         if( validUndoData.find(str[i]) == std::string::npos )
             return false;
@@ -70,7 +73,7 @@ bool Utils::isUndoData( const std::string& str )
 // --------------------------------------------------------------
 bool Utils::isUndoData( const char& chr )
 {
-    return Utils::isUndoData( std::string(&chr) );
+    return (validUndoData.find(chr) != std::string::npos);
 }
 
 } // namespace Chocobun

@@ -166,7 +166,7 @@ public:
      * @param newLine If set to true (default), new line breaks are inserted.
      * Otherwise, "|" are inserted (for RLE compression)
      */
-    void streamAllTileData( std::ostream& stream, bool newLine = true );
+    void streamAllTileData( std::ostream& stream );
 
     /*!
      * @brief Gets the array of current tile data
@@ -205,6 +205,11 @@ public:
      * @param tile The tile to set it to
      */
     void setTile( const std::size_t& x, const std::size_t& y, const char& tile );
+
+    /*!
+     * @brief Sets the tile in the initial tile array
+     */
+    void setInitialTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     /*!
      * @brief Returns the X-size of the level
@@ -338,6 +343,11 @@ public:
      * @brief Resets the level to its initial state
      */
     void reset( void );
+
+    /*!
+     * @brief Erases all undo data for this level
+     */
+    void clearUndoData( void );
 
     /*!
      * @brief Checks if undo data exists or not

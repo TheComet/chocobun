@@ -48,7 +48,7 @@ CollectionParser::~CollectionParser( void )
 }
 
 // --------------------------------------------------------------
-Collection CollectionParser::parse( const std::string& fileName )
+void CollectionParser::parse( const std::string& fileName, Collection& collection )
 {
 
     // open the file
@@ -74,8 +74,7 @@ Collection CollectionParser::parse( const std::string& fileName )
     }
 
     // parse
-    parser->parse( file );
-    return Collection("gay");
+    parser->parse( file, collection );
 }
 
 // --------------------------------------------------------------

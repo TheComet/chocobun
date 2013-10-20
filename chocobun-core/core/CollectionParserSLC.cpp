@@ -55,7 +55,7 @@ CollectionParserSLC::~CollectionParserSLC( void )
 }
 
 // --------------------------------------------------------------
-Collection CollectionParserSLC::_parse( std::ifstream& file )
+void CollectionParserSLC::_parse( std::ifstream& file, Collection& collection )
 {
     rapidxml::xml_document<> doc;
 
@@ -115,8 +115,7 @@ Collection CollectionParserSLC::_parse( std::ifstream& file )
         }
     }
 
-    //return metaTagValues[0];
-    return Collection("gay");
+    //TODO return metaTagValues[0];
 }
 
 // --------------------------------------------------------------

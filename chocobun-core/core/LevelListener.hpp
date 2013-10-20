@@ -25,7 +25,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Config.hpp>
+#include <cstddef> // std::size_t
 
 namespace Chocobun {
 

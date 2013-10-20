@@ -70,7 +70,7 @@ public:
      * @return Returns the name of the collection (if any), otherwise the string
      * is empty
      */
-    Collection parse( const std::string& fileName );
+    void parse( const std::string& fileName, Collection& collection );
 
     /*!
      * @brief Saves a collection to a file
