@@ -47,10 +47,6 @@ class CHOCOBUN_CORE_API Collection
 {
 public:
 
-    typedef std::vector<Level*>::iterator Iterator;
-    Iterator begin( void ) { return m_Levels.begin(); }
-    Iterator end  ( void ) { return  m_Levels.end();  }
-
     /*!
      * @brief Constructs a collection from a given file
      *

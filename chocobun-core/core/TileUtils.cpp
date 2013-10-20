@@ -15,23 +15,15 @@
  * along with Chocobun.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CHOCOBUN_GLOBALS_HPP__
-#define __CHOCOBUN_GLOBALS_HPP__
+// --------------------------------------------------------------
+// TileUtils.cpp
+// --------------------------------------------------------------
 
-// --------------------------------------------------------------
-// Globals.hpp
-// --------------------------------------------------------------
+#include <core/TileUtils.hpp>
 
 namespace Chocobun {
 
-// --------------------------------------------------------------
-// forward declarations
-template <class T> class Array2D;
-
-// --------------------------------------------------------------
-// typedefs
-typedef Array2D<char> LevelArray_t;
+const std::string validTiles = "#@+$*. _pPbB";
+const std::string validUndoData = "udlrUDLR";
 
 } // namespace Chocobun
-
-#endif // __CHOCOBUN_GLOBALS_HPP__
