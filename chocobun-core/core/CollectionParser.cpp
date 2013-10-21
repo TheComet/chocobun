@@ -38,7 +38,7 @@ namespace Chocobun {
 
 // --------------------------------------------------------------
 CollectionParser::CollectionParser( void ) :
-	m_fileFormat( FORMAT_SOK )
+	m_FileFormat( "SOK" )
 {
 }
 
@@ -90,14 +90,20 @@ void CollectionParser::save( const std::string& fileName, const Collection& coll
     // without memory leaks
     std::auto_ptr<CollectionParserBase> parser;
 
-    switch( this->getFileFormat() ) {
-        case FORMAT_SLC:
+    for(;;)
+    {
+        if( this->getFileFormat().compare("SLC") == 0 )
+        {
             parser = std::auto_ptr<CollectionParserBase>( new CollectionParserSLC() );
             break;
+        }
 
-        case FORMAT_SOK:
+        if( this->getFileFormat().compare("SOK") == 0 )
+        {
             parser = std::auto_ptr<CollectionParserBase>( new CollectionParserSOK() );
             break;
+        }
+        throw Exception( "[CollectionParser::save] Error: unknown file format \"" + this->getFileFormat() + "\"");
     }
 
     if( enableCompression ) parser->enableCompression();
@@ -116,13 +122,15 @@ void CollectionParser::save( const std::string& fileName, const Collection& coll
 */
 }
 
-void CollectionParser::setFileFormat( CollectionParser::FILE_FORMAT fileFormat )
+// --------------------------------------------------------------
+void CollectionParser::setFileFormat( const std::string& fileFormat )
 {
-    this->m_fileFormat = fileFormat;
+    this->m_FileFormat = fileFormat;
 }
 
-CollectionParser::FILE_FORMAT CollectionParser::getFileFormat()
+// --------------------------------------------------------------
+const std::string& CollectionParser::getFileFormat() const
 {
-    return this->m_fileFormat;
+    return this->m_FileFormat;
 }
 } // namespace Chocobun

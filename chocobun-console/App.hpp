@@ -81,6 +81,7 @@ private:
     void onSetTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     Chocobun::Collection* m_Collection;
+    std::string m_FileFormat;
 };
 
 #endif // __APP_HPP__

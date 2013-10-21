@@ -224,7 +224,6 @@ void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
 
 #ifdef _DEBUG
     std::cout << "parsing SOK successful" << std::endl;
-    collection.streamLevelNames(std::cout);
 #endif
 }
 
@@ -247,7 +246,7 @@ void CollectionParserSOK::_save( std::ofstream& file, const Collection& collecti
     // write all levels to file stream
     file << "Collection: " << collection.getName() << std::endl;
     RLE rle;
-    /*for( std::vector<Level*>::iterator it = collection.getLevels().begin(); it != collection.getLevels().end(); ++it )
+    for( Collection::const_level_iterator it = collection.level_begin(); it != collection.level_end(); ++it )
     {
 
         // header data contains all unformatted text read in from the file (including comments)
@@ -270,7 +269,7 @@ void CollectionParserSOK::_save( std::ofstream& file, const Collection& collecti
         if( (*it)->undoDataExists() || (*it)->redoDataExists() )
             file << "Snapshot: " << (*it)->exportUndoData() << std::endl;
 
-    }*/
+    }
 }
 
 } // namespace Chocobun

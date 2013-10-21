@@ -36,14 +36,13 @@ namespace Chocobun {
 Collection::Collection( void ) :
     m_EnableCompression( false ),
     m_IsLoaded( false ),
-    m_ActiveLevel( 0 ),
-    m_FileFormat( CollectionParser::FORMAT_SOK )
+    m_ActiveLevel( -1 )
 {
 }
 
 // --------------------------------------------------------------
 Collection::Collection( const Collection& that ) :
-    m_ActiveLevel( 0 )
+    m_ActiveLevel( -1 )
 {
     *this = that;
 }
@@ -92,18 +91,21 @@ void Collection::unload( void )
         return;
     }
 
-    // export levels
-    CollectionParser cp;
-    cp.setFileFormat( m_FileFormat );
-    cp.save( m_CollectionName, *this, m_EnableCompression );
-
     // destroy levels
     for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
         delete *it;
     m_Levels.clear();
-    m_ActiveLevel = 0;
+    m_ActiveLevel = -1;
 
     m_IsLoaded = false;
+}
+
+// --------------------------------------------------------------
+void Collection::save( const std::string& fileFormat )
+{
+    CollectionParser cp;
+    cp.setFileFormat( fileFormat );
+    cp.save( m_FileName, *this, m_EnableCompression );
 }
 
 // --------------------------------------------------------------
@@ -137,22 +139,12 @@ bool Collection::isCompressionEnabled( void ) const
 }
 
 // --------------------------------------------------------------
-void Collection::setFileFormat( CollectionParser::FILE_FORMAT fileFormat )
-{
-    m_FileFormat = fileFormat;
-}
-
-// --------------------------------------------------------------
-CollectionParser::FILE_FORMAT Collection::getFileFormat( void )
-{
-    return m_FileFormat;
-}
-
-// --------------------------------------------------------------
 Level* Collection::addLevel( void )
 {
-    m_Levels.push_back( new Level() );
-    return m_Levels.back();
+    Level* lvl = new Level();
+    m_Levels.push_back( lvl );
+    lvl->addListener( this );
+    return lvl;
 }
 
 // --------------------------------------------------------------
@@ -162,8 +154,15 @@ void Collection::removeLevel( Level* lvl )
     {
         if( *it == lvl )
         {
+
+            // reset active level if it is being removed
+            if( m_Levels[m_ActiveLevel] == *it )
+                m_ActiveLevel = -1;
+
+            // remove level
             delete *it;
-            m_Levels.erase( it );
+            it = m_Levels.erase( it );
+
             return;
         }
     }
@@ -177,8 +176,15 @@ void Collection::removeLevel( const std::string& levelName )
     {
         if( (*it)->getLevelName() == levelName )
         {
+
+            // reset active level if it is being removed
+            if( m_Levels[m_ActiveLevel] == *it )
+                m_ActiveLevel = -1;
+
+            // remove level
             delete *it;
-            m_Levels.erase( it );
+            it = m_Levels.erase( it );
+
             return;
         }
     }
@@ -253,7 +259,39 @@ been loaded yet (collection isn't initialised)" << std::endl;
 }
 
 // --------------------------------------------------------------
-void Collection::setActiveLevel( const std::string& levelName )
+void Collection::selectFirstLevel( void )
+{
+    if( m_Levels.size() == 0 ) return;
+    this->selectActiveLevel( m_Levels.front()->getLevelName() );
+}
+
+// --------------------------------------------------------------
+void Collection::selectLastLevel( void )
+{
+    if( m_Levels.size() == 0 ) return;
+    this->selectActiveLevel( m_Levels.back()->getLevelName() );
+}
+
+// --------------------------------------------------------------
+bool Collection::selectNextLevel( void )
+{
+    if( m_ActiveLevel == -1 || m_ActiveLevel+1 == m_Levels.size() ) return false;
+    ++m_ActiveLevel;
+    this->selectActiveLevel( m_Levels[m_ActiveLevel]->getLevelName() );
+    return true;
+}
+
+// --------------------------------------------------------------
+bool Collection::selectPreviousLevel( void )
+{
+    if( m_ActiveLevel == -1 || m_ActiveLevel-1 == 0 ) return false;
+    --m_ActiveLevel;
+    this->selectActiveLevel( m_Levels[m_ActiveLevel]->getLevelName() );
+    return true;
+}
+
+// --------------------------------------------------------------
+void Collection::selectActiveLevel( const std::string& levelName )
 {
 #ifdef _DEBUG
     if( !m_IsLoaded )
@@ -262,24 +300,24 @@ been loaded yet (collection isn't initialised)" << std::endl;
 #endif
 
     // get new active level pointer
-    Level* newActiveLevel = 0;
-    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
+    std::size_t newActiveLevel = -1;
+    for( std::size_t i = 0; i != m_Levels.size(); ++i )
     {
-        if( (*it)->getLevelName().compare( levelName ) == 0 )
+        if( m_Levels[i]->getLevelName().compare( levelName ) == 0 )
         {
-            newActiveLevel = (*it);
+            newActiveLevel = i;
             break;
         }
     }
 
     // none found
-    if( !newActiveLevel )
+    if( newActiveLevel == -1 )
         throw Exception( std::string("[Collection::setActiveLevel] Error: Level name \"") + levelName + "\" was not found in loaded collection" );
 
     // prepare the level to play on
-    newActiveLevel->validateLevel();
-    newActiveLevel->reset();
-    newActiveLevel->applyUndoData();
+    m_Levels[newActiveLevel]->validateLevel();
+    m_Levels[newActiveLevel]->reset();
+    m_Levels[newActiveLevel]->applyUndoData();
 
     // set the new level
     m_ActiveLevel = newActiveLevel;
@@ -289,71 +327,94 @@ been loaded yet (collection isn't initialised)" << std::endl;
 // --------------------------------------------------------------
 bool Collection::hasActiveLevel( void )
 {
-    if( m_ActiveLevel ) return true;
-    return false;
+    return ( m_ActiveLevel != -1 );
+}
+
+// --------------------------------------------------------------
+Collection::level_iterator Collection::level_begin( void )
+{
+    return m_Levels.begin();
+}
+
+// --------------------------------------------------------------
+Collection::level_iterator Collection::level_end( void )
+{
+    return m_Levels.end();
+}
+
+// --------------------------------------------------------------
+const Collection::const_level_iterator Collection::level_begin( void ) const
+{
+    return m_Levels.begin();
+}
+
+// --------------------------------------------------------------
+const Collection::const_level_iterator Collection::level_end( void ) const
+{
+    return m_Levels.end();
 }
 
 // --------------------------------------------------------------
 void Collection::getTileData( Array2D<char>& tiles ) const
 {
-    if( !m_ActiveLevel)
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::getTileData] Error: Attempt to get tile data without first setting an active level" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->getTileData( tiles );
+    m_Levels[m_ActiveLevel]->getTileData( tiles );
 }
 
 // --------------------------------------------------------------
 void Collection::streamTileData( std::ostream& stream )
 {
-    if( !m_ActiveLevel)
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::streamTiledata] Warning: Attempt to stream tile data without first setting an active level" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->streamAllTileData( stream );
+    m_Levels[m_ActiveLevel]->streamAllTileData( stream );
 }
 
 // --------------------------------------------------------------
 char Collection::getTile( const Uint32 x, const Uint32 y )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
         throw Exception( "[Collection::getTile] Error: Attempt to get tile without first setting an active level" );
-    return m_ActiveLevel->getTile( x, y );
+    return m_Levels[m_ActiveLevel]->getTile( x, y );
 }
 
 // --------------------------------------------------------------
 void Collection::setTile( const Uint32 x, const Uint32 y, const char tile )
 {
-   if( !m_ActiveLevel )
+   if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::setTile] Warning: Attempt to set a tile without first setting an active level" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->setInitialTile( x, y, tile );
+    m_Levels[m_ActiveLevel]->setInitialTile( x, y, tile );
 }
 
 // --------------------------------------------------------------
 Uint32 Collection::getSizeX( void ) const
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
         throw Exception( "[Collection::getSizeX] Error: No active level set" );
-    return m_ActiveLevel->getSizeX();
+    return m_Levels[m_ActiveLevel]->getSizeX();
 }
 
 // --------------------------------------------------------------
 Uint32 Collection::getSizeY( void ) const
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
         throw Exception( "[Collection::getSizeY] Error: No active level set" );
-    return m_ActiveLevel->getSizeY();
+    return m_Levels[m_ActiveLevel]->getSizeY();
 }
 
 // --------------------------------------------------------------
@@ -380,8 +441,7 @@ void Collection::addLevelListener( LevelListener* listener )
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         if( (*it) == listener )
             throw Exception( "[Collection::addLevelListener] Error: Listener has already been registered" );
-    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
-        (*it)->addListener( listener );
+    m_LevelListeners.push_back( listener );
 }
 
 // --------------------------------------------------------------
@@ -391,8 +451,6 @@ void Collection::removeLevelListener( LevelListener* listener )
     {
         if( (*it) == listener )
         {
-            for( std::vector<Level*>::iterator l_it = m_Levels.begin(); l_it != m_Levels.end(); ++l_it )
-                (*l_it)->removeListener( listener );
             m_LevelListeners.erase( it );
             return;
         }
@@ -403,93 +461,107 @@ void Collection::removeLevelListener( LevelListener* listener )
 // --------------------------------------------------------------
 void Collection::moveUp( void )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::moveUp] Warning: No active level set" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->moveUp();
+    m_Levels[m_ActiveLevel]->moveUp();
 }
 
 // --------------------------------------------------------------
 void Collection::moveDown( void )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::moveDown] Warning: No active level set" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->moveDown();
+    m_Levels[m_ActiveLevel]->moveDown();
 }
 
 // --------------------------------------------------------------
 void Collection::moveLeft( void )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::moveLeft] Warning: No active level set" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->moveLeft();
+    m_Levels[m_ActiveLevel]->moveLeft();
 }
 
 // --------------------------------------------------------------
 void Collection::moveRight( void )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::moveRight] Warning: No active level set" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->moveRight();
+    m_Levels[m_ActiveLevel]->moveRight();
 }
 
 // --------------------------------------------------------------
 void Collection::undo( void )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::undo] Warning: No active level set" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->undo();
+    m_Levels[m_ActiveLevel]->undo();
 }
 
 // --------------------------------------------------------------
 void Collection::redo( void )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::redo] Warning: No active level set" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->redo();
+    m_Levels[m_ActiveLevel]->redo();
 }
 
 // --------------------------------------------------------------
 void Collection::reset( void )
 {
-    if( !m_ActiveLevel )
+    if( m_ActiveLevel == -1 )
     {
 #ifdef _DEBUG
         std::cout << "[Collection::reset] Warning: No active level set" << std::endl;
 #endif
         return;
     }
-    m_ActiveLevel->reset();
-    m_ActiveLevel->clearUndoData();
+    m_Levels[m_ActiveLevel]->reset();
+    m_Levels[m_ActiveLevel]->clearUndoData();
+}
+
+// --------------------------------------------------------------
+void Collection::onSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
+{
+    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
+        (*it)->onSetTile( x, y, tile );
+}
+
+// --------------------------------------------------------------
+void Collection::onMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY )
+{
+    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
+        (*it)->onMoveTile( oldX, oldY, newX, newY );
 }
 
 // --------------------------------------------------------------

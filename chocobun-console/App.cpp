@@ -30,7 +30,8 @@
 // --------------------------------------------------------------
 // constructor
 App::App( void ) :
-    m_Collection(0)
+    m_Collection(0),
+    m_FileFormat( "SOK" )
 {
 }
 
@@ -38,7 +39,7 @@ App::App( void ) :
 // destructor
 App::~App( void )
 {
-    if( m_Collection ) delete m_Collection;
+    if( m_Collection ){ m_Collection->save( m_FileFormat ); delete m_Collection; }
 }
 
 // --------------------------------------------------------------
@@ -158,11 +159,11 @@ void App::go( void )
 					{
 						std::string format = argList.at( argList.size()-1 );
 						std::cout << "setting file format to \"" << format << "\"" << std::endl;
-						for(;;){
-							if( format.compare( "sok" ) == 0 ){ m_Collection->setFileFormat( Chocobun::CollectionParser::FORMAT_SOK ); break; }
-							if( format.compare( "slc" ) == 0 ){ m_Collection->setFileFormat( Chocobun::CollectionParser::FORMAT_SLC ); break; }
+                        if( format.compare( "SOK" ) == 0 ||
+                            format.compare( "SLC" ) == 0 )
+                            m_FileFormat = format;
+                        else
 							std::cout << "Error: Unknown file format \"" << format << "\"" << std::endl; break;
-						}
 					}else
 					{
 						std::cout << "Error: You haven't opened a collection yet." << std::endl;
@@ -174,6 +175,7 @@ void App::go( void )
                 {
                     if( m_Collection )
                     {
+                        m_Collection->save( m_FileFormat );
                         delete m_Collection;
                         m_Collection = 0;
                         std::cout << "Collection closed." << std::endl;
@@ -230,7 +232,7 @@ void App::go( void )
                 // open level
                 if( open )
                 {
-                    m_Collection->setActiveLevel( argList.at( argList.size()-1 ) );
+                    m_Collection->selectActiveLevel( argList.at( argList.size()-1 ) );
                     std::cout << "Opened level \"" << argList.at( argList.size()-1 ) << std::endl;
                     m_Collection->streamTileData( std::cout );
                }

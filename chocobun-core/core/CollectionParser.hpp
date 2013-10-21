@@ -43,15 +43,6 @@ class CollectionParser
 {
 public:
 
-	/*!
-	 * @brief List of file formats that are supported for export
-	 */
-    enum FILE_FORMAT
-	{
-		FORMAT_SOK,
-		FORMAT_SLC
-	};
-
     /*!
      * @brief Constructor
      */
@@ -88,18 +79,18 @@ public:
 	 *
 	 * @param fileFormat The file format
 	 */
-    void setFileFormat( FILE_FORMAT fileFormat );
+    void setFileFormat( const std::string& fileFormat );
 
 	/*!
 	 * @brief Gets the set export file format being used
 	 *
 	 * @return The export format
 	 */
-    FILE_FORMAT getFileFormat( void );
+    const std::string& getFileFormat( void ) const;
 
 private:
 
-    FILE_FORMAT m_fileFormat;
+    std::string m_FileFormat;
 
 };
 

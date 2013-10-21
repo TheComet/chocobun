@@ -47,7 +47,11 @@ class CHOCOBUN_CORE_API Collection :
 {
 public:
 
-    std::vector<Level*>& getLevels( void ) { return m_Levels; }
+    /*!
+     * @brief Expose level iterators
+     */
+    typedef std::vector<Level*>::iterator       level_iterator;
+    typedef std::vector<Level*>::const_iterator const_level_iterator;
 
     /*!
      * @brief Default constructor
@@ -61,8 +65,7 @@ public:
 
     /*!
      * @brief Destructor
-     *
-     * Unloads everything (this calls the deinitialise method)
+     * Unloads everything (this calls @a unload)
      */
     ~Collection( void );
 
@@ -73,6 +76,11 @@ public:
      * levels into memory
      */
     void load( const std::string& fileName );
+
+    /*!
+     * @brief Saves the collection to disk using the specified format
+     */
+    void save( const std::string& fileFormat );
 
     /*!
      * @brief Unloads the collection, saving it to disk and freeing up all memory
@@ -134,20 +142,6 @@ public:
     bool isCompressionEnabled( void ) const;
 
     /*!
-     * @brief Sets the export file format to be used for every future save
-     *
-     * @param fileFormat The file format
-     */
-    void setFileFormat( CollectionParser::FILE_FORMAT fileFormat );
-
-    /*!
-     * @brief Gets the set export file format being used
-     *
-     * @return The export format
-     */
-    CollectionParser::FILE_FORMAT getFileFormat( void );
-
-    /*!
      * @brief Adds a new, empty level to the collection
      */
     Level* addLevel( void );
@@ -199,6 +193,26 @@ public:
     void streamLevelNames( std::ostream& stream );
 
     /*!
+     * @brief Activates the first level in the collection
+     */
+    void selectFirstLevel( void );
+
+    /*!
+     * @brief Activates the last level in the collection
+     */
+    void selectLastLevel( void );
+
+    /*!
+     * @brief Activates the next level in the collection
+     */
+    bool selectNextLevel( void );
+
+    /*!
+     * @brief Activates the previous level in the collection
+     */
+    bool selectPreviousLevel( void );
+
+    /*!
      * @brief Selects a level so it is ready to play
      *
      * When a level is selected, everything about the level can be retrieved through
@@ -209,7 +223,7 @@ public:
      * @note You can retrieve a list of names with <b>getLevelNames</b>
      * @return If the active level doesn't exist, false is returned, otherwise true is returned.
      */
-    void setActiveLevel( const std::string& levelName );
+    void selectActiveLevel( const std::string& levelName );
 
     /*!
      * @brief Checks if a level is selected as active or not
@@ -217,6 +231,26 @@ public:
      * @return True if a level is selected as active, false if otherwise
      */
     bool hasActiveLevel( void );
+
+    /*!
+     * @brief Expose begin iterator for access to all levels
+     */
+    level_iterator level_begin( void );
+
+    /*!
+     * @brief Expose end iterator for access to all levels
+     */
+    level_iterator level_end( void );
+
+    /*!
+     * @brief Expose constant begin iterator for access to all levels
+     */
+    const const_level_iterator level_begin( void ) const;
+
+    /*!
+     * @brief Expose constant end iterator for access to all levels
+     */
+    const const_level_iterator level_end( void ) const;
 
     /*!
      * @brief Returns all tiles of the active level
@@ -372,6 +406,16 @@ public:
     void reset( void );
 
     /*!
+     * @brief Level Listener for tiles being set
+     */
+    void onSetTile( const std::size_t& x, const std::size_t& y, const char& tile );
+
+    /*!
+     * @brief Level listener for tiles being moved
+     */
+    void onMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY );
+
+    /*!
      * @brief Overload assignment operator
      */
     Collection& operator=( const Collection& that );
@@ -382,11 +426,9 @@ private:
     std::string m_CollectionName;
     std::vector<Level*> m_Levels;
     std::vector<LevelListener*> m_LevelListeners;
-    Level* m_ActiveLevel;
+    std::size_t m_ActiveLevel;
     bool m_EnableCompression;
     bool m_IsLoaded;
-
-    CollectionParser::FILE_FORMAT m_FileFormat;
 };
 
 } // namespace Chocobun
