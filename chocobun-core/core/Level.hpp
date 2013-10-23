@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// Level
+// Level.hpp
 // --------------------------------------------------------------
 
 #ifndef __CHOCOBUN_CORE_LEVEL_HPP__
@@ -26,7 +26,7 @@
 // include files
 
 #include <core/Config.hpp>
-#include <core/Typedefs.hpp>
+#include <core/TileField.hpp>
 
 #include <string>
 #include <vector>
@@ -36,8 +36,11 @@
 
 namespace Chocobun {
 
+// --------------------------------------------------------------
+// forward declarations
+
 class LevelListener;
-template <class T> class Array2D;
+class TileField;
 
 /*!
  * @brief Holds information of a loaded level
@@ -60,6 +63,12 @@ public:
      * @brief Destructor
      */
     ~Level( void );
+
+    TileField& getActiveTileField( void ) { return m_LevelArray; }
+    TileField* getActiveTileFieldPtr( void ) { return &m_LevelArray; }
+
+    TileField& getInitialTileField( void ) { return m_InitialLevelArray; }
+    TileField* getInitialTileFieldPtr( void ) { return &m_InitialLevelArray; }
 
     /*!
      * @brief Adds meta data to the level
@@ -116,112 +125,6 @@ public:
      * @param stream The stream object to stream to
      */
     void streamAllHeaderData( std::ostream& stream );
-
-    /*!
-     * @brief Inserts a tile into the level at the given coordinate
-     * Internally the map array is resized accordingly so it remains square.
-     * <b>Valid tile characters are:</b>
-     * - # Wall
-     * - @ Pusher
-     * - + Pusher on goal square
-     * - $ Box
-     * - * Box on goal square
-     * - . Goal square
-     * -   Floor (space)
-     * - _ Floor
-     * @exception Chocobun::Exception if an invalid character is passed
-     * @param x The X coordinate for the tile to insert
-     * @param y The Y coordinate for the tile to insert
-     * @param tile The type of tile
-     */
-    void insertTile( const std::size_t& x, const std::size_t& y, const char& tile );
-
-    /*!
-     * @brief Inserts a whole line instead of a single tile
-     * Internally the map array is resized accordingly so it remains square.
-     * <b>Valid tile characters are:</b>
-     * - # Wall
-     * - @ Pusher
-     * - + Pusher on goal square
-     * - $ Box
-     * - * Box on goal square
-     * - . Goal square
-     * -   Floor (space)
-     * - _ Floor
-     * @exception Chocobun::Exception if an invalid character is passed
-     * @param y The Y coordinate for the tile line to insert
-     * @param tiles The line of tiles to insert
-     */
-    void insertTileLine( const std::size_t& y, const std::string& tiles );
-
-    /*!
-     * @brief Streams all current tile data to a stream object
-     * This can be used to retrieve all of the tiles to update
-     * the screen when a move is made.
-     * @note This is the <b>current</b> version of the tile data,
-     * not the initial tile data (from when the level was first loaded).
-     * See @a streamInitialTileData to retrieve the tile data of the level
-     * in its initial state.
-     * @param stream The output stream object to stream to
-     * @param newLine If set to true (default), new line breaks are inserted.
-     * Otherwise, "|" are inserted (for RLE compression)
-     */
-    void streamAllTileData( std::ostream& stream );
-
-    /*!
-     * @brief Gets the array of current tile data
-     * @return Returns a 2-dimensional array of chars containing tile data
-     */
-    void getTileData( Array2D<char>& tiles ) const;
-
-    /*!
-     * @brief Streams the tile data of this level in its initial state
-     * Retrieves all of the tiles as they initially were. This is best used
-     * to save levels to a file.
-     * @param stream The output stream object to stream to
-     * @param newLine If set to true (default), new line breaks are insterted.
-     * Otherwise, "|" are inserted (for RLE compression)
-     */
-    void streamInitialTileData( std::ostream& stream, bool newLine = true );
-
-    /*!
-     * @brief Gets a single tile from the level
-     * Will retrieve the tile data specified by the x and y parameters
-     * @exception Chocobun::Exception if the x and y coordinates exceed
-     * the boundaries of the level.
-     * @param x The X-coordinate of the tile
-     * @param y The Y-coordinate of the tile
-     * @return Returns the tile at the specified coordinates
-     */
-    char getTile( std::size_t x, std::size_t y ) const;
-
-    /*!
-     * @brief Sets the specified tile and informs all listeners
-     * All listeners are informed about the tile change when this is called.
-     * @exception Chocobun::Exception if either the x and y parameters exceed
-     * the boundaries of the level, or if the tile character is invalid.
-     * @param x The x-coordinate of the tile
-     * @param y The y-coordinate of the tile
-     * @param tile The tile to set it to
-     */
-    void setTile( const std::size_t& x, const std::size_t& y, const char& tile );
-
-    /*!
-     * @brief Sets the tile in the initial tile array
-     */
-    void setInitialTile( const std::size_t& x, const std::size_t& y, const char& tile );
-
-    /*!
-     * @brief Returns the X-size of the level
-     * @return The X-size of the level
-     */
-    std::size_t getSizeX( void ) const;
-
-    /*!
-     * @brief Returns the Y-size of the level
-     * @return The Y-size of the level
-     */
-    std::size_t getSizeY( void ) const;
 
     /*!
      * @brief Adds level notes to this level
@@ -410,13 +313,16 @@ private:
      */
     void dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY );
 
+    std::string                         m_LevelName;
     std::map<std::string, std::string>  m_MetaData;
-    LevelArray_t*                       m_LevelArray;
-    LevelArray_t*                       m_InitialLevelArray;
     std::vector<std::string>            m_HeaderData;
     std::vector<std::string>            m_Notes;
+
+    TileField                           m_LevelArray;
+    TileField                           m_InitialLevelArray;
+
     std::vector<char>                   m_UndoData;
-    std::string                         m_LevelName;
+
     std::vector<LevelListener*>         m_LevelListeners;
 
     std::size_t                         m_PlayerX;

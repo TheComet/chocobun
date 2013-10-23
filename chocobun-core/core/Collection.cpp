@@ -44,15 +44,15 @@ Collection::Collection( void ) :
 Collection::Collection( const Collection& that ) :
     m_ActiveLevel( -1 )
 {
-    *this = that;
+    //*this = that;
 }
 
 // --------------------------------------------------------------
 Collection::~Collection( void )
 {
-    this->unload();
+    //this->unload();
 }
-
+/*
 // --------------------------------------------------------------
 void Collection::load( const std::string& fileName )
 {
@@ -590,5 +590,5 @@ Collection& Collection::operator=( const Collection& that )
     std::cout << "copying collection" << std::endl;
 
 }
-
+*/
 } // namespace Chocobun

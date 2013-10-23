@@ -39,7 +39,7 @@ App::App( void ) :
 // destructor
 App::~App( void )
 {
-    if( m_Collection ){ m_Collection->save( m_FileFormat ); delete m_Collection; }
+    // TODO if( m_Collection ){ m_Collection->save( m_FileFormat ); delete m_Collection; }
 }
 
 // --------------------------------------------------------------
@@ -79,6 +79,7 @@ void App::go( void )
             }
 
             // collection command
+/* TODO
             if( argList[0].compare("collection") == 0)
             {
 
@@ -121,7 +122,7 @@ void App::go( void )
                         if( m_Collection )
                             delete m_Collection;
                         m_Collection = new Chocobun::Collection();
-                        m_Collection->addLevelListener( this );
+                        // TODO m_Collection->addLevelListener( this );
                         m_Collection->load( fileName );
                         std::cout << "Successfully opened collection \"" << m_Collection->getName() << "\"";
 						std::cout << " from file \"" << fileName << "\"" << std::endl;
@@ -240,13 +241,6 @@ void App::go( void )
                 break;
             }
 
-            // exit program
-            if( argList[0].compare("quit") == 0 )
-            {
-                shutdown = true;
-                break;
-            }
-
             // movement commands
             if( std::string( "udlrzZ" ).compare( argList[0].substr(0,1) ) )
             {
@@ -284,6 +278,14 @@ void App::go( void )
                 // redraw level
                 m_Collection->streamTileData( std::cout );
 
+                break;
+            }
+*/
+
+            // exit program
+            if( argList[0].compare("quit") == 0 )
+            {
+                shutdown = true;
                 break;
             }
 

@@ -82,7 +82,7 @@ void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
 #endif
 
     // the first level is a requirement
-    Level* lvl = collection.addLevel();
+    Level* lvl; // TODO = collection.addLevel();
 
     // run length encoding
     RLE rle;
@@ -157,13 +157,13 @@ void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
             }
 
             // finalise the level name
-            collection.generateLevelName( levelName );
+            // TODO collection.generateLevelName( levelName );
             lvl->setLevelName( levelName );
 
             // TODO reverse Y order of level array (see issue #16)
 
             // generate new level
-            lvl = collection.addLevel();
+            // TODO lvl = collection.addLevel();
             if( levelName.compare( tempLevelName ) == 0 ) tempLevelName = "";
             levelName = tempLevelName;
             tileLine = 0;
@@ -179,7 +179,7 @@ void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
             {
                 rle.decompress( inBuf );
                 this->convertTilesToConventional( inBuf );
-                lvl->insertTileLine( tileLine, inBuf );
+                lvl->getInitialTileField().insertTileLine( tileLine, inBuf );
                 ++tileLine;
                 break;
             }
@@ -193,7 +193,7 @@ void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
                 // special case for collection name
                 if( key.compare("Collection") == 0 )
                 {
-                    collection.setName( value );
+                    // TODO collection.setName( value );
                     break;
                 }
 
@@ -219,7 +219,7 @@ void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
     }
 
     // give the still open level its name
-    collection.generateLevelName( levelName );
+    // TODO collection.generateLevelName( levelName );
     lvl->setLevelName( levelName );
 
 #ifdef _DEBUG
@@ -244,6 +244,7 @@ void CollectionParserSOK::_save( std::ofstream& file, const Collection& collecti
 {
 
     // write all levels to file stream
+    /* TODO
     file << "Collection: " << collection.getName() << std::endl;
     RLE rle;
     for( Collection::const_level_iterator it = collection.level_begin(); it != collection.level_end(); ++it )
@@ -269,7 +270,7 @@ void CollectionParserSOK::_save( std::ofstream& file, const Collection& collecti
         if( (*it)->undoDataExists() || (*it)->redoDataExists() )
             file << "Snapshot: " << (*it)->exportUndoData() << std::endl;
 
-    }
+    }*/
 }
 
 } // namespace Chocobun

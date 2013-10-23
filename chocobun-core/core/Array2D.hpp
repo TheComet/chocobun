@@ -19,6 +19,8 @@
 // Array2D.hxx
 // --------------------------------------------------------------
 
+#ifndef __CHOCOBUN_CORE_ARRAY2D_HPP__
+#define __CHOCOBUN_CORE_ARRAY2D_HPP__
 // --------------------------------------------------------------
 // include files
 
@@ -146,9 +148,11 @@ const std::size_t& Array2D<T>::sizeY( void ) const
 template <class T>
 Array2D<T>& Array2D<T>::operator=( const Array2D<T>& that )
 {
+    if( &that == this ) return *this;
     m_Array = that.m_Array;
     m_SizeX = that.m_SizeX;
     m_SizeY = that.m_SizeY;
+    return *this;
 }
 
 // --------------------------------------------------------------
@@ -185,3 +189,5 @@ T& Array2D<T>::at( const std::size_t& x, const std::size_t& y )
 }
 
 } // namespace Chocobun
+
+#endif // __CHOCOBUN_CORE_ARRAY2D_HPP__
