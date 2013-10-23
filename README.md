@@ -7,14 +7,16 @@ game.
 ## Features and progress
 
 * Importers/Exporters
-    + ( 90%) .SOK file importer/exporter
-    + ( 100%) SCL markup language importer/exporter
+    + (done) .SOK file importer/exporter
+    + ( 90%) SCL markup language importer/exporter
+    + (  0%) SBML markup language importer/exporter
+    + (  0%) XSB file importer/exporter
 * Player dynamics
     + (done) Basic movement of the player on levels
-    + ( 60%) Undo/Redo moves
+    + (done) Undo/Redo moves
     + (  0%) Move the player using a path-finder
 * Level dynamics
-    + (  0%) Validate levels, make sure they are solvable
+    + ( 20%) Validate levels, make sure they are solvable
     + (  0%) Level solver
 * Misc
     + (  0%) Generic A* path-finder
