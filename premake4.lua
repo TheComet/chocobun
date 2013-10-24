@@ -56,6 +56,12 @@ elseif os.get() == "linux" then
 	linklibs_chocobun_console_release = {
 		"chocobun-core"
 	}
+	linklibs_chocobun_tests_debug = {
+		"gtest"
+	}
+	linklibs_chocobun_tests_release = {
+		"gtest"
+	}
 	
 -- MAAAC
 elseif os.get() == "macosx" then
@@ -201,3 +207,40 @@ solution "Chocobun"
 			}
 			libdirs (libSearchDirs)
 			links (linklibs_chocobun_console_release)
+
+	-------------------------------------------------------------------
+	-- Unit tests
+	-------------------------------------------------------------------
+
+	project "chocobun-tests"
+		kind "ConsoleApp"
+		language "C++"
+		files {
+			"chocobun-tests/**.cpp",
+			"chocobun-tests/**.hpp"
+		}
+
+		includedirs (headerSearchDirs)
+
+		configuration "Debug"
+			targetdir "bin/debug"
+			defines {
+				"DEBUG",
+				"_DEBUG"
+			}
+			flags {
+				"Symbols"
+			}
+			libdirs (libSearchDirs)
+			links (linklibs_chocobun_tests_debug)
+
+		configuration "Release"
+			targetdir "bin/release"
+			defines {
+				"NDEBUG"
+			}
+			flags {
+				"Optimize"
+			}
+			libdirs (libSearchDirs)
+			links (linklibs_chocobun_tests_release)

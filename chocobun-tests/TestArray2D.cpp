@@ -16,51 +16,24 @@
  */
 
 // --------------------------------------------------------------
-// GraphNode.hpp
+// TestArray2D.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
 // include files
 
-#include <vector>
+#include <gtest/gtest.h>
+#include <core/Array2D.hpp>
 
-namespace Chocobun {
+// --------------------------------------------------------------
+// define test fixtures
 
-template <class T>
-class GraphNode
+#define TEST_CASE_NAME TestArray2D
+#define TEST_CASE_OBJECT Chocobun::Array2D<char>
+
+TEST( TEST_CASE_NAME, testingShit )
 {
-public:
-
-    /*!
-     * @brief Default constructor
-     */
-    GraphNode( void );
-
-    /*!
-     * @brief Default destructor
-     */
-    ~GraphNode( void );
-
-    /*!
-     * @brief Bidirectionally links two nodes together
-     */
-    void link( const GraphNode* other );
-
-    /*!
-     * @brief Unlinks two nodes that are linked
-     */
-    void unlink( const GraphNode* other );
-
-    /*!
-     * @brief Unlinks all linked nodes
-     */
-    void unlinkAll( void );
-
-private:
-
-    std::vector<GraphNode*> m_Links;
-    T                       m_Data;
-
-};
-
-} // namespace Chocobun
+    TEST_CASE_OBJECT test( '#' );
+    test.resize(5,5);
+    EXPECT_EQ( 5, test.sizeX() );
+}
