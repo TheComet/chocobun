@@ -29,6 +29,20 @@ namespace Chocobun {
 
 // --------------------------------------------------------------
 template <class COORD>
+void TileManipulator<COORD>::Listener::onMoveTile( const COORD& oldPos, const COORD& newPos )
+{
+    // listener should implement this
+}
+
+// --------------------------------------------------------------
+template <class COORD>
+void TileManipulator<COORD>::Listener::onSetTile( const COORD& pos, const char& tile )
+{
+    // listener should implement this
+}
+
+// --------------------------------------------------------------
+template <class COORD>
 TileManipulator<COORD>::TileManipulator( void )
 {
 }
