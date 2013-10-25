@@ -460,41 +460,4 @@ bool Level::redoDataExists( void )
     return ( m_UndoDataPos < m_UndoData.size() );
 }
 
-// --------------------------------------------------------------
-void Level::addListener( LevelListener* listener )
-{
-    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
-        if( (*it) == listener )
-            throw Exception( "[Level::addListener] Error: Listener has already been registered" );
-    m_LevelListeners.push_back( listener );
-}
-
-// --------------------------------------------------------------
-void Level::removeListener( LevelListener* listener )
-{
-    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
-    {
-        if( (*it) == listener )
-        {
-            m_LevelListeners.erase( it );
-            return;
-        }
-    }
-    throw Exception( "[Level::removeListener] Error: Listener could not be removed, as it wasn't registered as a listener to begin with" );
-}
-
-// --------------------------------------------------------------
-void Level::dispatchSetTile( const std::size_t& x, const std::size_t& y, const char& tile )
-{
-    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
-        (*it)->onSetTile( x, y, tile );
-}
-
-// --------------------------------------------------------------
-void Level::dispatchMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY )
-{
-    for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
-        (*it)->onMoveTile( oldX, oldY, newX, newY );
-}
-
 } // namespace Chocobun
