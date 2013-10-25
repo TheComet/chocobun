@@ -22,8 +22,8 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Graph.hpp>
-#include <core/GraphNode.hpp>
+#include <ChocobunGraph.hpp>
+#include <ChocobunGraphNode.hpp>
 
 namespace Chocobun {
 

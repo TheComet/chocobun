@@ -22,7 +22,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/GraphNode.hpp>
+#include <ChocobunGraphNode.hpp>
 
 namespace Chocobun {
 
@@ -62,20 +62,21 @@ template <class T>
 void GraphNode<T>::unlink( const GraphNode* other )
 {
 
-    // self linkage
-    if( this == other ) return;
-
-    // not linked
-    typename std::vector<GraphNode*>::iterator it = m_Links.begin();
-    for( ; it != m_Links.end(); ++it )
+    // unlink this from other
+    for( typename std::vector<GraphNode*>::iterator it = m_Links.begin(); it != m_Links.end(); ++it )
         if( *it == other )
+        {
+            m_Links.erase( it );
             break;
-    if( it == m_Links.end() )
-        return;
+        }
 
-    // unlink
-    m_Links.erase( it );
-    other->unlink( this );
+    // unlink other from this
+    for( typename std::vector<GraphNode*>::iterator it = other->m_Links.begin(); it != other->m_Links.end(); ++it )
+        if( *it == this )
+        {
+            other->m_Links.erase( it );
+            break;
+        }
 }
 
 // --------------------------------------------------------------
@@ -83,12 +84,19 @@ template <class T>
 void GraphNode<T>::unlinkAll( void )
 {
     typename std::vector<GraphNode*>::iterator it = m_Links.begin();
-    GraphNode* toUnlink;
     while( it != m_Links.end() )
     {
-        toUnlink = *it;
+
+        // unlink other from this
+        for( typename std::vector<GraphNode*>::iterator it2 = (*it)->m_Links.begin(); it2 != (*it)->m_Links.end(); ++it2 )
+            if( *it2 == this )
+            {
+                (*it)->m_Links.erase( it2 );
+                break;
+            }
+
+        // unlink this from other
         it = m_Links.erase( it );
-        toUnlink->unlink( this );
     }
 }
 

@@ -42,7 +42,7 @@ App::~App( void )
     // TODO if( m_Collection ){ m_Collection->save( m_FileFormat ); delete m_Collection; }
 }
 
-#include <core/GraphNode.hpp>
+#include <ChocobunGraphNode.hpp>
 
 // --------------------------------------------------------------
 void App::go( void )

@@ -25,8 +25,8 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Config.hpp>
-#include <core/TileField.hpp>
+#include <ChocobunConfig.hpp>
+#include <ChocobunTileField.hpp>
 
 #include <string>
 #include <vector>

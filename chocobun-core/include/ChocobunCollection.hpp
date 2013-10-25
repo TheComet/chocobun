@@ -25,10 +25,10 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Typedefs.hpp>
-#include <core/Export.hpp>
-#include <core/LevelListener.hpp>
-#include <core/CollectionParser.hpp>
+#include <ChocobunTypedefs.hpp>
+#include <ChocobunExport.hpp>
+#include <ChocobunLevelListener.hpp>
+#include <ChocobunCollectionParser.hpp>
 #include <vector>
 #include <string>
 

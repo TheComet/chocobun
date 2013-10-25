@@ -23,8 +23,8 @@
 // include files
 
 #include <sstream>
-#include <core/RLE.hpp>
-#include <core/Config.hpp>
+#include <ChocobunRLE.hpp>
+#include <ChocobunConfig.hpp>
 
 namespace Chocobun {
 

@@ -22,12 +22,12 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Utils.hpp>
-#include <core/Collection.hpp>
-#include <core/Level.hpp>
-#include <core/LevelListener.hpp>
-#include <core/Array2D.hpp>
-#include <core/Exception.hpp>
+#include <ChocobunUtils.hpp>
+#include <ChocobunCollection.hpp>
+#include <ChocobunLevel.hpp>
+#include <ChocobunLevelListener.hpp>
+#include <ChocobunArray2D.hpp>
+#include <ChocobunException.hpp>
 
 #include <sstream>
 

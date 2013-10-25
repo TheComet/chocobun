@@ -23,7 +23,7 @@
 // include files
 
 #include <gtest/gtest.h>
-#include <core/Array2D.hpp>
+#include <ChocobunArray2D.hpp>
 
 // --------------------------------------------------------------
 // define test fixtures

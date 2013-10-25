@@ -47,6 +47,15 @@ public:
      */
     ~Graph( void );
 
+    /*!
+     * @brief Adds a node to the graph
+     */
+    GraphNode<T>* addNode( void );
+
+    /*!
+     * @brief Removes a node from the graph
+     */
+
 private:
     std::vector<GraphNode<T>*> m_Nodes;
 };

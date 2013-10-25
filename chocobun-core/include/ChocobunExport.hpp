@@ -23,7 +23,7 @@
 #   define __CHOCOBUN_CORE_EXPORT_HPP__
 
     // headers
-#   include <core/Config.hpp>
+#   include <ChocobunConfig.hpp>
 
 #   if defined(CHOCOBUN_CORE_DYNAMIC)
 #       define CHOCOBUN_CORE_API CHOCOBUN_CORE_EXPORT

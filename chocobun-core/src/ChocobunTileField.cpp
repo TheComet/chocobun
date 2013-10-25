@@ -22,8 +22,8 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Utils.hpp>
-#include <core/TileField.hpp>
+#include <ChocobunUtils.hpp>
+#include <ChocobunTileField.hpp>
 
 #include <sstream>
 

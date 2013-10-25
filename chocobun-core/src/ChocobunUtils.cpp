@@ -19,8 +19,8 @@
 // TileUtils.cpp
 // --------------------------------------------------------------
 
-#include <core/Config.hpp>
-#include <core/Utils.hpp>
+#include <ChocobunConfig.hpp>
+#include <ChocobunUtils.hpp>
 
 namespace Chocobun {
 

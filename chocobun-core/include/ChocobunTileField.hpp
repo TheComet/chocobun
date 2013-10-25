@@ -26,7 +26,7 @@
 // include files
 
 #include <string>
-#include <core/Array2D.hpp>
+#include <ChocobunArray2D.hpp>
 
 namespace Chocobun {
 

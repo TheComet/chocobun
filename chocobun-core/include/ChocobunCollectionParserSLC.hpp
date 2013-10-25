@@ -25,7 +25,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/CollectionParserBase.hpp>
+#include <ChocobunCollectionParserBase.hpp>
 
 #include <rapidxml-1.13/rapidxml.hpp>
 

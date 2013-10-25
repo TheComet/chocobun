@@ -22,14 +22,14 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Collection.hpp>
-#include <core/CollectionParser.hpp>
-#include <core/CollectionParserSOK.hpp>
-#include <core/CollectionParserSLC.hpp>
-#include <core/RLE.hpp>
-#include <core/Level.hpp>
-#include <core/Exception.hpp>
-#include <core/Config.hpp>
+#include <ChocobunCollection.hpp>
+#include <ChocobunCollectionParser.hpp>
+#include <ChocobunCollectionParserSOK.hpp>
+#include <ChocobunCollectionParserSLC.hpp>
+#include <ChocobunRLE.hpp>
+#include <ChocobunLevel.hpp>
+#include <ChocobunException.hpp>
+#include <ChocobunConfig.hpp>
 #include <fstream>
 #include <sstream>
 #include <memory>

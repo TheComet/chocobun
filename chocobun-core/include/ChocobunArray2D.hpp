@@ -24,8 +24,8 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Array2D.hxx>
-#include <core/Exception.hpp>
+#include <ChocobunArray2D.hxx>
+#include <ChocobunException.hpp>
 
 #include <sstream>
 #include <algorithm> // std::reverse

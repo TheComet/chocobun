@@ -25,7 +25,7 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/CollectionParserBase.hpp>
+#include <ChocobunCollectionParserBase.hpp>
 
 namespace Chocobun {
 

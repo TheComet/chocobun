@@ -26,10 +26,10 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/Collection.hpp>
-#include <core/CollectionParserSLC.hpp>
-#include <core/Level.hpp>
-#include <core/Exception.hpp>
+#include <ChocobunCollection.hpp>
+#include <ChocobunCollectionParserSLC.hpp>
+#include <ChocobunLevel.hpp>
+#include <ChocobunException.hpp>
 
 #include <fstream>
 #include <sstream>

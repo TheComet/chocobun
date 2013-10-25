@@ -33,6 +33,7 @@ elseif os.get() == "linux" then
 	-- header search directories
 	headerSearchDirs = {
 		"chocobun-core",
+		"chocobun-core/include",
 		"chocobun-console",
 		"usr/local/include/",
 	}
@@ -57,10 +58,10 @@ elseif os.get() == "linux" then
 		"chocobun-core"
 	}
 	linklibs_chocobun_tests_debug = {
-		"gtest"
+		"gmock"
 	}
 	linklibs_chocobun_tests_release = {
-		"gtest"
+		"gmock"
 	}
 	
 -- MAAAC
@@ -68,7 +69,7 @@ elseif os.get() == "macosx" then
 
 	-- header search directories
 	headerSearchDirs = {
-		"chocobun-core",
+		"chocobun-core/include",
 		"chocobun-console",
 		"usr/include/"
 	}
@@ -131,8 +132,9 @@ solution "Chocobun"
 		kind "SharedLib"
 		language "C++"
 		files {
-			"chocobun-core/**.cpp",
-			"chocobun-core/**.hpp"
+			"chocobun-core/src/**.cpp",
+			"chocobun-core/include/**.hpp",
+			"chocobun-core/include/**.hxx"
 		}
 		
 		includedirs (headerSearchDirs)
@@ -233,6 +235,9 @@ solution "Chocobun"
 			}
 			libdirs (libSearchDirs)
 			links (linklibs_chocobun_tests_debug)
+			linkoptions {
+				"-pthread" -- google mock 1.5.0 and greater use threads
+			}
 
 		configuration "Release"
 			targetdir "bin/release"
@@ -244,3 +249,6 @@ solution "Chocobun"
 			}
 			libdirs (libSearchDirs)
 			links (linklibs_chocobun_tests_release)
+			linkoptions {
+				"-pthread" -- google mock 1.5.0 and greater use threads
+			}

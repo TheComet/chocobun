@@ -22,8 +22,8 @@
 // --------------------------------------------------------------
 // include files
 
-#include <core/TileManipulator.hpp>
-#include <core/Exception.hpp>
+#include <ChocobunTileManipulator.hpp>
+#include <ChocobunException.hpp>
 
 namespace Chocobun {
 

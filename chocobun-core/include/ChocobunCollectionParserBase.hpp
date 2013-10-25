@@ -27,7 +27,7 @@
 
 #include <string>
 #include <vector>
-#include <core/Config.hpp>
+#include <ChocobunConfig.hpp>
 
 namespace Chocobun {
 
