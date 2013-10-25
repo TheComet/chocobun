@@ -16,18 +16,27 @@
  */
 
 // --------------------------------------------------------------
-// TestArray2D.cpp
+// TestGraphNode.cpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
 // include files
 
 #include <gmock/gmock.h>
-#include <ChocobunArray2D.hpp>
+#include <ChocobunGraphNode.hpp>
+
+using namespace Chocobun;
 
 // --------------------------------------------------------------
 // define test fixtures
 
-#define TEST_CASE_NAME TestArray2D
-#define TEST_CASE_OBJECT Array2D<char>
+#define TEST_CASE_NAME TestGraphNode
+#define TEST_CASE_OBJECT GraphNode<char>
 
+TEST( TEST_CASE_NAME, ContentStorage )
+{
+    TEST_CASE_OBJECT test('a');
+    ASSERT_EQ( 'a', test.getData() );
+    test.setData( 'b' );
+    ASSERT_EQ( 'b', test.getData() );
+}

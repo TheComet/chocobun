@@ -37,6 +37,11 @@ public:
     GraphNode( void );
 
     /*!
+     * @brief Constructor setting data
+     */
+    GraphNode( const T& data );
+
+    /*!
      * @brief Default destructor
      */
     ~GraphNode( void );
@@ -55,6 +60,26 @@ public:
      * @brief Unlinks all linked nodes
      */
     void unlinkAll( void );
+
+    /*!
+     * @brief Sets the data this node should store
+     */
+    void setData( const T& data );
+
+    /*!
+     * @brief Gets the data this node is storing
+     */
+    const T& getData( void ) const;
+
+    /*!
+     * @brief Returns the number of links the node currently has
+     */
+    std::size_t getLinkCount( void ) const;
+
+    /*!
+     * @brief Returns a pointer to a linked node specified by ID
+     */
+    GraphNode<T>* getLinkedNode( const std::size_t& ID ) const;
 
 private:
 

@@ -1,3 +1,5 @@
+
+
 /*
 * This file is part of Chocobun.
 *
@@ -16,137 +18,178 @@
 */
 
 // --------------------------------------------------------------
-// Array2D.hpp
+// Array2D.hxx
 // --------------------------------------------------------------
 
+#ifndef __CHOCOBUN_CORE_ARRAY2D_HPP__
+#define __CHOCOBUN_CORE_ARRAY2D_HPP__
 // --------------------------------------------------------------
 // include files
 
-#include <iostream>
-#include <vector>
+#include <ChocobunArray2D.hxx>
+#include <ChocobunException.hpp>
+
+#include <sstream>
+#include <algorithm> // std::reverse
 
 namespace Chocobun {
 
-/*!
- * @brief Wraps a dynamic 2-dimensional array with std::vector< std::vector<T> > at its core
- */
+// --------------------------------------------------------------
 template <class T>
-class Array2D
+Array2D<T>::Array2D( void ) :
+    m_DefaultContent( T() ),
+    m_SizeX(0),
+    m_SizeY(0)
 {
-public:
+}
 
-    /*!
-     * @brief Default constructor
-     */
-    Array2D( void );
+// --------------------------------------------------------------
+template <class T>
+Array2D<T>::Array2D( const T& content ) :
+    m_DefaultContent( content ),
+    m_SizeX(0),
+    m_SizeY(0)
+{
+}
 
-    /*!
-     * @brief Constructor setting the default content of the array
-     * see @a setDefaultContent for more information
-     * @param content The content to use
-     */
-    Array2D( const T& content );
+// --------------------------------------------------------------
+template <class T>
+Array2D<T>::Array2D( const Array2D& that ) :
+    m_DefaultContent( T() )
+{
+    *this = that;
+}
 
-    /*!
-     * @brief Copy Constructor
-     * @param cp The other 2D array to copy
-     */
-    Array2D( const Array2D& that );
+// --------------------------------------------------------------
+template <class T>
+Array2D<T>::Array2D( const Array2D& that, const T& content ) :
+    m_DefaultContent( content )
+{
+    *this = that;
+}
 
-    /*!
-     * @brief Copy Constructor with setting the default content of the array
-     */
-    Array2D( const Array2D& that, const T& content );
+// --------------------------------------------------------------
+template <class T>
+Array2D<T>::~Array2D( void )
+{
+}
 
-    /*!
-     * @brief Default destructor
-     */
-    ~Array2D( void );
+// --------------------------------------------------------------
+template <class T>
+void Array2D<T>::setDefaultContent( const T& content )
+{
+    m_DefaultContent = content;
+}
 
-    /*!
-     * @brief Sets the default initial content of the array
-     * Sets what content should be inserted into the array
-     * when first allocated or cleared.
-     * @param content The content to use
-     */
-    void setDefaultContent( const T& content );
+// --------------------------------------------------------------
+template <class T>
+const T& Array2D<T>::getDefaultContent( void ) const
+{
+    return m_DefaultContent;
+}
 
-    /*!
-     * @brief Retrieves the default content of the array
-     */
-    const T& getDefaultContent( void ) const;
+// --------------------------------------------------------------
+template <class T>
+void Array2D<T>::resize( const std::size_t& x, const std::size_t& y )
+{
 
-    /*!
-     * @brief Resizes the Array2D to the specified dimensions
-     * @param x The new x-size
-     * @param y The new y-size
-     */
-    void resize( const std::size_t& x, const std::size_t& y );
+    // scale x-dimension up or down
+    if( x != m_SizeX )
+    {
+        m_Array.resize( x );
+        while( x > m_SizeX )
+        {
+            m_Array[m_SizeX].resize( m_SizeY, m_DefaultContent );
+            ++m_SizeX;
+        }
+        m_SizeX = x;
+    }
 
-    /*!
-     * @brief Mirrors the array along its X axis
-     */
-    void mirrorX( void );
+    // scale y-dimension up or down
+    if( y != m_SizeY )
+    {
+        for( typename std::vector< std::vector<T> >::iterator it = m_Array.begin(); it != m_Array.end(); ++it )
+        {
+            it->resize( y, m_DefaultContent );
+        }
+        m_SizeY = y;
+    }
+}
 
-    /*!
-     * @brief Mirrors the array along its Y axis
-     */
-    void mirrorY( void );
+// --------------------------------------------------------------
+template <class T>
+void Array2D<T>::mirrorX( void )
+{
+    if( m_SizeX <= 1 ) return;
+    std::reverse( m_Array.begin(), m_Array.end() );
+}
 
-    /*!
-     * @brief Gets the size of the array in the x dimension
-     * @return std::size_t of the array's x dimension
-     */
-    const std::size_t& sizeX( void ) const;
+// --------------------------------------------------------------
+template <class T>
+void Array2D<T>::mirrorY( void )
+{
+    if( !m_SizeX || m_SizeY <= 1 ) return;
+    std::reverse( m_Array[0].begin(), m_Array[0].end() );
+}
 
-    /*!
-     * @brief Gets the size of the array in the y dimension
-     * @return std::size_t of the array's y dimension
-     */
-    const std::size_t& sizeY( void ) const;
+// --------------------------------------------------------------
+template <class T>
+const std::size_t& Array2D<T>::sizeX( void ) const
+{
+    return m_SizeX;
+}
 
-    /*!
-     * @brief Gets a character from the array at the specified coordinates
-     * Enables the use of reading from the Array2D with boundary checking
-     * @exception Throws a Chocobun::Exception if the coordinates are
-     * out of bounds
-     * @return The data stored at the specified coordinates
-     */
-    const T& at( const std::size_t& x, const std::size_t& y ) const;
+// --------------------------------------------------------------
+template <class T>
+const std::size_t& Array2D<T>::sizeY( void ) const
+{
+    return m_SizeY;
+}
 
-    /*!
-     * @brief Gets a character from the array at the specified coordinates
-     * Enables the use of writing to the array with boundary checking
-     * @exception Throws a Chocobun::Exception if the coordinates are
-     * out of bounds
-     * @return The data stored at the specified coordinates
-     */
-    T& at( const std::size_t& x, const std::size_t& y );
+// --------------------------------------------------------------
+template <class T>
+Array2D<T>& Array2D<T>::operator=( const Array2D<T>& that )
+{
+    if( &that == this ) return *this;
+    m_Array = that.m_Array;
+    m_SizeX = that.m_SizeX;
+    m_SizeY = that.m_SizeY;
+    return *this;
+}
 
-    /*!
-     * @brief Overload assignment operator
-     */
-    Array2D<T>& operator=( const Array2D<T>& that );
+// --------------------------------------------------------------
+template <class T>
+std::vector<T>& Array2D<T>::operator[]( const std::size_t& index )
+{
+    return m_Array[index];
+}
 
-    /*!
-     * @brief Subscript operator overload
-     * Enables the use of writing to the Array2D using [][]
-     */
-    std::vector<T>& operator[]( const std::size_t& index );
+// --------------------------------------------------------------
+template <class T>
+const std::vector<T>& Array2D<T>::operator[]( const std::size_t& index ) const
+{
+    return m_Array[index];
+}
 
-    /*!
-     * @brief Subscript operator overload
-     * Enables the use of reading from the Array2D using [][]
-     */
-    const std::vector<T>& operator[]( const std::size_t& index ) const;
+// --------------------------------------------------------------
+template <class T>
+const T& Array2D<T>::at( const std::size_t& x, const std::size_t& y ) const
+{
+    return m_Array[x][y];
+}
 
-private:
-
-    T                               m_DefaultContent;
-    std::size_t                     m_SizeX;
-    std::size_t                     m_SizeY;
-    std::vector< std::vector<T> >   m_Array; // NOTE: outer vector: x-dimension, inner vector: y-dimension
-};
+// --------------------------------------------------------------
+template <class T>
+T& Array2D<T>::at( const std::size_t& x, const std::size_t& y )
+{
+    if( x >= m_SizeX || y >= m_SizeY )
+    {
+        std::stringstream ss; ss << "[Array2D::at] Error: coordinates out of bounds: " << x << "," << y;
+        throw Exception( ss.str() );
+    }
+    return m_Array[x][y];
+}
 
 } // namespace Chocobun
 
+#endif // __CHOCOBUN_CORE_ARRAY2D_HPP__

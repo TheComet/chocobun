@@ -28,7 +28,17 @@ namespace Chocobun {
 
 // --------------------------------------------------------------
 template <class T>
-GraphNode<T>::GraphNode( void )
+GraphNode<T>::GraphNode( void ) :
+    m_Links(),
+    m_Data( T() )
+{
+}
+
+// --------------------------------------------------------------
+template <class T>
+GraphNode<T>::GraphNode( const T& content ) :
+    m_Links(),
+    m_Data( content )
 {
 }
 
@@ -98,6 +108,34 @@ void GraphNode<T>::unlinkAll( void )
         // unlink this from other
         it = m_Links.erase( it );
     }
+}
+
+// --------------------------------------------------------------
+template <class t>
+void GraphNode<T>::setData( const T& data )
+{
+    this->m_Data = data;
+}
+
+// --------------------------------------------------------------
+template <class T>
+const T& getData( void ) const
+{
+    return this->m_Data;
+}
+
+// --------------------------------------------------------------
+template <class T>
+std::size_t GraphNode<T>::getLinkCount( void ) const
+{
+    return m_Links.size();
+}
+
+// --------------------------------------------------------------
+template <class T>
+GraphNode<T>* GraphNode<T>::getLinkedNode( const std::size_t& ID ) const
+{
+    return m_Links.at( ID );
 }
 
 } // namespace Chocobun
