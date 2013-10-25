@@ -34,8 +34,6 @@ namespace Chocobun {
 
 // --------------------------------------------------------------
 Collection::Collection( void ) :
-    m_EnableCompression( false ),
-    m_IsLoaded( false ),
     m_ActiveLevel( -1 )
 {
 }
@@ -44,7 +42,7 @@ Collection::Collection( void ) :
 Collection::Collection( const Collection& that ) :
     m_ActiveLevel( -1 )
 {
-    //*this = that;
+    *this = that;
 }
 
 // --------------------------------------------------------------
@@ -106,20 +104,20 @@ void Collection::save( const std::string& fileFormat )
     CollectionParser cp;
     cp.setFileFormat( fileFormat );
     cp.save( m_FileName, *this, m_EnableCompression );
-}
+}*/
 
 // --------------------------------------------------------------
-void Collection::setName( const std::string& name )
+void Collection::setCollectionName( const std::string& name )
 {
     m_CollectionName = name;
 }
 
 // --------------------------------------------------------------
-const std::string& Collection::getName( void ) const
+const std::string& Collection::getCollectionName( void ) const
 {
 	return m_CollectionName;
 }
-
+/*
 // --------------------------------------------------------------
 void Collection::enableCompression( void )
 {
@@ -137,21 +135,18 @@ bool Collection::isCompressionEnabled( void ) const
 {
     return m_EnableCompression;
 }
-
+*/
 // --------------------------------------------------------------
 Level* Collection::addLevel( void )
 {
-    Level* lvl = new Level();
-    m_Levels.push_back( lvl );
-    lvl->addListener( this );
-    return lvl;
+    m_Levels.push_back( new Level() );
+    return m_Levels.front();
 }
 
 // --------------------------------------------------------------
 void Collection::removeLevel( Level* lvl )
 {
     for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
-    {
         if( *it == lvl )
         {
 
@@ -165,7 +160,6 @@ void Collection::removeLevel( Level* lvl )
 
             return;
         }
-    }
     throw Exception( "[Collection::removeLevel] Error: Level not registered to this collection." );
 }
 
@@ -173,7 +167,6 @@ void Collection::removeLevel( Level* lvl )
 void Collection::removeLevel( const std::string& levelName )
 {
     for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
-    {
         if( (*it)->getLevelName() == levelName )
         {
 
@@ -187,7 +180,6 @@ void Collection::removeLevel( const std::string& levelName )
 
             return;
         }
-    }
     throw Exception( "[Collection::removeLevel] Error: Level not registered to this collection: " + levelName );
 }
 
@@ -215,9 +207,9 @@ void Collection::generateLevelName( std::string& name )
 }
 
 // --------------------------------------------------------------
-Level* Collection::getLevelPtr( const std::string& levelName )
+Level* Collection::getLevelPtr( const std::string& levelName ) const
 {
-    for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
+    for( std::vector<Level*>::const_iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
     {
         if( (*it)->getLevelName() == levelName )
             return *it;
@@ -226,34 +218,26 @@ Level* Collection::getLevelPtr( const std::string& levelName )
 }
 
 // --------------------------------------------------------------
-Level& Collection::getLevel( const std::string& levelName )
+Level& Collection::getLevel( const std::string& levelName ) const
 {
     return *this->getLevelPtr( levelName );
 }
 
 // --------------------------------------------------------------
-void Collection::getLevelNames( std::vector<std::string>& vs )
+std::vector<std::string> Collection::getLevelNames( void ) const
 {
-#ifdef _DEBUG
-    if( !m_IsLoaded )
-        std::cout << "[Collection::getLevelNames] Warning: Levels haven't been\
- loaded yet (collection isn't initialised)" << std::endl;
-#endif
-    vs.clear();
-    for( std::vector<Level*>::iterator it = m_Levels.begin();
+
+    std::vector<std::string> vs;
+    for( std::vector<Level*>::const_iterator it = m_Levels.begin();
          it != m_Levels.end(); ++it )
         vs.push_back( (*it)->getLevelName() );
+    return vs;
 }
 
 // --------------------------------------------------------------
-void Collection::streamLevelNames( std::ostream& stream )
+void Collection::streamLevelNames( std::ostream& stream ) const
 {
-#ifdef _DEBUG
-    if( !m_IsLoaded )
-        std::cout << "[Collection::streamLevelNames] Warning: Levels haven't \
-been loaded yet (collection isn't initialised)" << std::endl;
-#endif
-    for( std::vector<Level*>::iterator it = m_Levels.begin();
+    for( std::vector<Level*>::const_iterator it = m_Levels.begin();
          it != m_Levels.end(); ++it )
         stream << (*it)->getLevelName() << std::endl;
 }
@@ -262,14 +246,14 @@ been loaded yet (collection isn't initialised)" << std::endl;
 void Collection::selectFirstLevel( void )
 {
     if( m_Levels.size() == 0 ) return;
-    this->selectActiveLevel( m_Levels.front()->getLevelName() );
+    this->setActiveLevel( m_Levels.front()->getLevelName() );
 }
 
 // --------------------------------------------------------------
 void Collection::selectLastLevel( void )
 {
     if( m_Levels.size() == 0 ) return;
-    this->selectActiveLevel( m_Levels.back()->getLevelName() );
+    this->setActiveLevel( m_Levels.back()->getLevelName() );
 }
 
 // --------------------------------------------------------------
@@ -277,7 +261,7 @@ bool Collection::selectNextLevel( void )
 {
     if( m_ActiveLevel == -1 || m_ActiveLevel+1 == m_Levels.size() ) return false;
     ++m_ActiveLevel;
-    this->selectActiveLevel( m_Levels[m_ActiveLevel]->getLevelName() );
+    this->setActiveLevel( m_Levels[m_ActiveLevel]->getLevelName() );
     return true;
 }
 
@@ -286,20 +270,15 @@ bool Collection::selectPreviousLevel( void )
 {
     if( m_ActiveLevel == -1 || m_ActiveLevel-1 == 0 ) return false;
     --m_ActiveLevel;
-    this->selectActiveLevel( m_Levels[m_ActiveLevel]->getLevelName() );
+    this->setActiveLevel( m_Levels[m_ActiveLevel]->getLevelName() );
     return true;
 }
 
 // --------------------------------------------------------------
-void Collection::selectActiveLevel( const std::string& levelName )
+void Collection::setActiveLevel( const std::string& levelName )
 {
-#ifdef _DEBUG
-    if( !m_IsLoaded )
-        std::cout << "[Collection::setActiveLevel] Warning: Levels haven't \
-been loaded yet (collection isn't initialised)" << std::endl;
-#endif
 
-    // get new active level pointer
+    // get new active level index
     std::size_t newActiveLevel = -1;
     for( std::size_t i = 0; i != m_Levels.size(); ++i )
     {
@@ -329,7 +308,7 @@ bool Collection::hasActiveLevel( void )
 {
     return ( m_ActiveLevel != -1 );
 }
-
+/*
 // --------------------------------------------------------------
 Collection::level_iterator Collection::level_begin( void )
 {
@@ -563,32 +542,28 @@ void Collection::onMoveTile( const std::size_t& oldX, const std::size_t& oldY, c
     for( std::vector<LevelListener*>::iterator it = m_LevelListeners.begin(); it != m_LevelListeners.end(); ++it )
         (*it)->onMoveTile( oldX, oldY, newX, newY );
 }
-
+*/
 // --------------------------------------------------------------
 Collection& Collection::operator=( const Collection& that )
 {
     if( this == &that ) return *this;
 
     // shallow copies
-    this->m_FileName = that.m_FileName;
     this->m_CollectionName = that.m_CollectionName;
-    this->m_LevelListeners = that.m_LevelListeners;
-    this->m_EnableCompression = that.m_EnableCompression;
-    this->m_IsLoaded = that.m_IsLoaded;
+    this->m_ActiveLevel = that.m_ActiveLevel;
 
-    // destroy levels
+    // re-allocate memory for level objects to match the size of "that"
     for( std::vector<Level*>::iterator it = m_Levels.begin(); it != m_Levels.end(); ++it )
         delete *it;
     m_Levels.clear();
-    m_ActiveLevel = 0;
+    for( std::vector<Level*>::const_iterator it = that.m_Levels.begin(); it != that.m_Levels.end(); ++it )
+        m_Levels.push_back( new Level() );
 
     // deep copy level objects
-    // memory has already been allocated for level objects in copy constructor
     for( std::size_t i = 0; i != that.m_Levels.size(); ++i )
-        m_Levels.push_back( new Level(*(that.m_Levels[i])) );
+        *(m_Levels[i]) = *(that.m_Levels[i]);
 
-    std::cout << "copying collection" << std::endl;
-
+    return *this;
 }
-*/
+
 } // namespace Chocobun

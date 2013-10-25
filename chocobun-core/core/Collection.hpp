@@ -48,18 +48,13 @@ class CHOCOBUN_CORE_API Collection :
 public:
 
     /*!
-     * @brief Expose level iterators
-     */
-    typedef std::vector<Level*>::iterator       level_iterator;
-    typedef std::vector<Level*>::const_iterator const_level_iterator;
-
-    /*!
      * @brief Default constructor
      */
     Collection( void );
 
     /*!
      * @brief Copy Constructor
+     * Will perform a deep copy on all containing levels
      */
     Collection( const Collection& that );
 
@@ -69,38 +64,77 @@ public:
      */
     ~Collection( void );
 
-/*
-    void load( const std::string& fileName );
+    /*!
+     * @brief Sets the name of this collection
+     * The name of the collection is exported to the save file
+     * @param name The name to give to this collection
+     */
+    void setCollectionName( const std::string& name );
 
-    void save( const std::string& fileFormat );
+    /*!
+     * @brief Gets the current name of this collection
+     * @return The name
+     */
+    const std::string& getCollectionName( void ) const;
 
-    void unload( void );
-
-    void setName( const std::string& name );
-
-    const std::string& getName( void ) const;
-
-    void enableCompression( void );
-
-    void disableCompression( void );
-
-    bool isCompressionEnabled( void ) const;
-
+    /*!
+     * @brief Adds a new, empty level to the collection
+     * The level is added to a list internally for later reference. If you wish
+     * to perform further operations on the specific level, the pointer to it
+     * is returned, so you could do something like the following:
+     * @code
+     * Collection myCollection();
+     * myCollection.addLevel()->setLevelName( "myLevel" );
+     * @endcode
+     * You can get the level pointer at any time again with the methods
+     * @a getLevelPtr and @a getLevel.
+     * @return A pointer to the created level object
+     */
     Level* addLevel( void );
 
+    /*!
+     * @brief Removes and destroys a level from the collection by pointer
+     * The level is permanently removed from the collection
+     * @param lvl Pointer to the level to remove
+     */
     void removeLevel( Level* lvl );
 
+    /*!
+     * @brief Removes and destroys a level from the collection by name
+     * The level is permanently removed from the collection
+     * @param levelName The name of the level to remove
+     */
     void removeLevel( const std::string& levelName );
 
-    void generateLevelName( std::string& name );
+    /*!
+     * @brief Returns the number of levels currently registered in the collection
+     * @return The number of levels
+     */
+    std::size_t getLevelCount( void ) const;
 
-    Level* getLevelPtr( const std::string& levelName );
+    /*!
+     * @brief Returns a pointer to a level object specified by its name
+     * This can be used to manipulate the level object
+     * @exception Throws a Chocobun::Exception if the level name was not found
+     * in the collection
+     * @param levelName The name of the level to retrieve
+     * @return The pointer to the level
+     */
+    Level* getLevelPtr( const std::string& levelName ) const;
 
-    Level& getLevel( const std::string& levelName );
+    /*!
+     * @brief Returns a reference to a level object specified by its name
+     * This can be used to manipulate the level object
+     * @exception Throws a Chocobun::Exception if the level name was not found
+     * in the collection
+     * @param levelName The name of the leveel to retrieve
+     * @return The reference to the level
+     */
+    Level& getLevel( const std::string& levelName ) const;
 
-    void getLevelNames( std::vector<std::string>& vs );
+    std::vector<std::string> getLevelNames( void ) const;
 
-    void streamLevelNames( std::ostream& stream );
+    void streamLevelNames( std::ostream& stream ) const;
 
     void selectFirstLevel( void );
 
@@ -110,9 +144,26 @@ public:
 
     bool selectPreviousLevel( void );
 
-    void selectActiveLevel( const std::string& levelName );
+    void setActiveLevel( const std::string& levelName );
 
     bool hasActiveLevel( void );
+
+    void generateLevelName( std::string& currentName );
+
+/*
+    void load( const std::string& fileName );
+
+    void save( const std::string& fileFormat );
+
+    void unload( void );
+
+    const std::string& getName( void ) const;
+
+    void enableCompression( void );
+
+    void disableCompression( void );
+
+    bool isCompressionEnabled( void ) const;
 
     level_iterator level_begin( void );
 
@@ -147,18 +198,14 @@ public:
     void onSetTile( const std::size_t& x, const std::size_t& y, const char& tile );
 
     void onMoveTile( const std::size_t& oldX, const std::size_t& oldY, const std::size_t& newX, const std::size_t& newY );
-
-    Collection& operator=( const Collection& that );
 */
+    Collection& operator=( const Collection& that );
+
 private:
 
-    std::string m_FileName;
-    std::string m_CollectionName;
     std::vector<Level*> m_Levels;
-    std::vector<LevelListener*> m_LevelListeners;
+    std::string m_CollectionName;
     std::size_t m_ActiveLevel;
-    bool m_EnableCompression;
-    bool m_IsLoaded;
 };
 
 } // namespace Chocobun

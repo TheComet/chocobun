@@ -27,25 +27,28 @@
 namespace Chocobun {
 
 // --------------------------------------------------------------
-GraphNode::GraphNode( void )
+template <class T>
+GraphNode<T>::GraphNode( void )
 {
 }
 
 // --------------------------------------------------------------
-GraphNode::~GraphNode( void )
+template <class T>
+GraphNode<T>::~GraphNode( void )
 {
     this->unlinkAll();
 }
 
 // --------------------------------------------------------------
-void GraphNode::link( const GraphNode* other )
+template <class T>
+void GraphNode<T>::link( const GraphNode* other )
 {
 
     // self linkage
     if( this == other ) return;
 
     // this already linked with other
-    for( std::vector<GraphNode*>::iterator it = m_Links.begin(); it != m_Links.end(); ++it )
+    for( typename std::vector<GraphNode*>::iterator it = m_Links.begin(); it != m_Links.end(); ++it )
         if( *it == other ) return;
 
     // safe to link both, as if this isn't linked with the other, the other is
@@ -55,14 +58,15 @@ void GraphNode::link( const GraphNode* other )
 }
 
 // --------------------------------------------------------------
-void GraphNode::unlink( const GraphNode* other )
+template <class T>
+void GraphNode<T>::unlink( const GraphNode* other )
 {
 
     // self linkage
     if( this == other ) return;
 
     // not linked
-    std::vector<GraphNode*>::iterator it = m_Links.begin();
+    typename std::vector<GraphNode*>::iterator it = m_Links.begin();
     for( ; it != m_Links.end(); ++it )
         if( *it == other )
             break;
@@ -75,9 +79,10 @@ void GraphNode::unlink( const GraphNode* other )
 }
 
 // --------------------------------------------------------------
-void GraphNode::unlinkAll( void )
+template <class T>
+void GraphNode<T>::unlinkAll( void )
 {
-    std::vector<GraphNode*>::iterator it = m_Links.begin();
+    typename std::vector<GraphNode*>::iterator it = m_Links.begin();
     GraphNode* toUnlink;
     while( it != m_Links.end() )
     {

@@ -55,11 +55,6 @@ public:
     Level( void );
 
     /*!
-     * @brief Copy constructor
-     */
-    Level( const Level& that );
-
-    /*!
      * @brief Destructor
      */
     ~Level( void );
@@ -281,12 +276,6 @@ public:
      */
     void removeListener( LevelListener* listener );
 
-    /*!
-     * @brief Overload assignment operator
-     * Allows copying between level objects
-     */
-    Level& operator=( const Level& other );
-
 private:
 
     /*!
@@ -322,8 +311,6 @@ private:
     TileField                           m_InitialLevelArray;
 
     std::vector<char>                   m_UndoData;
-
-    std::vector<LevelListener*>         m_LevelListeners;
 
     std::size_t                         m_PlayerX;
     std::size_t                         m_PlayerY;

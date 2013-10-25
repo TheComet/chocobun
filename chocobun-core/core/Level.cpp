@@ -43,16 +43,6 @@ Level::Level( void ) :
 }
 
 // --------------------------------------------------------------
-Level::Level( const Level& that ) :
-    m_PlayerX( 0 ),
-    m_PlayerY( 0 ),
-    m_UndoDataPos( 0 ),
-    m_IsLevelValid( false )
-{
-    *this = that;
-}
-
-// --------------------------------------------------------------
 Level::~Level( void )
 {
 }

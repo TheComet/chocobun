@@ -16,39 +16,33 @@
 */
 
 // --------------------------------------------------------------
-// Graph.hpp
+// TileManipulator.hpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
 // include files
 
-#include <vector>
-
 namespace Chocobun {
 
-// --------------------------------------------------------------
-// forward declarations
-
-template <class T>
-class GraphNode;
-
-template <class T>
-class Graph
+class TileManipulator
 {
 public:
 
     /*!
      * @brief Default constructor
      */
-    Graph( void );
+    TileManipulator( void );
 
     /*!
      * @brief Default destructor
      */
-    ~Graph( void );
+    virtual ~TileManipulator( void );
 
-private:
-    std::vector<GraphNode<T>*> m_Nodes;
+    /*!
+     *
+     */
+
+
 };
 
 } // namespace Chocobun
