@@ -26,6 +26,9 @@
 
 namespace Chocobun {
 
+/*!
+ * @brief A generic node to be part of a graph for various searching algorithms
+ */
 template <class T>
 class GraphNode
 {
@@ -37,7 +40,7 @@ public:
     GraphNode( void );
 
     /*!
-     * @brief Constructor setting data
+     * @brief Constructors a node and sets its data
      */
     GraphNode( const T& data );
 
@@ -49,27 +52,17 @@ public:
     /*!
      * @brief Bidirectionally links two nodes together
      */
-    void link( const GraphNode* other );
+    void link( GraphNode<T>* other );
 
     /*!
      * @brief Unlinks two nodes that are linked
      */
-    void unlink( const GraphNode* other );
+    void unlink( GraphNode* other );
 
     /*!
      * @brief Unlinks all linked nodes
      */
     void unlinkAll( void );
-
-    /*!
-     * @brief Sets the data this node should store
-     */
-    void setData( const T& data );
-
-    /*!
-     * @brief Gets the data this node is storing
-     */
-    const T& getData( void ) const;
 
     /*!
      * @brief Returns the number of links the node currently has
@@ -80,6 +73,16 @@ public:
      * @brief Returns a pointer to a linked node specified by ID
      */
     GraphNode<T>* getLinkedNode( const std::size_t& ID ) const;
+
+    /*!
+     * @brief Sets the data this node should store
+     */
+    void setData( const T& data );
+
+    /*!
+     * @brief Gets the data this node is storing
+     */
+    const T& getData( void ) const;
 
 private:
 

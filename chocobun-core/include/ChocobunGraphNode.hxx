@@ -51,7 +51,7 @@ GraphNode<T>::~GraphNode( void )
 
 // --------------------------------------------------------------
 template <class T>
-void GraphNode<T>::link( const GraphNode* other )
+void GraphNode<T>::link( GraphNode<T>* other )
 {
 
     // self linkage
@@ -69,7 +69,7 @@ void GraphNode<T>::link( const GraphNode* other )
 
 // --------------------------------------------------------------
 template <class T>
-void GraphNode<T>::unlink( const GraphNode* other )
+void GraphNode<T>::unlink( GraphNode* other )
 {
 
     // unlink this from other
@@ -111,20 +111,6 @@ void GraphNode<T>::unlinkAll( void )
 }
 
 // --------------------------------------------------------------
-template <class t>
-void GraphNode<T>::setData( const T& data )
-{
-    this->m_Data = data;
-}
-
-// --------------------------------------------------------------
-template <class T>
-const T& getData( void ) const
-{
-    return this->m_Data;
-}
-
-// --------------------------------------------------------------
 template <class T>
 std::size_t GraphNode<T>::getLinkCount( void ) const
 {
@@ -136,6 +122,20 @@ template <class T>
 GraphNode<T>* GraphNode<T>::getLinkedNode( const std::size_t& ID ) const
 {
     return m_Links.at( ID );
+}
+
+// --------------------------------------------------------------
+template <class T>
+void GraphNode<T>::setData( const T& data )
+{
+    this->m_Data = data;
+}
+
+// --------------------------------------------------------------
+template <class T>
+const T& GraphNode<T>::getData( void ) const
+{
+    return this->m_Data;
 }
 
 } // namespace Chocobun
