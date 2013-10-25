@@ -123,6 +123,15 @@ public:
     Level* getLevelPtr( const std::string& levelName ) const;
 
     /*!
+     * @brief Returns a pointer to a level object specified by its index
+     * The index to a level ranges from 0 to @a getLevelCount
+     * @exception Throws a Chocobun::Exception if the index is out of range
+     * @param ID The index of the level to retrieve
+     * @return The pointer to the level
+     */
+    Level* getLevelPtr( const std::size_t& ID ) const;
+
+    /*!
      * @brief Returns a reference to a level object specified by its name
      * This can be used to manipulate the level object
      * @exception Throws a Chocobun::Exception if the level name was not found
@@ -132,6 +141,18 @@ public:
      */
     Level& getLevel( const std::string& levelName ) const;
 
+    /*!
+     * @brief Returns a reference to a level object specified by its index
+     * The index to a level ranges from 0 to @a getLevelCount
+     * @exception Throws a Chocobun::Exception if the index is out of range
+     * @param ID The index of the level to retrieve
+     * @return The reference to the level
+     */
+    Level& getLevel( const std::size_t& ID ) const;
+
+    /*!
+     * @brief Creates a list of level names and returns it
+     */
     std::vector<std::string> getLevelNames( void ) const;
 
     void streamLevelNames( std::ostream& stream ) const;

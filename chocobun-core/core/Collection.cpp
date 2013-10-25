@@ -218,9 +218,23 @@ Level* Collection::getLevelPtr( const std::string& levelName ) const
 }
 
 // --------------------------------------------------------------
+Level* Collection::getLevelPtr( const std::size_t& ID ) const
+{
+    if( ID >= m_Levels.size() )
+        throw Exception( "[Collection::getLevelPtr] Error: Level ID out of bounds: " + ID );
+    return m_Levels[ ID ];
+}
+
+// --------------------------------------------------------------
 Level& Collection::getLevel( const std::string& levelName ) const
 {
     return *this->getLevelPtr( levelName );
+}
+
+// --------------------------------------------------------------
+Level& Collection::getLevel( const std::size_t& ID ) const
+{
+    return *this->getLevelPtr( ID );
 }
 
 // --------------------------------------------------------------
