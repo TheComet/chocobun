@@ -16,7 +16,7 @@
 */
 
 // --------------------------------------------------------------
-// Graph.hpp
+// ChocobunGraph.hpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -43,6 +43,11 @@ public:
     Graph( void );
 
     /*!
+     * @brief Copy constructor
+     */
+    Graph( const Graph<T>& that );
+
+    /*!
      * @brief Default destructor
      */
     ~Graph( void );
@@ -55,6 +60,32 @@ public:
     /*!
      * @brief Removes a node from the graph
      */
+    void removeNode( GraphNode<T>* node );
+
+    /*!
+     * @brief Removes all nodes from the graph
+     */
+    void removeAllNodes( void );
+
+    /*!
+     * @brief Returns the number of nodes in the graph
+     */
+    std::size_t getNodeCount( void ) const;
+
+    /*!
+     * @brief Returns a pointer to the specified node
+     */
+    GraphNode<T>* getNodePtr( const std::size_t& ID );
+
+    /*!
+     * @brief Returns a reference to the specified node
+     */
+    GraphNode<T>& getNode( const std::size_t& ID );
+
+    /*!
+     * @brief Overload assignment operator
+     */
+    GraphNode<T>* operator=( const GraphNode<T>& that );
 
 private:
     std::vector<GraphNode<T>*> m_Nodes;
