@@ -119,9 +119,16 @@ std::size_t GraphNode<T>::getLinkCount( void ) const
 
 // --------------------------------------------------------------
 template <class T>
-GraphNode<T>* GraphNode<T>::getLinkedNode( const std::size_t& ID ) const
+GraphNode<T>* GraphNode<T>::getLinkedNode( const std::size_t& index)
 {
-    return m_Links.at( ID );
+    return m_Links.at( index );
+}
+
+// --------------------------------------------------------------
+template <class T>
+const GraphNode<T>* GraphNode<T>::getLinkedNode( const std::size_t& index ) const
+{
+    return m_Links.at( index );
 }
 
 // --------------------------------------------------------------

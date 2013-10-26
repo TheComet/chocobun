@@ -70,9 +70,14 @@ public:
     std::size_t getLinkCount( void ) const;
 
     /*!
-     * @brief Returns a pointer to a linked node specified by ID
+     * @brief Returns a pointer to a linked node specified by index
      */
-    GraphNode<T>* getLinkedNode( const std::size_t& ID ) const;
+    GraphNode<T>* getLinkedNode( const std::size_t& index );
+
+    /*!
+     * @brief Returns a const pointer to a linked node specified by index
+     */
+    const GraphNode<T>* getLinkedNode( const std::size_t& index ) const;
 
     /*!
      * @brief Sets the data this node should store

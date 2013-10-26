@@ -73,19 +73,34 @@ public:
     std::size_t getNodeCount( void ) const;
 
     /*!
+     * @brief Returns the current index of the node
+     */
+    std::size_t getNodeIndex( const GraphNode<T>* node ) const;
+
+    /*!
      * @brief Returns a pointer to the specified node
      */
-    GraphNode<T>* getNodePtr( const std::size_t& ID );
+    GraphNode<T>* getNodePtr( const std::size_t& index );
+
+    /*!
+     * @brief Returns a const pointer to the specified node
+     */
+    const GraphNode<T>* getNodePtr( const std::size_t& index ) const;
 
     /*!
      * @brief Returns a reference to the specified node
      */
-    GraphNode<T>& getNode( const std::size_t& ID );
+    GraphNode<T>& getNode( const std::size_t& index );
+
+    /*!
+     * @brief Returns a const reference to the specified node
+     */
+    const GraphNode<T>& getNode( const std::size_t& index ) const;
 
     /*!
      * @brief Overload assignment operator
      */
-    GraphNode<T>* operator=( const GraphNode<T>& that );
+    Graph<T>& operator=( const Graph<T>& that );
 
 private:
     std::vector<GraphNode<T>*> m_Nodes;

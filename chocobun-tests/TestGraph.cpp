@@ -69,3 +69,28 @@ TEST( TEST_CASE_NAME, ReturnsCorrectNodes )
     ASSERT_EQ( node1, &test.getNode(0) );
     ASSERT_EQ( node2, &test.getNode(1) );
 }
+
+TEST( TEST_CASE_NAME, CopiesAndLinksCorrectlyOnAssignment )
+{
+
+    // build a small graph
+    TEST_CASE_OBJECT test1;
+    TEST_CASE_OBJECT test2;
+    TEST_CASE_NODE* node1 = test1.addNode();
+    TEST_CASE_NODE* node2 = test1.addNode();
+    TEST_CASE_NODE* node3 = test1.addNode();
+    node1->link( node2 );
+    node2->link( node3 );
+
+    // this is what is being tested
+    test2 = test1;
+
+    // test links
+    ASSERT_EQ( 1, test2.getNode(0).getLinkCount() );
+    ASSERT_EQ( 2, test2.getNode(1).getLinkCount() );
+    ASSERT_EQ( 1, test2.getNode(2).getLinkCount() );
+    ASSERT_EQ( test2.getNodePtr(0), test2.getNode(1).getLinkedNode(0) );
+    ASSERT_EQ( test2.getNodePtr(1), test2.getNode(0).getLinkedNode(0) );
+    ASSERT_EQ( test2.getNodePtr(1), test2.getNode(2).getLinkedNode(0) );
+    ASSERT_EQ( test2.getNodePtr(2), test2.getNode(1).getLinkedNode(1) );
+}

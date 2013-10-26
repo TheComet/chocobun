@@ -58,9 +58,11 @@ elseif os.get() == "linux" then
 		"chocobun-core"
 	}
 	linklibs_chocobun_tests_debug = {
+		"chocobun-core_d",
 		"gmock"
 	}
 	linklibs_chocobun_tests_release = {
+		"chocobun-core",
 		"gmock"
 	}
 	
@@ -132,9 +134,9 @@ solution "Chocobun"
 		kind "SharedLib"
 		language "C++"
 		files {
-			"chocobun-core/src/**.cpp",
-			"chocobun-core/include/**.hpp",
-			"chocobun-core/include/**.hxx"
+			"chocobun-core/**.cpp",
+			"chocobun-core/**.hpp",
+			"chocobun-core/**.hxx"
 		}
 		
 		includedirs (headerSearchDirs)
