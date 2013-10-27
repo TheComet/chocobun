@@ -93,4 +93,9 @@ TEST( TEST_CASE_NAME, CopiesAndLinksCorrectlyOnAssignment )
     ASSERT_EQ( test2.getNodePtr(1), test2.getNode(0).getLinkedNode(0) );
     ASSERT_EQ( test2.getNodePtr(1), test2.getNode(2).getLinkedNode(0) );
     ASSERT_EQ( test2.getNodePtr(2), test2.getNode(1).getLinkedNode(1) );
+
+    // new node objects need to have been created, and not just have their pointers copied
+    ASSERT_NE( test1.getNodePtr(0), test2.getNodePtr(0) );
+    ASSERT_NE( test1.getNodePtr(1), test2.getNodePtr(1) );
+    ASSERT_NE( test1.getNodePtr(2), test2.getNodePtr(2) );
 }

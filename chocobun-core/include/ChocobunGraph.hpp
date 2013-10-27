@@ -37,6 +37,8 @@ class Graph
 {
 public:
 
+    typedef T Data;
+
     /*!
      * @brief Default constructor
      */

@@ -19,6 +19,9 @@
 // Array2D.hpp
 // --------------------------------------------------------------
 
+#ifndef __CHOCOBUN_CORE_ARRAY2D_HPP__
+#define __CHOCOBUN_CORE_ARRAY2D_HPP__
+
 // --------------------------------------------------------------
 // include files
 
@@ -149,3 +152,5 @@ private:
 };
 
 } // namespace Chocobun
+
+#endif // __CHOCOBUN_CORE_ARRAY2D_HPP__

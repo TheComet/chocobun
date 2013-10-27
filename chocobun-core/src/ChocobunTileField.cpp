@@ -24,6 +24,7 @@
 
 #include <ChocobunUtils.hpp>
 #include <ChocobunTileField.hpp>
+#include <ChocobunException.hpp>
 
 #include <sstream>
 

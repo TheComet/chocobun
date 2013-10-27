@@ -28,60 +28,60 @@
 namespace Chocobun {
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::Listener::onMoveTile( const COORD& oldPos, const COORD& newPos )
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH,COORD>::Listener::onMoveTile( const GRAPH& graph, const COORD& oldPos, const COORD& newPos )
 {
     // listener should implement this
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::Listener::onSetTile( const COORD& pos, const char& tile )
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH, COORD>::Listener::onSetTile( const GRAPH& graph, const COORD& pos )
 {
     // listener should implement this
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-TileManipulator<COORD>::TileManipulator( void )
+template <class GRAPH, class COORD>
+TileManipulator<GRAPH, COORD>::TileManipulator( void )
 {
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-TileManipulator<COORD>::~TileManipulator( void )
+template <class GRAPH, class COORD>
+TileManipulator<GRAPH, COORD>::~TileManipulator( void )
 {
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::moveTile( const COORD& oldPos, const COORD& newPos ) const
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH, COORD>::moveTile( GRAPH& graph, const COORD& oldPos, const COORD& newPos )
 {
-    if( this->_moveTile( oldPos, newPos ) )
-        this->dispatchMoveTile( oldPos, newPos );
+    if( this->_moveTile( graph, oldPos, newPos ) )
+        this->dispatchMoveTile( graph, oldPos, newPos );
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::setTile( const COORD& pos, const char& tile ) const
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH, COORD>::setTile( GRAPH& graph, const COORD& pos, const typename GRAPH::Data& tile )
 {
-    if( this->_setTile( pos, tile ) )
-        this->dispatchSetTile( pos, tile );
+    if( this->_setTile( graph, pos, tile ) )
+        this->dispatchSetTile( graph, pos );
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::addListener( const TileManipulator::Listener* listener )
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH, COORD>::addListener( TileManipulator::Listener* listener )
 {
     for( typename std::vector<TileManipulator::Listener*>::iterator it = m_Listeners.begin(); it != m_Listeners.end(); ++it )
         if( *it == listener )
-            throw Exception( "[TileManipulator::addListener] Error: Listener already registered" );
+            throw Exception( "[TileManipulator<GRAPH,COORD>::addListener] Error: Listener already registered" );
     m_Listeners.push_back( listener );
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::removeListener( const TileManipulator::Listener* listener )
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH, COORD>::removeListener( const TileManipulator::Listener* listener )
 {
     for( typename std::vector<TileManipulator::Listener*>::iterator it = m_Listeners.begin(); it != m_Listeners.end(); ++it )
         if( *it == listener )
@@ -89,37 +89,37 @@ void TileManipulator<COORD>::removeListener( const TileManipulator::Listener* li
             m_Listeners.erase( it );
             return;
         }
-    throw Exception( "[TileManipulator::removeListener] Error: Listener not registered" );
+    throw Exception( "[TileManipulator<GRAPH,COORD>::removeListener] Error: Listener not registered" );
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-bool TileManipulator<COORD>::_moveTile( const COORD& oldPos, const COORD& newPos )
+template <class GRAPH, class COORD>
+bool TileManipulator<GRAPH, COORD>::_moveTile( GRAPH& graph, const COORD& oldPos, const COORD& newPos )
 {
     return false; // disable listener dispatching
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-bool TileManipulator<COORD>::_setTile( const COORD& pos, const char& tile )
+template <class GRAPH, class COORD>
+bool TileManipulator<GRAPH, COORD>::_setTile( GRAPH& graph, const COORD& pos, const typename GRAPH::Data& tile )
 {
     return false; // disable listener dispatching
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::dispatchMoveTile( const COORD& oldPos, const COORD& newPos ) const
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH, COORD>::dispatchMoveTile( const GRAPH& graph, const COORD& oldPos, const COORD& newPos ) const
 {
     for( typename std::vector<TileManipulator::Listener*>::const_iterator it = m_Listeners.begin(); it != m_Listeners.end(); ++it )
-        (*it)->onMoveTile( oldPos, newPos );
+        (*it)->onMoveTile( graph, oldPos, newPos );
 }
 
 // --------------------------------------------------------------
-template <class COORD>
-void TileManipulator<COORD>::dispatchSetTile( const COORD& pos, const char& tile ) const
+template <class GRAPH, class COORD>
+void TileManipulator<GRAPH, COORD>::dispatchSetTile( const GRAPH& graph, const COORD& pos ) const
 {
     for( typename std::vector<TileManipulator::Listener*>::const_iterator it = m_Listeners.begin(); it != m_Listeners.end(); ++it )
-        (*it)->onSetTile( pos, tile );
+        (*it)->onSetTile( graph, pos );
 }
 
 } // namespace Chocobun

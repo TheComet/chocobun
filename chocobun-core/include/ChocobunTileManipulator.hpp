@@ -29,20 +29,35 @@ namespace Chocobun {
 // --------------------------------------------------------------
 // forward declarations
 
-template <class COORD>
+template <class GRAPH, class COORD>
 class TileManipulator
 {
 public:
 
     /*!
      * @brief Listener interface class for tile manipulation notifications
+     * Inherit from this and register as a listener with @a addListener
+     * to receive notifications on tile manipulation events
      */
     class Listener
     {
-    protected:
+    public:
 
-        void onMoveTile( const COORD& oldPos, const COORD& newPos );
-        void onSetTile( const COORD& pos, const char& tile );
+        /*!
+         * @brief Called when a tile is moved from one position to another
+         * @note Refer to the appropriate inheriting class for more
+         * information on what this does, as it is not implemented
+         * here.
+         */
+        virtual void onMoveTile( const GRAPH& graph, const COORD& oldPos, const COORD& newPos );
+
+        /*!
+         * @brief Called when the contents of a tile are changed
+         * @note Refer to the appropriate inheriting class for more
+         * information on what this does, as it is not implemented
+         * here.
+         */
+        virtual void onSetTile( const GRAPH& graph, const COORD& pos );
     };
 
     /*!
@@ -57,21 +72,31 @@ public:
 
     /*!
      * @brief Moves a tile from one position to another
+     * @note Refer to the appropriate inheriting class for more
+     * information on what this does, as it is not implemented
+     * here.
      */
-    void moveTile( const COORD& oldPos, const COORD& newPos ) const;
+    void moveTile( GRAPH& graph, const COORD& oldPos, const COORD& newPos );
 
     /*!
      * @brief Changes the tile from one type to another
+     * @note Refer to the appropriate inheriting class for more
+     * information on what this does, as it is not implemented
+     * here.
      */
-    void setTile( const COORD& pos, const char& tile ) const;
+    void setTile( GRAPH& graph, const COORD& pos, const typename GRAPH::Data& tile );
 
     /*!
      * @brief Add a listener to be informed about tile manipulations
+     * See @a Listener for more details
+     * @param listener The listener to register
      */
-    void addListener( const Listener* listener );
+    void addListener( Listener* listener );
 
     /*!
      * @brief Remove a registered listener
+     * See @a Listener for more details
+     * @param listener The listener to remove
      */
     void removeListener( const Listener* listener);
 
@@ -88,7 +113,7 @@ protected:
      * @param newPos The destination coordinates of the selected tile
      * @return True to notify listeners, false to not notify listeners
      */
-    virtual bool _moveTile( const COORD& oldPos, const COORD& newPos );
+    virtual bool _moveTile( GRAPH& graph, const COORD& oldPos, const COORD& newPos );
 
     /*!
      * @brief Abstract method for changing a tile from one type to another
@@ -101,22 +126,23 @@ protected:
      * @param tile The type of tile to change it to
      * @return True to notify listeners, false to not notify listeners
      */
-    virtual bool _setTile( const COORD& pos, const char& tile );
+    virtual bool _setTile( GRAPH& graph, const COORD& pos, const typename GRAPH::Data& tile );
 
 private:
 
     /*!
      * @brief Dispatches a tile move event to all registered listeners
+     * @note See @a Listener for more information
      */
-    void dispatchMoveTile( const COORD& oldPos, const COORD& newPos ) const;
+    void dispatchMoveTile( const GRAPH& graph, const COORD& oldPos, const COORD& newPos ) const;
 
     /*!
      * @brief Dispatches a tile set event to all registered listeners
+     * @note See @a Listener for more information
      */
-    void dispatchSetTile( const COORD& pos, const char& tile ) const;
+    void dispatchSetTile( const GRAPH& graph, const COORD& pos ) const;
 
     std::vector<Listener*> m_Listeners;
-
 };
 
 } // namespace Chocobun

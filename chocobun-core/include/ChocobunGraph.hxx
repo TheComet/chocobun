@@ -26,6 +26,8 @@
 #include <ChocobunGraphNode.hxx>
 #include <ChocobunException.hpp>
 
+#include <iostream>
+
 namespace Chocobun {
 
 // --------------------------------------------------------------
