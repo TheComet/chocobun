@@ -31,39 +31,39 @@
 namespace Chocobun {
 
 // --------------------------------------------------------------
-template <class NODE>
-Graph<NODE>::Graph( void )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+Graph<COORD, MOVECOSTTYPE, DATA>::Graph( void )
 {
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-Graph<NODE>::Graph( const Graph<NODE>& that )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+Graph<COORD, MOVECOSTTYPE, DATA>::Graph( const Graph<COORD, MOVECOSTTYPE, DATA>& that )
 {
     *this = that;
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-Graph<NODE>::~Graph( void )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+Graph<COORD, MOVECOSTTYPE, DATA>::~Graph( void )
 {
     this->removeAllNodes();
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-NODE* Graph<NODE>::addNode( void )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>* Graph<COORD, MOVECOSTTYPE, DATA>::addNode( void )
 {
-    NODE* newNode = new NODE();
+    GraphNode_t* newNode = new GraphNode_t();
     m_Nodes.push_back( newNode );
     return newNode;
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-void Graph<NODE>::removeNode( NODE* node )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+void Graph<COORD, MOVECOSTTYPE, DATA>::removeNode( GraphNode_t* node )
 {
-    for( typename std::vector<NODE*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
+    for( typename std::vector<GraphNode_t*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
         if( *it == node )
         {
             m_Nodes.erase( it );
@@ -72,69 +72,69 @@ void Graph<NODE>::removeNode( NODE* node )
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-void Graph<NODE>::removeAllNodes( void )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+void Graph<COORD, MOVECOSTTYPE, DATA>::removeAllNodes( void )
 {
-    for( typename std::vector<NODE*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
+    for( typename std::vector<GraphNode_t*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
         delete *it;
     m_Nodes.clear();
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-std::size_t Graph<NODE>::getNodeCount( void ) const
+template <class COORD, class MOVECOSTTYPE, class DATA>
+std::size_t Graph<COORD, MOVECOSTTYPE, DATA>::getNodeCount( void ) const
 {
     return m_Nodes.size();
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-std::size_t Graph<NODE>::getNodeIndex( const NODE* node ) const
+template <class COORD, class MOVECOSTTYPE, class DATA>
+std::size_t Graph<COORD, MOVECOSTTYPE, DATA>::getNodeIndex( const GraphNode_t* node ) const
 {
     for( std::size_t i = 0; i != m_Nodes.size(); ++i )
         if( m_Nodes[i] == node )
             return i;
-    throw Exception( "[Graph<NODE>::getNodeIndex] Error: Node not found" );
+    throw Exception( "[Graph<COORD, MOVECOSTTYPE, DATA>::getNodeIndex] Error: Node not found" );
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-NODE* Graph<NODE>::getNodePtr( const std::size_t& index )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>* Graph<COORD, MOVECOSTTYPE, DATA>::getNodePtr( const std::size_t& index )
 {
     return m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-const NODE* Graph<NODE>::getNodePtr( const std::size_t& index ) const
+template <class COORD, class MOVECOSTTYPE, class DATA>
+const GraphNode<COORD, MOVECOSTTYPE, DATA>* Graph<COORD, MOVECOSTTYPE, DATA>::getNodePtr( const std::size_t& index ) const
 {
     return m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-NODE& Graph<NODE>::getNode( const std::size_t& index )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>& Graph<COORD, MOVECOSTTYPE, DATA>::getNode( const std::size_t& index )
 {
     return *m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-const NODE& Graph<NODE>::getNode( const std::size_t& index ) const
+template <class COORD, class MOVECOSTTYPE, class DATA>
+const GraphNode<COORD, MOVECOSTTYPE, DATA>& Graph<COORD, MOVECOSTTYPE, DATA>::getNode( const std::size_t& index ) const
 {
     return *m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class NODE>
-Graph<NODE>& Graph<NODE>::operator=( const Graph<NODE>& that )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+Graph<COORD, MOVECOSTTYPE, DATA>& Graph<COORD, MOVECOSTTYPE, DATA>::operator=( const Graph<COORD, MOVECOSTTYPE, DATA>& that )
 {
     if( &that == this ) return *this;
 
     // re-allocate memory to match as many nodes as "that"
     this->removeAllNodes();
     for( std::size_t i = 0; i != that.getNodeCount(); ++i )
-        m_Nodes.push_back( new NODE() );
+        m_Nodes.push_back( new GraphNode_t() );
 
     // build links
     // assumption is the indices of both m_Nodes lists in this and that are identical

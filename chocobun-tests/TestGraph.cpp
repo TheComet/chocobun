@@ -32,8 +32,8 @@ using namespace Chocobun;
 // define test fixtures
 
 #define TEST_CASE_NAME TestGraph
-#define TEST_CASE_NODE GraphNode<char,int,int>
-#define TEST_CASE_OBJECT Graph<TEST_CASE_NODE>
+#define TEST_CASE_OBJECT Graph<int, int, char>
+#define TEST_CASE_NODE TEST_CASE_OBJECT::GraphNode_t
 
 TEST( TEST_CASE_NAME, AllNodesAreDeleted )
 {

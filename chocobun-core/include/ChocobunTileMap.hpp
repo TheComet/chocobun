@@ -42,6 +42,8 @@ public:
         COORD coordinate;
     };
 
+    typedef Graph<COORD, std::size_t, NodeData> Graph_t;
+
     /*!
      * @brief Default constructor
      */
@@ -114,16 +116,16 @@ public:
     /*!
      * @brief Returns a reference to the underlying graph object
      */
-    Graph<NodeData>& getGraph( void );
+    Graph_t& getGraph( void );
 
     /*!
      * @brief Returns a const reference to the underlying graph object
      */
-    const Graph<NodeData>& getGraph( void ) const;
+    const Graph_t& getGraph( void ) const;
 
 private:
 
-    Graph<NodeData> m_Graph;
+    Graph_t         m_Graph;
     COORD           m_MapDimensions;
 };
 

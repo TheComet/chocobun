@@ -35,8 +35,8 @@ class GraphNode
 {
 public:
 
-    typedef GraphNode<COORD,MOVECOSTTYPE,DATA>          GraphNode_t;
-    typedef GraphNodeLink<GraphNode_t,MOVECOSTTYPE> GraphNodeLink_t;
+    typedef GraphNode<COORD, MOVECOSTTYPE, DATA>        GraphNode_t;
+    typedef GraphNodeLink<GraphNode_t, MOVECOSTTYPE>    GraphNodeLink_t;
 
     /*!
      * @brief Default constructor
