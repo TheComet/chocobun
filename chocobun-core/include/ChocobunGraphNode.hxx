@@ -16,7 +16,7 @@
  */
 
 // --------------------------------------------------------------
-// GraphNode.hpp
+// GraphNodeBase.hpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
@@ -27,51 +27,31 @@
 namespace Chocobun {
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( void ) :
+template <class MOVECOSTTYPE, class DATA>
+GraphNodeBase<MOVECOSTTYPE, DATA>::GraphNodeBase( void ) :
     m_Links(),
-    m_Coordinate( COORD() ),
     m_Data( DATA() )
 {
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const DATA& content ) :
+template <class MOVECOSTTYPE, class DATA>
+GraphNodeBase<MOVECOSTTYPE, DATA>::GraphNodeBase( const DATA& data ) :
     m_Links(),
-    m_Coordinate( COORD() ),
-    m_Data( content )
-{
-}
-
-// --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const COORD& coord ) :
-    m_Links(),
-    m_Coordinate( coord ),
-    m_Data( DATA() )
-{
-}
-
-// --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const COORD& coord, const DATA& data ) :
-    m_Links(),
-    m_Coordinate( coord ),
     m_Data( data )
 {
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-GraphNode<COORD, MOVECOSTTYPE, DATA>::~GraphNode( void )
+template <class MOVECOSTTYPE, class DATA>
+GraphNodeBase<MOVECOSTTYPE, DATA>::~GraphNodeBase( void )
 {
     this->unlinkAll();
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-void GraphNode<COORD, MOVECOSTTYPE, DATA>::link( GraphNode_t* other, const MOVECOSTTYPE& moveCost )
+template <class MOVECOSTTYPE, class DATA>
+void GraphNodeBase<MOVECOSTTYPE, DATA>::link( GraphNode_t* other, const MOVECOSTTYPE& moveCost )
 {
 
     // self linkage
@@ -88,8 +68,8 @@ void GraphNode<COORD, MOVECOSTTYPE, DATA>::link( GraphNode_t* other, const MOVEC
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-void GraphNode<COORD, MOVECOSTTYPE, DATA>::unlink( GraphNode_t* other )
+template <class MOVECOSTTYPE, class DATA>
+void GraphNodeBase<MOVECOSTTYPE, DATA>::unlink( GraphNode_t* other )
 {
 
     // unlink this from other
@@ -110,8 +90,8 @@ void GraphNode<COORD, MOVECOSTTYPE, DATA>::unlink( GraphNode_t* other )
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-void GraphNode<COORD, MOVECOSTTYPE, DATA>::unlinkAll( void )
+template <class MOVECOSTTYPE, class DATA>
+void GraphNodeBase<MOVECOSTTYPE, DATA>::unlinkAll( void )
 {
     typename std::vector<GraphNodeLink_t>::iterator it = this->m_Links.begin();
     while( it != this->m_Links.end() )
@@ -131,18 +111,74 @@ void GraphNode<COORD, MOVECOSTTYPE, DATA>::unlinkAll( void )
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-std::size_t GraphNode<COORD, MOVECOSTTYPE, DATA>::getLinkCount( void ) const
+template <class MOVECOSTTYPE, class DATA>
+std::size_t GraphNodeBase<MOVECOSTTYPE, DATA>::getLinkCount( void ) const
 {
     return this->m_Links.size();
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-const GraphNodeLink< GraphNode<COORD, MOVECOSTTYPE, DATA>, MOVECOSTTYPE >&
-    GraphNode<COORD, MOVECOSTTYPE, DATA>::getNodeLink( const std::size_t& index ) const
+template <class MOVECOSTTYPE, class DATA>
+const GraphNodeLink< GraphNodeBase<MOVECOSTTYPE, DATA>, MOVECOSTTYPE >&
+    GraphNodeBase<MOVECOSTTYPE, DATA>::getNodeLink( const std::size_t& index ) const
 {
     return this->m_Links.at( index );
+}
+
+// --------------------------------------------------------------
+template <class MOVECOSTTYPE, class DATA>
+void GraphNodeBase<MOVECOSTTYPE, DATA>::setData( const DATA& data )
+{
+    this->m_Data = data;
+}
+
+// --------------------------------------------------------------
+template <class MOVECOSTTYPE, class DATA>
+const DATA& GraphNodeBase<MOVECOSTTYPE, DATA>::getData( void ) const
+{
+    return this->m_Data;
+}
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+// GraphNode without void as first template parameter
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( void ) :
+    m_Coordinate( COORD() )
+{
+}
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const DATA& data ) :
+    GraphNodeBase<MOVECOSTTYPE, DATA>( data ),
+    m_Coordinate( COORD() )
+{
+}
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const COORD& coord ) :
+    m_Coordinate( coord )
+{
+}
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const COORD& coord, const DATA& data ) :
+    GraphNodeBase<MOVECOSTTYPE, DATA>( data ),
+    m_Coordinate( coord )
+{
+}
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::~GraphNode( void )
+{
 }
 
 // --------------------------------------------------------------
@@ -160,17 +196,22 @@ const COORD& GraphNode<COORD, MOVECOSTTYPE, DATA>::getCoordinate( void ) const
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-void GraphNode<COORD, MOVECOSTTYPE, DATA>::setData( const DATA& data )
+// --------------------------------------------------------------
+// GraphNode with void as first template parameter
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
+template <class MOVECOSTTYPE, class DATA>
+GraphNode<void, MOVECOSTTYPE, DATA>::GraphNode( const DATA& data ) :
+    GraphNodeBase<MOVECOSTTYPE, DATA>( data )
 {
-    this->m_Data = data;
 }
 
 // --------------------------------------------------------------
-template <class COORD, class MOVECOSTTYPE, class DATA>
-const DATA& GraphNode<COORD, MOVECOSTTYPE, DATA>::getData( void ) const
+template <class MOVECOSTTYPE, class DATA>
+GraphNode<void, MOVECOSTTYPE, DATA>::~GraphNode( void )
 {
-    return this->m_Data;
 }
 
 } // namespace Chocobun

@@ -32,6 +32,9 @@ namespace Chocobun {
 template <class COORD, class MOVECOSTTYPE, class DATA>
 class GraphNode;
 
+template <class MOVECOSTTYPE, class DATA>
+class GraphNodeBase;
+
 template <class COORD, class MOVECOSTTYPE, class DATA>
 class Graph
 {
@@ -39,6 +42,7 @@ public:
 
     typedef Graph<COORD, MOVECOSTTYPE, DATA>        Graph_t;
     typedef GraphNode<COORD, MOVECOSTTYPE, DATA>    GraphNode_t;
+    typedef GraphNodeBase<MOVECOSTTYPE, DATA>       GraphNodeBase_t;
 
     /*!
      * @brief Default constructor
@@ -78,7 +82,7 @@ public:
     /*!
      * @brief Returns the current index of the node
      */
-    std::size_t getNodeIndex( const GraphNode_t* node ) const;
+    std::size_t getNodeIndex( const GraphNodeBase_t* node ) const;
 
     /*!
      * @brief Returns a pointer to the specified node

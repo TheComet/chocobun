@@ -66,6 +66,7 @@ void Graph<COORD, MOVECOSTTYPE, DATA>::removeNode( GraphNode_t* node )
     for( typename std::vector<GraphNode_t*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
         if( *it == node )
         {
+            delete *it;
             m_Nodes.erase( it );
             return;
         }
@@ -89,7 +90,7 @@ std::size_t Graph<COORD, MOVECOSTTYPE, DATA>::getNodeCount( void ) const
 
 // --------------------------------------------------------------
 template <class COORD, class MOVECOSTTYPE, class DATA>
-std::size_t Graph<COORD, MOVECOSTTYPE, DATA>::getNodeIndex( const GraphNode_t* node ) const
+std::size_t Graph<COORD, MOVECOSTTYPE, DATA>::getNodeIndex( const GraphNodeBase_t* node ) const
 {
     for( std::size_t i = 0; i != m_Nodes.size(); ++i )
         if( m_Nodes[i] == node )
