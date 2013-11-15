@@ -35,14 +35,7 @@ class TileMap
 {
 public:
 
-    struct NodeData
-    {
-        NodeData( char data, COORD coordinate ) : data(data), coordinate(coordinate) {}
-        char data;
-        COORD coordinate;
-    };
-
-    typedef Graph<COORD, std::size_t, NodeData> Graph_t;
+    typedef Graph<COORD, std::size_t, char> Graph_t;
 
     /*!
      * @brief Default constructor
