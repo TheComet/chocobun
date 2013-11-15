@@ -211,7 +211,7 @@ void Level::reset( void )
 #ifdef _DEBUG
     std::cout << "resetting level" << std::endl;
 #endif
-    m_LevelArray = m_InitialLevelArray;
+    // TODO reset level
 }
 
 // --------------------------------------------------------------
@@ -233,7 +233,7 @@ void Level::validateLevel( void )
 
     // does another check need to be done?
     if( m_IsLevelValid ) return;
-
+/* TODO
     // make sure there's only one player
     // this also sets the internal positions of the player
     bool playerFound = false;
@@ -259,7 +259,7 @@ void Level::validateLevel( void )
     if( !playerFound ) throw Exception( "[Level::validateLevel] Error: No player was found on this level." );
 
     // arriving here means the level is valid
-    m_IsLevelValid = true;
+    m_IsLevelValid = true;*/
 }
 
 // --------------------------------------------------------------
@@ -289,7 +289,7 @@ void Level::moveRight( void )
 // --------------------------------------------------------------
 void Level::movePlayer( char direction, bool updateUndoData )
 {
-
+/* TODO
     if( !m_IsLevelValid )
     {
 #ifdef _DEBUG
@@ -369,7 +369,7 @@ void Level::movePlayer( char direction, bool updateUndoData )
                 m_UndoData.pop_back();
         m_UndoData.push_back( direction );
         ++m_UndoDataPos;
-    }
+    }*/
 }
 
 // --------------------------------------------------------------

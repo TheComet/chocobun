@@ -23,16 +23,20 @@
 // include files
 
 #include <vector>
+#include <ChocobunGraphNodeLink.hxx>
 
 namespace Chocobun {
 
 /*!
  * @brief A generic node to be part of a graph for various searching algorithms
  */
-template <class T>
+template <class COORD, class MOVECOSTTYPE, class DATA>
 class GraphNode
 {
 public:
+
+    typedef GraphNode<COORD,MOVECOSTTYPE,DATA>          GraphNode_t;
+    typedef GraphNodeLink<GraphNode_t,MOVECOSTTYPE> GraphNodeLink_t;
 
     /*!
      * @brief Default constructor
@@ -42,7 +46,17 @@ public:
     /*!
      * @brief Constructors a node and sets its data
      */
-    GraphNode( const T& data );
+    GraphNode( const DATA& data );
+
+    /*!
+     * @brief Constructs a node and sets its coordinate
+     */
+    GraphNode( const COORD& coord );
+
+    /*!
+     * @brief Constructs a node and sets its coordinate and data
+     */
+    GraphNode( const COORD& coord, const DATA& data );
 
     /*!
      * @brief Default destructor
@@ -52,12 +66,12 @@ public:
     /*!
      * @brief Bidirectionally links two nodes together
      */
-    void link( GraphNode<T>* other );
+    void link( GraphNode_t* other, const MOVECOSTTYPE& moveCost );
 
     /*!
      * @brief Unlinks two nodes that are linked
      */
-    void unlink( GraphNode* other );
+    void unlink( GraphNode_t* other );
 
     /*!
      * @brief Unlinks all linked nodes
@@ -70,29 +84,35 @@ public:
     std::size_t getLinkCount( void ) const;
 
     /*!
-     * @brief Returns a pointer to a linked node specified by index
+     * @brief Returns the link object specified by index
      */
-    GraphNode<T>* getLinkedNode( const std::size_t& index );
+    const GraphNodeLink_t& getNodeLink( const std::size_t& index ) const;
 
     /*!
-     * @brief Returns a const pointer to a linked node specified by index
+     * @brief Sets the coordinate of the node
      */
-    const GraphNode<T>* getLinkedNode( const std::size_t& index ) const;
+    void setCoordinate( const COORD& coord );
+
+    /*!
+     * @brief Gets the coordinate of the node
+     */
+    const COORD& getCoordinate( void ) const;
 
     /*!
      * @brief Sets the data this node should store
      */
-    void setData( const T& data );
+    void setData( const DATA& data );
 
     /*!
      * @brief Gets the data this node is storing
      */
-    const T& getData( void ) const;
+    const DATA& getData( void ) const;
 
 private:
 
-    std::vector<GraphNode*> m_Links;
-    T                       m_Data;
+    std::vector<GraphNodeLink_t>    m_Links;
+    COORD                           m_Coordinate;
+    DATA                            m_Data;
 
 };
 

@@ -29,15 +29,13 @@ namespace Chocobun {
 // --------------------------------------------------------------
 // forward declarations
 
-template <class T>
+template <class COORD, class MOVECOSTTYPE, class DATA>
 class GraphNode;
 
-template <class T>
+template <class NODE>
 class Graph
 {
 public:
-
-    typedef T Data;
 
     /*!
      * @brief Default constructor
@@ -47,7 +45,7 @@ public:
     /*!
      * @brief Copy constructor
      */
-    Graph( const Graph<T>& that );
+    Graph( const Graph<NODE>& that );
 
     /*!
      * @brief Default destructor
@@ -57,12 +55,12 @@ public:
     /*!
      * @brief Adds a node to the graph
      */
-    GraphNode<T>* addNode( void );
+    NODE* addNode( void );
 
     /*!
      * @brief Removes a node from the graph
      */
-    void removeNode( GraphNode<T>* node );
+    void removeNode( NODE* node );
 
     /*!
      * @brief Removes all nodes from the graph
@@ -77,35 +75,35 @@ public:
     /*!
      * @brief Returns the current index of the node
      */
-    std::size_t getNodeIndex( const GraphNode<T>* node ) const;
+    std::size_t getNodeIndex( const NODE* node ) const;
 
     /*!
      * @brief Returns a pointer to the specified node
      */
-    GraphNode<T>* getNodePtr( const std::size_t& index );
+    NODE* getNodePtr( const std::size_t& index );
 
     /*!
      * @brief Returns a const pointer to the specified node
      */
-    const GraphNode<T>* getNodePtr( const std::size_t& index ) const;
+    const NODE* getNodePtr( const std::size_t& index ) const;
 
     /*!
      * @brief Returns a reference to the specified node
      */
-    GraphNode<T>& getNode( const std::size_t& index );
+    NODE& getNode( const std::size_t& index );
 
     /*!
      * @brief Returns a const reference to the specified node
      */
-    const GraphNode<T>& getNode( const std::size_t& index ) const;
+    const NODE& getNode( const std::size_t& index ) const;
 
     /*!
      * @brief Overload assignment operator
      */
-    Graph<T>& operator=( const Graph<T>& that );
+    Graph<NODE>& operator=( const Graph<NODE>& that );
 
 private:
-    std::vector<GraphNode<T>*> m_Nodes;
+    std::vector<NODE*> m_Nodes;
 };
 
 } // namespace Chocobun

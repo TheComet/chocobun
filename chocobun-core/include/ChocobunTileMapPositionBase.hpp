@@ -15,48 +15,33 @@
 * along with Chocobun. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef __CHOCOBUN_CORE_TILE_MAP_POSITION_BASE_HPP__
+#define __CHOCOBUN_CORE_TILE_MAP_POSITION_BASE_HPP__
+
 // --------------------------------------------------------------
-// ChocobunQuadTileMap.hpp
+// ChocobunTileMapPositionBase.hpp
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
 // include files
 
-#include <ChocobunGraph.hxx>
-
 namespace Chocobun {
 
-// --------------------------------------------------------------
-// forward declarations
-
-template <class T>
-class QuadTileMap
+class ChocobunTileMapPositionBase
 {
+public:
 
     /*!
      * @brief Default constructor
      */
-    QuadTileMap( void );
+    ChocobunTileMapPositionBase( void );
 
     /*!
      * @brief Default destructor
      */
-    ~QuadTileMap( void );
-
-    /*!
-     * @brief Returns a reference to the underlying graph
-     */
-    Graph<T>& getGraph( void );
-
-    /*!
-     * @brief Returns a const reference to the underlying graph
-     */
-    const Graph<T>& getGraph( void ) const;
-
-private:
-
-    Graph<T> m_Graph;
-
+    virtual ~ChocobunTileMapPositionBase( void );
 };
 
 } // namespace Chocobun
+
+#endif // __CHOCOBUN_CORE_TILE_MAP_POSITION_BASE_HPP__

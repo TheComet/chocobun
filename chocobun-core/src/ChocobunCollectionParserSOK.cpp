@@ -179,7 +179,7 @@ void CollectionParserSOK::_parse( std::ifstream& file, Collection& collection )
             {
                 rle.decompress( inBuf );
                 this->convertTilesToConventional( inBuf );
-                lvl->getInitialTileField().insertTileLine( tileLine, inBuf );
+                // TODO lvl->getInitialTileField().insertTileLine( tileLine, inBuf );
                 ++tileLine;
                 break;
             }

@@ -31,39 +31,39 @@
 namespace Chocobun {
 
 // --------------------------------------------------------------
-template <class T>
-Graph<T>::Graph( void )
+template <class NODE>
+Graph<NODE>::Graph( void )
 {
 }
 
 // --------------------------------------------------------------
-template <class T>
-Graph<T>::Graph( const Graph<T>& that )
+template <class NODE>
+Graph<NODE>::Graph( const Graph<NODE>& that )
 {
     *this = that;
 }
 
 // --------------------------------------------------------------
-template <class T>
-Graph<T>::~Graph( void )
+template <class NODE>
+Graph<NODE>::~Graph( void )
 {
     this->removeAllNodes();
 }
 
 // --------------------------------------------------------------
-template <class T>
-GraphNode<T>* Graph<T>::addNode( void )
+template <class NODE>
+NODE* Graph<NODE>::addNode( void )
 {
-    GraphNode<T>* newNode = new GraphNode<T>();
+    NODE* newNode = new NODE();
     m_Nodes.push_back( newNode );
     return newNode;
 }
 
 // --------------------------------------------------------------
-template <class T>
-void Graph<T>::removeNode( GraphNode<T>* node )
+template <class NODE>
+void Graph<NODE>::removeNode( NODE* node )
 {
-    for( typename std::vector<GraphNode<T>*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
+    for( typename std::vector<NODE*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
         if( *it == node )
         {
             m_Nodes.erase( it );
@@ -72,78 +72,78 @@ void Graph<T>::removeNode( GraphNode<T>* node )
 }
 
 // --------------------------------------------------------------
-template <class T>
-void Graph<T>::removeAllNodes( void )
+template <class NODE>
+void Graph<NODE>::removeAllNodes( void )
 {
-    for( typename std::vector<GraphNode<T>*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
+    for( typename std::vector<NODE*>::iterator it = m_Nodes.begin(); it != m_Nodes.end(); ++it )
         delete *it;
     m_Nodes.clear();
 }
 
 // --------------------------------------------------------------
-template <class T>
-std::size_t Graph<T>::getNodeCount( void ) const
+template <class NODE>
+std::size_t Graph<NODE>::getNodeCount( void ) const
 {
     return m_Nodes.size();
 }
 
 // --------------------------------------------------------------
-template <class T>
-std::size_t Graph<T>::getNodeIndex( const GraphNode<T>* node ) const
+template <class NODE>
+std::size_t Graph<NODE>::getNodeIndex( const NODE* node ) const
 {
     for( std::size_t i = 0; i != m_Nodes.size(); ++i )
         if( m_Nodes[i] == node )
             return i;
-    throw Exception( "[Graph<T>::getNodeIndex] Error: Node not found" );
+    throw Exception( "[Graph<NODE>::getNodeIndex] Error: Node not found" );
 }
 
 // --------------------------------------------------------------
-template <class T>
-GraphNode<T>* Graph<T>::getNodePtr( const std::size_t& index )
+template <class NODE>
+NODE* Graph<NODE>::getNodePtr( const std::size_t& index )
 {
     return m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class T>
-const GraphNode<T>* Graph<T>::getNodePtr( const std::size_t& index ) const
+template <class NODE>
+const NODE* Graph<NODE>::getNodePtr( const std::size_t& index ) const
 {
     return m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class T>
-GraphNode<T>& Graph<T>::getNode( const std::size_t& index )
+template <class NODE>
+NODE& Graph<NODE>::getNode( const std::size_t& index )
 {
     return *m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class T>
-const GraphNode<T>& Graph<T>::getNode( const std::size_t& index ) const
+template <class NODE>
+const NODE& Graph<NODE>::getNode( const std::size_t& index ) const
 {
     return *m_Nodes.at( index );
 }
 
 // --------------------------------------------------------------
-template <class T>
-Graph<T>& Graph<T>::operator=( const Graph<T>& that )
+template <class NODE>
+Graph<NODE>& Graph<NODE>::operator=( const Graph<NODE>& that )
 {
     if( &that == this ) return *this;
 
     // re-allocate memory to match as many nodes as "that"
     this->removeAllNodes();
     for( std::size_t i = 0; i != that.getNodeCount(); ++i )
-        m_Nodes.push_back( new GraphNode<T>() );
+        m_Nodes.push_back( new NODE() );
 
     // build links
-    // assumption is the indices of both m_Nodes lists are identical
+    // assumption is the indices of both m_Nodes lists in this and that are identical
     for( std::size_t i = 0; i != m_Nodes.size(); ++i )
     {
         for( std::size_t l = 0; l != that.getNode(i).getLinkCount(); ++l )
         {
-            const std::size_t mutualIndexOfLink = that.getNodeIndex( that.getNode(i).getLinkedNode(l) );
-            m_Nodes[i]->link( m_Nodes[mutualIndexOfLink] );
+            const std::size_t mutualIndexOfLink = that.getNodeIndex( that.getNode(i).getNodeLink(l).link );
+            m_Nodes[i]->link( m_Nodes[mutualIndexOfLink], that.getNode(i).getNodeLink(l).moveCost );
         }
     }
 

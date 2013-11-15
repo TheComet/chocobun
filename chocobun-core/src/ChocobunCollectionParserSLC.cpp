@@ -111,7 +111,7 @@ void CollectionParserSLC::_parse( std::ifstream& file, Collection& collection )
 
         for( rapidxml::xml_node<>* levelLineNode = levelNode->first_node("L"); levelLineNode; levelLineNode = levelLineNode->next_sibling() )
         {
-            lvl->getInitialTileField().insertTileLine(y++, levelLineNode->value());
+            // TODO lvl->getInitialTileField().insertTileLine(y++, levelLineNode->value());
         }
     }
 

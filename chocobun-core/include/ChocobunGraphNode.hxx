@@ -27,62 +27,82 @@
 namespace Chocobun {
 
 // --------------------------------------------------------------
-template <class T>
-GraphNode<T>::GraphNode( void ) :
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( void ) :
     m_Links(),
-    m_Data( T() )
+    m_Coordinate( COORD() ),
+    m_Data( DATA() )
 {
 }
 
 // --------------------------------------------------------------
-template <class T>
-GraphNode<T>::GraphNode( const T& content ) :
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const DATA& content ) :
     m_Links(),
+    m_Coordinate( COORD() ),
     m_Data( content )
 {
 }
 
 // --------------------------------------------------------------
-template <class T>
-GraphNode<T>::~GraphNode( void )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const COORD& coord ) :
+    m_Links(),
+    m_Coordinate( coord ),
+    m_Data( DATA() )
+{
+}
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::GraphNode( const COORD& coord, const DATA& data ) :
+    m_Links(),
+    m_Coordinate( coord ),
+    m_Data( data )
+{
+}
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+GraphNode<COORD, MOVECOSTTYPE, DATA>::~GraphNode( void )
 {
     this->unlinkAll();
 }
 
 // --------------------------------------------------------------
-template <class T>
-void GraphNode<T>::link( GraphNode<T>* other )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+void GraphNode<COORD, MOVECOSTTYPE, DATA>::link( GraphNode_t* other, const MOVECOSTTYPE& moveCost )
 {
 
     // self linkage
     if( this == other ) return;
 
     // this already linked with other
-    for( typename std::vector<GraphNode*>::iterator it = m_Links.begin(); it != m_Links.end(); ++it )
-        if( *it == other ) return;
+    for( typename std::vector<GraphNodeLink_t>::iterator it = m_Links.begin(); it != m_Links.end(); ++it )
+        if( it->link == other ) return;
 
     // safe to link both, as if this isn't linked with the other, the other is
     // guaranteed not be be linked with this
-    m_Links.push_back( other );
-    other->m_Links.push_back( this );
+    this->m_Links.push_back( GraphNodeLink_t(other, moveCost) );
+    other->m_Links.push_back( GraphNodeLink_t(this, moveCost) );
 }
 
 // --------------------------------------------------------------
-template <class T>
-void GraphNode<T>::unlink( GraphNode* other )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+void GraphNode<COORD, MOVECOSTTYPE, DATA>::unlink( GraphNode_t* other )
 {
 
     // unlink this from other
-    for( typename std::vector<GraphNode*>::iterator it = m_Links.begin(); it != m_Links.end(); ++it )
-        if( *it == other )
+    for( typename std::vector<GraphNodeLink_t>::iterator it = this->m_Links.begin(); it != this->m_Links.end(); ++it )
+        if( it->link == other )
         {
             m_Links.erase( it );
             break;
         }
 
     // unlink other from this
-    for( typename std::vector<GraphNode*>::iterator it = other->m_Links.begin(); it != other->m_Links.end(); ++it )
-        if( *it == this )
+    for( typename std::vector<GraphNodeLink_t>::iterator it = other->m_Links.begin(); it != other->m_Links.end(); ++it )
+        if( it->link == this )
         {
             other->m_Links.erase( it );
             break;
@@ -90,57 +110,65 @@ void GraphNode<T>::unlink( GraphNode* other )
 }
 
 // --------------------------------------------------------------
-template <class T>
-void GraphNode<T>::unlinkAll( void )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+void GraphNode<COORD, MOVECOSTTYPE, DATA>::unlinkAll( void )
 {
-    typename std::vector<GraphNode*>::iterator it = m_Links.begin();
-    while( it != m_Links.end() )
+    typename std::vector<GraphNodeLink_t>::iterator it = this->m_Links.begin();
+    while( it != this->m_Links.end() )
     {
 
         // unlink other from this
-        for( typename std::vector<GraphNode*>::iterator it2 = (*it)->m_Links.begin(); it2 != (*it)->m_Links.end(); ++it2 )
-            if( *it2 == this )
+        for( typename std::vector<GraphNodeLink_t>::iterator it2 = it->link->m_Links.begin(); it2 != it->link->m_Links.end(); ++it2 )
+            if( it2->link == this )
             {
-                (*it)->m_Links.erase( it2 );
+                it->link->m_Links.erase( it2 );
                 break;
             }
 
         // unlink this from other
-        it = m_Links.erase( it );
+        it = this->m_Links.erase( it );
     }
 }
 
 // --------------------------------------------------------------
-template <class T>
-std::size_t GraphNode<T>::getLinkCount( void ) const
+template <class COORD, class MOVECOSTTYPE, class DATA>
+std::size_t GraphNode<COORD, MOVECOSTTYPE, DATA>::getLinkCount( void ) const
 {
-    return m_Links.size();
+    return this->m_Links.size();
 }
 
 // --------------------------------------------------------------
-template <class T>
-GraphNode<T>* GraphNode<T>::getLinkedNode( const std::size_t& index)
+template <class COORD, class MOVECOSTTYPE, class DATA>
+const GraphNodeLink< GraphNode<COORD, MOVECOSTTYPE, DATA>, MOVECOSTTYPE >&
+    GraphNode<COORD, MOVECOSTTYPE, DATA>::getNodeLink( const std::size_t& index ) const
 {
-    return m_Links.at( index );
+    return this->m_Links.at( index );
 }
 
 // --------------------------------------------------------------
-template <class T>
-const GraphNode<T>* GraphNode<T>::getLinkedNode( const std::size_t& index ) const
+template <class COORD, class MOVECOSTTYPE, class DATA>
+void GraphNode<COORD, MOVECOSTTYPE, DATA>::setCoordinate( const COORD& coord )
 {
-    return m_Links.at( index );
+    this->m_Coordinate = coord;
 }
 
 // --------------------------------------------------------------
-template <class T>
-void GraphNode<T>::setData( const T& data )
+template <class COORD, class MOVECOSTTYPE, class DATA>
+const COORD& GraphNode<COORD, MOVECOSTTYPE, DATA>::getCoordinate( void ) const
+{
+    return this->m_Coordinate;
+}
+
+// --------------------------------------------------------------
+template <class COORD, class MOVECOSTTYPE, class DATA>
+void GraphNode<COORD, MOVECOSTTYPE, DATA>::setData( const DATA& data )
 {
     this->m_Data = data;
 }
 
 // --------------------------------------------------------------
-template <class T>
-const T& GraphNode<T>::getData( void ) const
+template <class COORD, class MOVECOSTTYPE, class DATA>
+const DATA& GraphNode<COORD, MOVECOSTTYPE, DATA>::getData( void ) const
 {
     return this->m_Data;
 }

@@ -26,7 +26,7 @@
 // include files
 
 #include <ChocobunConfig.hpp>
-#include <ChocobunTileField.hpp>
+#include <ChocobunTileMap.hpp>
 
 #include <string>
 #include <vector>
@@ -58,12 +58,6 @@ public:
      * @brief Destructor
      */
     ~Level( void );
-
-    TileField& getActiveTileField( void ) { return m_LevelArray; }
-    TileField* getActiveTileFieldPtr( void ) { return &m_LevelArray; }
-
-    TileField& getInitialTileField( void ) { return m_InitialLevelArray; }
-    TileField* getInitialTileFieldPtr( void ) { return &m_InitialLevelArray; }
 
     /*!
      * @brief Adds meta data to the level
@@ -306,9 +300,6 @@ private:
     std::map<std::string, std::string>  m_MetaData;
     std::vector<std::string>            m_HeaderData;
     std::vector<std::string>            m_Notes;
-
-    TileField                           m_LevelArray;
-    TileField                           m_InitialLevelArray;
 
     std::vector<char>                   m_UndoData;
 

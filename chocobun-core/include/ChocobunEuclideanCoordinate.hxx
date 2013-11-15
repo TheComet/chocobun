@@ -16,40 +16,36 @@
 */
 
 // --------------------------------------------------------------
-// ChocobunQuadTileMap.hxx
+// ChocobunEuclideanCoordinate.hxx
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
 // include files
 
-#include <ChocobunQuadTileMap.hpp>
+#include <ChocobunEuclideanCoordinate.hpp>
 
 namespace Chocobun {
 
 // --------------------------------------------------------------
 template <class T>
-QuadTileMap<T>::QuadTileMap( void )
+EuclideanCoordinate<T>::EuclideanCoordinate( void ) :
+    x( T() ),
+    y( T() )
 {
 }
 
 // --------------------------------------------------------------
 template <class T>
-QuadTileMap<T>::~QuadTileMap( void )
+EuclideanCoordinate<T>::EuclideanCoordinate( const T& x, const T& y ) :
+    x( x ),
+    y( y )
 {
 }
 
 // --------------------------------------------------------------
 template <class T>
-Graph<T>& QuadTileMap<T>::getGraph( void )
+EuclideanCoordinate<T>::~EuclideanCoordinate( void )
 {
-    return m_Graph;
-}
-
-// --------------------------------------------------------------
-template <class T>
-const Graph<T>& QuadTileMap<T>::getGraph( void ) const
-{
-    return m_Graph;
 }
 
 } // namespace Chocobun
