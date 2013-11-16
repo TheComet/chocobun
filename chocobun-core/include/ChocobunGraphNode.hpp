@@ -28,7 +28,18 @@
 namespace Chocobun {
 
 /*!
- * @brief Base class for a generic node to be part of a graph
+ * @brief Base class for a generic node to be part of a @a Graph
+ *
+ * Nodes can be arbitrarily linked with one another, making it possible to represent
+ * complex data structures.
+ *
+ * A node holds various information about itself.
+ * - A list of links (see @a GraphNodeLink) to other nodes connected with this node
+ * - User defined data (can be anything)
+ * - Open/closed state for a pathfinder
+ * - Optional coordinate of the node
+ *
+ * To learn more about creating and managing graphs, please see @a Graph
  */
 template <class MOVECOSTTYPE, class DATA>
 class GraphNodeBase
@@ -125,13 +136,35 @@ public:
      */
     const DATA& getData( void ) const;
 
+    /*!
+     * @brief Sets the node to have an open state
+     * This is used by the pathfinder to flag visited nodes
+     */
+    void open( void );
+
+    /*!
+     * @brief Sets the node to have a closed state
+     * This is used by the pathdinder to flag visited nodes
+     */
+    void close( void );
+
+    /*!
+     * @brief Returns true if the node is open
+     * This is used by the pathfinder to flag visited nodes
+     */
+    bool isOpen( void );
+
+protected:
+
     std::vector<GraphNodeLink_t>    m_Links;
     DATA                            m_Data;
+    bool                            m_IsOpen;
 
 };
 
 /*!
  * @brief Extended coordinate implementation if the first template parameter is not void
+ *
  * If the first template parameter was not set to be **void**, a class with
  * coordinate methods is instantiated. This primarily allows the pathfinder
  * to operate much faster because it can make estimations of the remaining
@@ -205,6 +238,7 @@ private:
 
 /*!
  * @brief Non-coordinate implementation
+ *
  * If the first template parameter is set to **void**, methods for coordinate
  * management are not instantiated. The pathfinder will be slower as it won't
  * be able to make any estimates about the remaining path.
@@ -213,6 +247,11 @@ template <class MOVECOSTTYPE, class DATA>
 class GraphNode<void, MOVECOSTTYPE, DATA> : public GraphNodeBase<MOVECOSTTYPE, DATA>
 {
 public:
+
+    /*!
+     * @brief Default constructor
+     */
+    GraphNode( void );
 
     /*!
      * @brief Constructs a node and sets its data

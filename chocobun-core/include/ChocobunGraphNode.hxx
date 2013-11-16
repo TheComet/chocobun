@@ -30,7 +30,8 @@ namespace Chocobun {
 template <class MOVECOSTTYPE, class DATA>
 GraphNodeBase<MOVECOSTTYPE, DATA>::GraphNodeBase( void ) :
     m_Links(),
-    m_Data( DATA() )
+    m_Data( DATA() ),
+    m_IsOpen( true )
 {
 }
 
@@ -38,7 +39,8 @@ GraphNodeBase<MOVECOSTTYPE, DATA>::GraphNodeBase( void ) :
 template <class MOVECOSTTYPE, class DATA>
 GraphNodeBase<MOVECOSTTYPE, DATA>::GraphNodeBase( const DATA& data ) :
     m_Links(),
-    m_Data( data )
+    m_Data( data ),
+    m_IsOpen( true )
 {
 }
 
@@ -140,6 +142,27 @@ const DATA& GraphNodeBase<MOVECOSTTYPE, DATA>::getData( void ) const
 }
 
 // --------------------------------------------------------------
+template <class MOVECOSTTYPE, class DATA>
+void GraphNodeBase<MOVECOSTTYPE, DATA>::open( void )
+{
+    m_IsOpen = true;
+}
+
+// --------------------------------------------------------------
+template <class MOVECOSTTYPE, class DATA>
+void GraphNodeBase<MOVECOSTTYPE, DATA>::close( void )
+{
+    m_IsOpen = false;
+}
+
+// --------------------------------------------------------------
+template <class MOVECOSTTYPE, class DATA>
+bool GraphNodeBase<MOVECOSTTYPE, DATA>::isOpen( void )
+{
+    return m_IsOpen;
+}
+
+// --------------------------------------------------------------
 // --------------------------------------------------------------
 // GraphNode without void as first template parameter
 // --------------------------------------------------------------
@@ -200,6 +223,12 @@ const COORD& GraphNode<COORD, MOVECOSTTYPE, DATA>::getCoordinate( void ) const
 // GraphNode with void as first template parameter
 // --------------------------------------------------------------
 // --------------------------------------------------------------
+
+// --------------------------------------------------------------
+template <class MOVECOSTTYPE, class DATA>
+GraphNode<void, MOVECOSTTYPE, DATA>::GraphNode( void )
+{
+}
 
 // --------------------------------------------------------------
 template <class MOVECOSTTYPE, class DATA>
